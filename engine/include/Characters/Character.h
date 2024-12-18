@@ -11,9 +11,6 @@ public:
     {}
 
 public:
-    const std::string& Name() const { return m_name; }
-    std::string& Name() { return m_name; }
-
     const phs::Vector2D& Acceleration() const { return m_acceleration; }
     phs::Vector2D& Acceleration() { return m_acceleration; }
 
@@ -24,7 +21,6 @@ public:
     phs::Vector2D& ForwardDir() { return m_forwardDir; }
 
 private:
-    std::string m_name;
     phs::Vector2D m_acceleration;
     phs::Vector2D m_velocity;
     phs::Vector2D m_forwardDir;

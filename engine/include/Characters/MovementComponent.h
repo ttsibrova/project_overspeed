@@ -1,5 +1,5 @@
 #pragma once
-#include <Characters/Character.h>
+#include <Physics/Vector2D.h>
 
 enum class EMovementMode
 {
@@ -8,10 +8,11 @@ enum class EMovementMode
     FALLING
 };
 
+class Player;
 class MovementComponent
 {
 public:
-    MovementComponent (Character* owner);
+    MovementComponent (Player* owner);
 
     void Update (double dt);
 
@@ -43,7 +44,7 @@ private:
     phs::Vector2D m_MovingDirection;
 
 private:
-    Character* m_myOwner;
+    Player* m_myOwner;
     EMovementMode m_currMM;
 };
 

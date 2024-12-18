@@ -1,6 +1,7 @@
 #include <Characters/MovementComponent.h>
+#include <Characters/Player.h>
 
-MovementComponent::MovementComponent (Character* owner):
+MovementComponent::MovementComponent (Player* owner):
     m_bIsFalling (false),
     m_bIsGrounded (false),
     m_bIsJumping (false),

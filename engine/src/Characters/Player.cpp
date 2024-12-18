@@ -5,7 +5,8 @@
 #include <raylib/raylib.h>
 
 
-Player::Player (Properties props): Character (props),
+Player::Player (Properties props):
+    m_forwardDir (phs::Vector2D (1., 0.)),
     m_mc (this),
     m_height (props.Height),
     m_width (props.Width),
@@ -39,7 +40,7 @@ void Player::Update (double dt)
 
 void Player::Move()
 {
-    auto dir = InputHandler::GlobalInstance().GetAxisVec();
+    auto dir = Input::GetAxisVec();
     phs::Log (dir, "Input axis");
 
     if (dir.SquareMagnitude() < 1e-5 || std::abs (dir.X()) < 1e-5) {
@@ -54,20 +55,7 @@ void Player::Jump()
 {
 }
 
-bool MageMoveCommand::Execute (IObject* obj)
+void PlayerMovement::MovePlayer (Player& player)
 {
-    if (auto player = dynamic_cast <Player*> (obj)) {
-        player->Move();
-        return true;
-    }
-    return false;
-}
-
-bool MageJumpCommand::Execute (IObject* obj)
-{
-    if (auto player = dynamic_cast <Player*> (obj)) {
-        player->Jump();
-        return true;
-    }
-    return false;
+    player.Move();
 }
