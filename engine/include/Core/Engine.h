@@ -1,5 +1,5 @@
 #pragma once
-
+#include <World/World.h>
 
 class Engine
 {
@@ -25,4 +25,5 @@ private:
     {}
 
     bool m_bIsRunning;
+    std::optional <GameWorld> m_world;
 };

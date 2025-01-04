@@ -13,19 +13,6 @@
 #include <iostream>
 
 
-class APressedCommand : public Command
-{
-    bool Execute (IObject*)
-    {
-        std::cout << "Key A is pressed\n";
-        return true;
-    }
-};
-
-static Player* player = nullptr;
-static InputLayer<Player>* iLayer = nullptr;
-static Level* lvl = nullptr;
-
 Engine& Engine::GetInstance()
 {
     static Engine m_Instance;
@@ -38,21 +25,15 @@ bool Engine::Init()
     if (!IsWindowReady()) {
         return false;
     }
-    SetTargetFPS (60);
+    SetTargetFPS (120);
 
     TextureManager::GetInstance().Load ("mage_idle", "assets/idle.png");
     TextureManager::GetInstance().Load ("mage_run", "assets/run.png");
-    Properties playerProp ("mage_idle", 128.f, 128.f, phs::Vector2D (100, 100));
-    player = new Player (playerProp);
 
-    iLayer = new InputLayer <Player>();
-    iLayer->AddAction (GAMEPAD_BUTTON_UNKNOWN, KEY_A, ActionType::HOLD, PlayerMovement::MovePlayer);
-    iLayer->AddAction (GAMEPAD_BUTTON_UNKNOWN, KEY_W, ActionType::HOLD, PlayerMovement::MovePlayer);
-    iLayer->AddAction (GAMEPAD_BUTTON_UNKNOWN, KEY_S, ActionType::HOLD, PlayerMovement::MovePlayer);
-    iLayer->AddAction (GAMEPAD_BUTTON_UNKNOWN, KEY_D, ActionType::HOLD, PlayerMovement::MovePlayer);
-
-    lvl = new Level();
-    lvl->Init ("assets/lvl1_swamp.tmx");
+    m_world = GameWorld::CreateGameWorld (Maps::level_1);
+    if (!m_world.has_value()) {
+        return false;
+    }
 
     return m_bIsRunning = true;
 }
@@ -71,16 +52,19 @@ void Engine::Quit()
 void Engine::Update()
 {
     Timer::GlobalInstance().Update();
-    InputHandler::GlobalInstance().HandleInput (*iLayer, *player);
-    player->Update (Timer::GlobalInstance().GetDeltaTime());
+    if (m_world.has_value()) {
+        m_world.value().Update();
+    }
 }
 
 void Engine::Render()
 {
     BeginDrawing();
     ClearBackground (GRAY);
-    lvl->Draw();
-    player->Draw();
+    if (m_world.has_value()) {
+        m_world.value().Draw();
+    }
+
     EndDrawing();
 
 }

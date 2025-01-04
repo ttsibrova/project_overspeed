@@ -8,7 +8,9 @@ class Vector2D;
 class Trsf2D
 {
 public:
-    void AddRotation (float rad);
+    Trsf2D() = default;
+
+    //void AddRotation (float rad);
     void AddRotation (float a, float b, float c, float d) {
         m_a += a;
         m_b += b;
@@ -17,6 +19,7 @@ public:
     }
 
     void AddTranslation (Vector2D trsl);
+    void SetTranslation (Vector2D trsl);
     void AddTranslation (float e, float f) {
         m_e += e;
         m_f += f;

@@ -7,7 +7,7 @@ void Animation::Update()
     m_frame = static_cast <int> (GetTime() / m_animSpeed) % m_frameCount;
 }
 
-void Animation::Draw (const phs::Vector2D& pos, RenderFlip flip)
+void Animation::Draw (const phs::Point2D& pos, RenderFlip flip)
 {
     TextureManager::GetInstance().DrawFrame (m_textureID, pos, m_width, m_height, m_row, m_frame, flip);
 }

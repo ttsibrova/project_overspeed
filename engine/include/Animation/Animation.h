@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Graphics/RenderFlip.h>
-#include <Physics/Vector2D.h>
+#include <Physics/Point2D.h>
 
 class Animation
 {
@@ -17,7 +17,7 @@ public:
 
 
     void Update();
-    void Draw (const phs::Vector2D& pos, RenderFlip flip);
+    void Draw (const phs::Point2D& pos, RenderFlip flip);
     void SetProps (std::string textureID, int row, int frame, float height, float width, float animSpeed);
 
 private:

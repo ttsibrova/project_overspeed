@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Physics/Vector2D.h>
+#include <Physics/Point2D.h>
 #include <Graphics/RenderFlip.h>
 
 #include <raylib/raylib.h>
@@ -21,10 +21,10 @@ public:
     void Drop (std::string id);
     void Clean();
 
-    void Draw (std::string id, const phs::Vector2D& pos);
-    void Draw (size_t id, const phs::Vector2D& pos);
-    void DrawTile (size_t id, const phs::Vector2D& pos, float width, float height, TilePos tilePos);
-    void DrawFrame (std::string id, const phs::Vector2D& pos, float width, float height, int row, int frame, RenderFlip flip = RenderFlip::FLIP_NONE);
+    void Draw (std::string id, const phs::Point2D& pos);
+    void Draw (size_t id, const phs::Point2D& pos);
+    void DrawTile (size_t id, const phs::Point2D& pos, float width, float height, TilePos tilePos);
+    void DrawFrame (std::string id, const phs::Point2D& pos, float width, float height, int row, int frame, RenderFlip flip = RenderFlip::FLIP_NONE);
 
 public:
     TextureManager (const TextureManager&) = delete;

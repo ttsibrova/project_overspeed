@@ -44,47 +44,52 @@ EmbeddedTileset LoadEmbeddedTileset (const tinytmx::Tileset& tileset)
     return res;
 }
 
-
-bool Level::Init (std::string mapFilePath)
+Level::Level (const tinytmx::Map& tmxMap)
 {
-    tinytmx::Map levelMap;
-    levelMap.ParseFile (mapFilePath);
-    if (levelMap.HasError()) {
-        std::println ("{}", levelMap.GetErrorText());
-        return false;
-    }
+    assert (tmxMap.GetTilesets().size() < 3);
 
-    assert (levelMap.GetTilesets().size() < 3);
-
-    for (const auto& tileset: levelMap.GetTilesets()) {
+    for (const auto& tileset : tmxMap.GetTilesets()) {
         auto image = tileset->GetImage();
         if (!image) {
             m_cTileset = LoadCollectionTileset (*tileset);
-        } else {
+        }
+        else {
             m_eTileset = LoadEmbeddedTileset (*tileset);
         }
     }
 
-    auto layers = levelMap.GetTileLayers();
+    auto layers = tmxMap.GetTileLayers();
     for (const auto& layer : layers) {
         auto finiteLayer = layer->GetDataTileFiniteMap();
         assert (finiteLayer);
-        if (m_levelWidhtInTiles == 1) {
-            m_levelWidhtInTiles = finiteLayer->GetWidth();
-        } else { // delete later
-            assert (m_levelWidhtInTiles == finiteLayer->GetWidth());
+        if (m_levelHeightInTiles == 1) {
+            m_levelHeightInTiles = finiteLayer->GetHeight();
+        }
+        else { // delete later
+            assert (m_levelHeightInTiles == finiteLayer->GetHeight());
         }
         std::vector <int> layerIDs;
-        auto heightInTiles = finiteLayer->GetHeight();
-        layerIDs.reserve (heightInTiles * m_levelWidhtInTiles);
-        for (unsigned int i = 0; i < heightInTiles; i++) {
-            for (unsigned int j = 0; j < m_levelWidhtInTiles; j++) {
-                layerIDs.push_back (finiteLayer->GetTileGid (j, i));
+        auto widthInTiles = finiteLayer->GetWidth();
+        layerIDs.reserve (widthInTiles * m_levelHeightInTiles);
+        for (unsigned int i = 0; i < widthInTiles; i++) {
+            for (unsigned int j = 0; j < m_levelHeightInTiles; j++) {
+                layerIDs.push_back (finiteLayer->GetTileGid (i, j));
             }
         }
         m_layers.emplace_back (std::move (layerIDs));
     }
-    return true;
+}
+
+
+std::optional <Level> Level::CreateLevel (Maps map)
+{
+    tinytmx::Map levelMap;
+    levelMap.ParseFile (maps::GetPath (map));
+    if (levelMap.HasError()) {
+        std::println ("{}", levelMap.GetErrorText());
+        return {};
+    }
+    return { Level (levelMap) };
 }
 
 void Level::Draw()
@@ -93,14 +98,31 @@ void Level::Draw()
     for (const auto& layer : m_layers) {
         const auto& tileIDs = layer.Tiles();
         for (int i = 0; i < static_cast <int> (tileIDs.size()); i++) {
-            const float x = static_cast <float> (i % m_levelWidhtInTiles);
-            const float y = static_cast <float> (i / m_levelWidhtInTiles);
+            const float x = static_cast <float> (i / m_levelHeightInTiles);
+            const float y = static_cast <float> (i % m_levelHeightInTiles);
             if (m_eTileset.IsTileBelongsToSet (tileIDs[i])) {
-                TextureManager::GetInstance().DrawTile (m_eTileset.GetImageID(), {x * tileWidth, y * tileWidth}, tileWidth, tileHeight, m_eTileset.GetTilePosition (tileIDs[i]));
+                TextureManager::GetInstance().DrawTile (m_eTileset.GetImageID(),
+                                                        {x * tileWidth, y * tileWidth}, //pixel position
+                                                        tileWidth, tileHeight,
+                                                        m_eTileset.GetTilePosition (tileIDs[i])); //position on texture
             } else if (m_cTileset.IsTileBelongsToSet (tileIDs[i])) {
                 TextureManager::GetInstance().Draw (m_cTileset.GetImageID (tileIDs[i]), {x * tileWidth, y * tileWidth});
             }
         }
 
     }
+}
+
+GroundData Level::GetGroundData()
+{
+    const auto& groundLayer = m_layers[0];
+    auto md = std::mdspan (groundLayer.Tiles().data(), groundLayer.TilesNum() / m_levelHeightInTiles, m_levelHeightInTiles);
+    //for (size_t i = 0; i < md.extent (0); i++) {
+    //    for (size_t j = 0; j < md.extent (1); j++) {
+    //        std::print (" {} ", md[std::array{i, j}]);
+    //    }
+    //    std::print ("\n");
+    //}
+    auto [heiht, width] = m_eTileset.GetHeightWidth();
+    return {md, heiht, width};
 }

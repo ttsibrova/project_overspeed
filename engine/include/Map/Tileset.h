@@ -1,24 +1,5 @@
 #pragma once
 #include <vector>
-#include <optional>
-
-class TilesetImageData
-{
-public:
-    TilesetImageData (std::vector <unsigned int>&& imagePath):
-        m_imagePath (std::move (imagePath))
-    {}
-
-    inline unsigned int GetImageId (int tileID) const {
-        if (m_imagePath.size() > 1) {
-            return m_imagePath [tileID - 1];
-        }
-        return m_imagePath.front();
-    }
-
-private:
-    const std::vector <unsigned int> m_imagePath;
-};
 
 class Tileset
 {

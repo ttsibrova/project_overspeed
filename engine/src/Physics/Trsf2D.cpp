@@ -10,6 +10,12 @@ void Trsf2D::AddTranslation (Vector2D trsl)
     m_f += trsl.Y();
 }
 
+void Trsf2D::SetTranslation (Vector2D trsl)
+{
+    m_e = trsl.X();
+    m_f = trsl.Y();
+}
+
 Vector2D Trsf2D::GetTranslationPart() const
 {
     return Vector2D (m_e, m_f);
@@ -29,7 +35,7 @@ void Trsf2D::Log (std::string prefix)
     } else {
         std::cout << "T";
     }
-    std::cout << "rsf matrix = ( \n"
+    std::cout << "Trsf matrix = ( \n"
               << m_a << " " << m_c << " " << m_e << '\n'
               << m_b << " " << m_d << " " << m_f << '\n'
               << "0 0 1\n)" << std::endl;

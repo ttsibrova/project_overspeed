@@ -1,5 +1,5 @@
 #include <Graphics/TextureManager.h>
-#include <Map/TilesetImageData.h>
+#include <Map/Tileset.h>
 
 
 TextureManager& TextureManager::GetInstance()
@@ -53,17 +53,17 @@ void TextureManager::Clean()
     m_hashedTexturesMap.clear();
 }
 
-void TextureManager::Draw (std::string id, const phs::Vector2D& pos)
+void TextureManager::Draw (std::string id, const phs::Point2D& pos)
 {
     DrawTextureV (m_texturesMap[id], pos, WHITE);
 }
 
-void TextureManager::Draw (size_t id, const phs::Vector2D& pos)
+void TextureManager::Draw (size_t id, const phs::Point2D& pos)
 {
     DrawTextureV (m_hashedTexturesMap[id], pos, WHITE);
 }
 
-void TextureManager::DrawTile (size_t id, const phs::Vector2D& pos, float width, float height, TilePos tilePos)
+void TextureManager::DrawTile (size_t id, const phs::Point2D& pos, float width, float height, TilePos tilePos)
 {
     float x0 = tilePos.col * width;
     float y0 = tilePos.row * height;
@@ -72,7 +72,7 @@ void TextureManager::DrawTile (size_t id, const phs::Vector2D& pos, float width,
     DrawTextureRec (m_hashedTexturesMap[id], rec, pos, WHITE);
 }
 
-void TextureManager::DrawFrame (std::string id, const phs::Vector2D& pos, float width, float height, int row, int frame, RenderFlip flip)
+void TextureManager::DrawFrame (std::string id, const phs::Point2D& pos, float width, float height, int row, int frame, RenderFlip flip)
 {
     float x0 = frame * width;
     float y0 = row * height;
