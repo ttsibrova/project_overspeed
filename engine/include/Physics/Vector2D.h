@@ -92,6 +92,9 @@ public:
         m_XY.x = m_XY.x / Magnitude();
         m_XY.y = m_XY.y / Magnitude();
     }
+    [[nodiscard]] inline Vector2D Normalized() const {
+        return Vector2D (m_XY.x / Magnitude(), m_XY.y / Magnitude());
+    }
 
     inline void Translate (const Vector2D& trsl) {
         *(this) += trsl;
@@ -133,9 +136,18 @@ inline Vector2D DownVector()
 {
     return Vector2D (0.f, 1.f);
 }
+inline Vector2D UpVector()
+{
+    return Vector2D (0.f, -1.f);
+}
 inline Vector2D RightVector()
 {
     return Vector2D (1.f, 0.f);
+}
+
+inline Vector2D LeftVector()
+{
+    return Vector2D (-1.f, 0.f);
 }
 
 inline Vector2D StripByAxis (const Vector2D& vec, EAxis axis)
@@ -201,7 +213,7 @@ inline Quadrant GetVectorQudrant (const Vector2D& vec)
     if (vec.X() < 0 && vec.Y() < 0) {
         return Quadrant::III;
     }
-    if (vec.X() > 0 && vec.Y() > 0) {
+    if (vec.X() > 0 && vec.Y() < 0) {
         return Quadrant::IV;
     }
     std::unreachable();

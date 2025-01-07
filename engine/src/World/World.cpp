@@ -6,6 +6,10 @@
 
 #include <print>
 
+#if _DEBUG
+#include <Debug/GlobalDebugger.h>
+#endif
+
 GameWorld::GameWorld (Level&& lvl):
     m_player ({"mage_idle", 128.f, 128.f, phs::Vector2D (100, 100)}),
     m_currentLevel (std::move (lvl))
@@ -29,6 +33,9 @@ std::optional<GameWorld> GameWorld::CreateGameWorld (Maps map)
 
 void GameWorld::Update()
 {
+#if _DEBUG
+    Debug::GlobalDebugger::GetInstance().Update();
+#endif
     InputHandler::GlobalInstance().HandleInput (m_playerInputLayer, m_player);
 
     float dt = static_cast <float> (Timer::GlobalInstance().GetDeltaTime());
@@ -40,4 +47,8 @@ void GameWorld::Draw()
 {
     m_currentLevel.Draw();
     m_player.Draw();
+
+#if _DEBUG
+    Debug::GlobalDebugger::GetInstance().Draw();
+#endif
 }

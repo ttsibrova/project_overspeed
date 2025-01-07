@@ -6,7 +6,8 @@
 #include <print>
 
 #define MIN_TICK_TIME 1.e-4f
-#define FUZZY_COMPARE_VALUE 1.e-7
+#define MAX_SIM_TICK_TIME 0.02f
+#define FUZZY_COMPARE_VALUE 1.e-7f
 
 
 namespace PlayerMovement {
@@ -96,11 +97,14 @@ PhysicsUpdateState ComputeUpdatePlayerMovement (float dt, const Player& player, 
     switch (targetMode)
     {
     case MovementMode::NONE:
-        break;
+    {
+        PhysicsUpdateState state {targetMode, phs::Vector2D(), phs::Trsf2D(), dt};
+        return state;
+    }
     case MovementMode::RUNNING:
     {
         auto physUpdate = PlayerMovement::SimulatePhysRunning (dt, playerState.currentSimTime, playerState.m_velocity);
-        auto adjustedVec = Collision::ComputeCollisionWithGround (playerCollider, physUpdate.trsf.GetTranslationPart(), ground);
+        auto adjustedVec = Collision::HitScanGround (playerCollider, physUpdate.trsf.GetTranslationPart(), ground);
         if (adjustedVec.has_value()) {
             physUpdate.trsf.SetTranslation (adjustedVec.value());
         }
@@ -109,7 +113,7 @@ PhysicsUpdateState ComputeUpdatePlayerMovement (float dt, const Player& player, 
     case MovementMode::FALLING:
     {
         auto physUpdate = PlayerMovement::SimulatePhysFalling (dt, playerState.currentSimTime, playerState.m_velocity);
-        auto adjustedVec = Collision::ComputeCollisionWithGround (playerCollider, physUpdate.trsf.GetTranslationPart (), ground);
+        auto adjustedVec = Collision::HitScanGround (playerCollider, physUpdate.trsf.GetTranslationPart(), ground);
         if (adjustedVec.has_value ()) {
             physUpdate.trsf.SetTranslation (adjustedVec.value());
         }
@@ -126,24 +130,20 @@ PhysicsUpdateState ComputeUpdatePlayerMovement (float dt, const Player& player, 
 }
 
 
-PhysicsUpdateState SimulatePhysRunning (const float dt, const float simulationTime, const phs::Vector2D& playerVelocity)
+PhysicsUpdateState SimulatePhysRunning (const float dt, float simulationTime, const phs::Vector2D& playerVelocity)
 {
     const float playerMaxSpeed = 400.f;
     const float maxSpeedDelay = .2f;
     const float startSpeed = 100.f;
     const float dSpeed = (playerMaxSpeed - startSpeed) / maxSpeedDelay;
 
-     (simulationTime >= 0);
-     __assume (dt >= 0);
+    __assume (simulationTime >= 0.f);
+    __assume (dt >= 0.f);
 
     auto inputVec = phs::StripByAxis (Input::GetAxisVec(), phs::EAxis::X);
     if (inputVec.SquareMagnitude() < 1e-5 || std::abs (inputVec.X()) < 1e-5) {
         return {MovementMode::NONE, playerVelocity, phs::Trsf2D(), 0.}; //no direction
     }
-
-    float tickTime = std::max (dt, MIN_TICK_TIME);
-    float speed = startSpeed + dSpeed * (simulationTime + tickTime);
-    speed = std::min (playerMaxSpeed, speed);
 
     phs::Vector2D newVelocity = phs::StripByAxis (playerVelocity, phs::EAxis::X);
     auto currHorizontalSpeed = newVelocity.Magnitude();
@@ -151,15 +151,35 @@ PhysicsUpdateState SimulatePhysRunning (const float dt, const float simulationTi
         newVelocity.FlipX();
     }
 
-    currHorizontalSpeed = std::min (playerMaxSpeed, currHorizontalSpeed);
-    currHorizontalSpeed = std::max (currHorizontalSpeed, speed);
-
-    newVelocity = inputVec * currHorizontalSpeed;
-
+    float tickTime = std::max (dt, MIN_TICK_TIME);
+    float remainingTime = 0.f;
     phs::Trsf2D trsl;
-    trsl.AddTranslation (newVelocity * tickTime);
 
-    return {MovementMode::RUNNING, newVelocity, trsl, simulationTime + tickTime};
+    while (tickTime > 0.f) {
+        if (tickTime > MAX_SIM_TICK_TIME) {
+            remainingTime = tickTime - MAX_SIM_TICK_TIME;
+            tickTime = MAX_SIM_TICK_TIME;
+        }
+
+        float speed = startSpeed + dSpeed * (simulationTime + tickTime);
+        speed = std::min (playerMaxSpeed, speed);
+
+        currHorizontalSpeed = std::min (playerMaxSpeed, currHorizontalSpeed);
+        currHorizontalSpeed = std::max (currHorizontalSpeed, speed);
+
+        newVelocity = inputVec * currHorizontalSpeed;
+        trsl.AddTranslation (newVelocity * tickTime);
+        simulationTime += tickTime;
+
+        if (remainingTime > MAX_SIM_TICK_TIME) {
+            remainingTime -= MAX_SIM_TICK_TIME;
+        } else {
+            tickTime = remainingTime;
+            remainingTime = 0.f;
+        }
+    }
+
+    return {MovementMode::RUNNING, newVelocity, trsl, simulationTime};
 }
 
 PhysicsUpdateState SimulatePhysFalling (const float dt, const float simulationTime, const phs::Vector2D& playerVelocity)

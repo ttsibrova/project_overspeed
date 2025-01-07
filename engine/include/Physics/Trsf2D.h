@@ -10,7 +10,7 @@ class Trsf2D
 public:
     Trsf2D() = default;
 
-    //void AddRotation (float rad);
+    void SetRotation (float rad);
     void AddRotation (float a, float b, float c, float d) {
         m_a += a;
         m_b += b;
@@ -35,10 +35,10 @@ public:
 
     Vector2D operator* (const Vector2D& rhs) const;
 
-    void Log (std::string prefix = "");
 
 private:
     float m_a{1}, m_b{0}, m_c{0}, m_d{1}, m_e{0}, m_f{0};
 };
 
+//void Log (const Trsf2D& trsf, std::string prefix = "");
 }

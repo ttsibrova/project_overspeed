@@ -4,6 +4,14 @@
 
 namespace phs {
 
+void Trsf2D::SetRotation (float rad)
+{
+    m_a = std::cos (rad);
+    m_b = std::sin (rad);
+    m_c = -m_b;
+    m_d = m_a;
+}
+
 void Trsf2D::AddTranslation (Vector2D trsl)
 {
     m_e += trsl.X();
@@ -28,17 +36,17 @@ Vector2D Trsf2D::operator* (const Vector2D& rhs) const
     return Vector2D (x, y);
 }
 
-void Trsf2D::Log (std::string prefix)
-{
-    if (prefix != "") {
-        std::cout << prefix << " t";
-    } else {
-        std::cout << "T";
-    }
-    std::cout << "Trsf matrix = ( \n"
-              << m_a << " " << m_c << " " << m_e << '\n'
-              << m_b << " " << m_d << " " << m_f << '\n'
-              << "0 0 1\n)" << std::endl;
-}
+//void Log (const Trsf2D& trsf, std::string prefix)
+//{
+//    if (prefix != "") {
+//        std::cout << prefix << " t";
+//    } else {
+//        std::cout << "T";
+//    }
+//    std::cout << "Trsf matrix = ( \n"
+//              << m_a << " " << m_c << " " << m_e << '\n'
+//              << m_b << " " << m_d << " " << m_f << '\n'
+//              << "0 0 1\n)" << std::endl;
+//}
 
 }

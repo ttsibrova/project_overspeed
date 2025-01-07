@@ -117,12 +117,6 @@ GroundData Level::GetGroundData()
 {
     const auto& groundLayer = m_layers[0];
     auto md = std::mdspan (groundLayer.Tiles().data(), groundLayer.TilesNum() / m_levelHeightInTiles, m_levelHeightInTiles);
-    //for (size_t i = 0; i < md.extent (0); i++) {
-    //    for (size_t j = 0; j < md.extent (1); j++) {
-    //        std::print (" {} ", md[std::array{i, j}]);
-    //    }
-    //    std::print ("\n");
-    //}
     auto [heiht, width] = m_eTileset.GetHeightWidth();
     return {md, heiht, width};
 }

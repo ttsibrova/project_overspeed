@@ -33,6 +33,11 @@ public:
         return Point2D (m_x + trsl.X(), m_y + trsl.Y());
     }
 
+    bool operator== (const Point2D& other) const
+    {
+        return std::abs (m_x - other.m_x) < 1.e-7f && std::abs (m_y - other.m_y) < 1.e-7f;
+    }
+
     operator Vector2() const {
         return {m_x, m_y};
     }

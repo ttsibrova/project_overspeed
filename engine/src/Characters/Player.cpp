@@ -7,6 +7,9 @@
 
 #include <print>
 
+#include <Debug/DebugLog.h>
+
+
 Player::Player (Properties props):
     m_flip (FLIP_NONE),
     m_nextAction (PlayerAction::IDLE),
@@ -25,7 +28,7 @@ void Player::Draw()
 
 void Player::Update (const PhysicsUpdateState& updateState)
 {
-    std::print ("player mode: {} \n", std::to_underlying (m_currentMM));
+    //std::print ("player mode: {} \n", std::to_underlying (m_currentMM));
     if (updateState.nextMode != m_currentMM) {
         ChangeActiveMM (updateState.nextMode);
     }
@@ -34,6 +37,9 @@ void Player::Update (const PhysicsUpdateState& updateState)
     m_currSimTime = updateState.simTime;
     m_velocity = updateState.velocity;
     m_pos.Translate (updateState.trsf.GetTranslationPart());
+
+    m_pos.X() = std::round (m_pos.X()); //snapping character to the pixel grid
+    m_pos.Y() = std::round (m_pos.Y()); //snapping character to the pixel grid
 
     if (m_velocity.SquareMagnitude() > 1.e-7f) {
         if (phs::IsOpposite (m_velocity, phs::Vector2D (1.f, 0.f))) {
@@ -45,6 +51,9 @@ void Player::Update (const PhysicsUpdateState& updateState)
 
     m_anim.Update();
     m_nextAction = PlayerAction::IDLE;
+
+    Debug::Log (std::move (GetCollider()));
+    Debug::Log (updateState, m_pos);
 }
 
 void Player::AddAction (PlayerAction action)
