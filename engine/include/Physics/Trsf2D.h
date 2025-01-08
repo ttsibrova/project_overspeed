@@ -11,13 +11,6 @@ public:
     Trsf2D() = default;
 
     void SetRotation (float rad);
-    void AddRotation (float a, float b, float c, float d) {
-        m_a += a;
-        m_b += b;
-        m_c += c;
-        m_d += d;
-    }
-
     void AddTranslation (Vector2D trsl);
     void SetTranslation (Vector2D trsl);
     void AddTranslation (float e, float f) {
@@ -34,6 +27,8 @@ public:
     Vector2D GetTranslationPart() const;
 
     Vector2D operator* (const Vector2D& rhs) const;
+
+    //Add matrices multiplication for accumulating rotation
 
 
 private:

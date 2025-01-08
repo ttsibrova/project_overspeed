@@ -25,7 +25,7 @@ bool Engine::Init()
     if (!IsWindowReady()) {
         return false;
     }
-    SetTargetFPS (60);
+    SetTargetFPS (120);
 
     TextureManager::GetInstance().Load ("mage_idle", "assets/idle.png");
     TextureManager::GetInstance().Load ("mage_run", "assets/run.png");

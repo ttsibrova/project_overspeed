@@ -1,6 +1,7 @@
 #include <World/LevelCollision.h>
 
 #include <Geometry/LineIntersection.h>
+#include <Physics/Precisions.h>
 
 #include <cassert>
 #include <print>
@@ -54,7 +55,7 @@ std::optional <phs::Point2D> GetCollidedPoint (const Collider& playerCollider,
     case phs::Quadrant::X_ALIGNED:
         res.emplace_back (max.X(), center_Y);
         res.emplace_back (max.X(), min.Y());
-        res.emplace_back (max.X(), max.Y() - 1.e-4f);
+        res.emplace_back (max.X(), max.Y());
         break;
     case phs::Quadrant::Y_ALIGNED:
         res.emplace_back (center_X, max.Y());
@@ -64,7 +65,7 @@ std::optional <phs::Point2D> GetCollidedPoint (const Collider& playerCollider,
     case phs::Quadrant::X_OPPOSITE:
         res.emplace_back (min.X(), center_Y);
         res.push_back (min);
-        res.emplace_back (min.X(), max.Y() - 1.e-4f);
+        res.emplace_back (min.X(), max.Y());
         break;
     case phs::Quadrant::Y_OPPOSITE:
         res.emplace_back (center_X, min.Y());
@@ -122,7 +123,7 @@ std::vector <std::pair <phs::Point2D, phs::Point2D>> GetTileLines (phs::Quadrant
     case phs::Quadrant::Y_OPPOSITE:
         res.emplace_back (minTileCorner, phs::Point2D (maxTileCorner.X(), minTileCorner.Y()));
         res.emplace_back (minTileCorner, phs::Point2D (minTileCorner.X(), maxTileCorner.Y()));
-        res.emplace_back (maxTileCorner, phs::Point2D (maxTileCorner.X (), minTileCorner.Y ()));
+        res.emplace_back (maxTileCorner, phs::Point2D (maxTileCorner.X(), minTileCorner.Y()));
         break;
     }
     return res;
@@ -130,8 +131,8 @@ std::vector <std::pair <phs::Point2D, phs::Point2D>> GetTileLines (phs::Quadrant
 
 bool IsBelongToSegment (const phs::Point2D& p, const phs::Point2D& p1, const phs::Point2D& p2)
 {
-    return p.X() >= std::min (p1.X(), p2.X()) - 0.5f && p.X() <= std::max (p1.X(), p2.X()) + 0.5f &&
-           p.Y() >= std::min (p1.Y(), p2.Y()) - 0.5f && p.Y() <= std::max (p1.Y(), p2.Y()) + 0.5f;
+    return p.X() >= std::min (p1.X(), p2.X()) - phs::Precision::half_pixel && p.X() <= std::max (p1.X(), p2.X()) + phs::Precision::half_pixel &&
+           p.Y() >= std::min (p1.Y(), p2.Y()) - phs::Precision::half_pixel && p.Y() <= std::max (p1.Y(), p2.Y()) + phs::Precision::half_pixel;
 
 }
 
@@ -246,36 +247,36 @@ std::optional <phs::Vector2D> HitScanGround (const Collider& playerCollider, con
     }
 
     // Slight push out of walls
-    if (finalVector.has_value() && finalVector.value().SquareMagnitude() > 0.25f) {
+    if (finalVector.has_value() && finalVector.value().SquareMagnitude() > phs::Precision::quarter_pixel) {
         switch (vecQuadrant)
         {
         case phs::Quadrant::I:
-            finalVector.value().X() -= 1.f;
-            finalVector.value().Y() -= 1.f;
+            finalVector.value().X() -= phs::Precision::pixel;
+            finalVector.value().Y() -= phs::Precision::pixel;
             break;
         case phs::Quadrant::II:
-            finalVector.value().X() += 1.f;
-            finalVector.value().Y() -= 1.f;
+            finalVector.value().X() += phs::Precision::pixel;
+            finalVector.value().Y() -= phs::Precision::pixel;
             break;
         case phs::Quadrant::III:
-            finalVector.value().X() += 1.f;
-            finalVector.value().Y() += 1.f;
+            finalVector.value().X() += phs::Precision::pixel;
+            finalVector.value().Y() += phs::Precision::pixel;
             break;
         case phs::Quadrant::IV:
-            finalVector.value().X() -= 1.f;
-            finalVector.value().Y() += 1.f;
+            finalVector.value().X() -= phs::Precision::pixel;
+            finalVector.value().Y() += phs::Precision::pixel;
             break;
         case phs::Quadrant::X_ALIGNED:
-            finalVector.value().X() -= 1.f;
+            finalVector.value().X() -= phs::Precision::pixel;
             break;
         case phs::Quadrant::Y_ALIGNED:
-            finalVector.value().Y() -= 1.f;
+            finalVector.value().Y() -= phs::Precision::pixel;
             break;
         case phs::Quadrant::X_OPPOSITE:
-            finalVector.value().X() += 1.f;
+            finalVector.value().X() += phs::Precision::pixel;
             break;
         case phs::Quadrant::Y_OPPOSITE:
-            finalVector.value().Y() += 1.f;
+            finalVector.value().Y() += phs::Precision::pixel;
             break;
         default:
             break;
@@ -296,16 +297,16 @@ std::optional<phs::Vector2D> GetGroundNormalUnderPlayer (const Collider& playerC
     case phs::Quadrant::IV:
     case phs::Quadrant::X_ALIGNED:
     {
-        anchorPnt.X() = playerCollider.Max().X() + 1.e-2f;
-        anchorPnt.Y() = playerCollider.Max().Y() + 1.f;
+        anchorPnt.X() = playerCollider.Max().X() + phs::Precision::pixel + phs::Precision::quarter_pixel;
+        anchorPnt.Y() = playerCollider.Max().Y() + phs::Precision::pixel;
         break;
     }
     case phs::Quadrant::II:
     case phs::Quadrant::III:
     case phs::Quadrant::X_OPPOSITE:
     {
-        anchorPnt.X() = playerCollider.Min().X() - 1.e-2f;
-        anchorPnt.Y() = playerCollider.Max().Y() + 1.f;
+        anchorPnt.X() = playerCollider.Min().X() - phs::Precision::pixel + phs::Precision::quarter_pixel;
+        anchorPnt.Y() = playerCollider.Max().Y() + phs::Precision::pixel;
         break;
     }
     case phs::Quadrant::Y_ALIGNED:
