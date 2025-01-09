@@ -1,4 +1,5 @@
 #pragma once
+#include <Physics/Precisions.h>
 #include <raylib/raylib.h>
 #include <iostream>
 
@@ -167,7 +168,7 @@ inline Vector2D StripByAxis (const Vector2D& vec, EAxis axis)
     return res;
 }
 
-inline bool IsOpposite (const Vector2D& v1, const Vector2D& v2, float precision = 1.e-7f)
+inline bool IsOpposite (const Vector2D& v1, const Vector2D& v2, float precision = Precision::float_tol)
 {
     if (v1.SquareMagnitude() < precision || v2.SquareMagnitude() < precision) {
         return false;
@@ -195,12 +196,12 @@ inline void Log (const Vector2D& vec, std::string prefix = "") {
 
 inline Quadrant GetVectorQudrant (const Vector2D& vec)
 {
-    if (std::abs (vec.Y()) < 1e-5) {
-        if (vec.X() > 0) return Quadrant::X_ALIGNED;
+    if (std::abs (vec.Y()) < Precision::float_tol) {
+        if (vec.X() > 0.f) return Quadrant::X_ALIGNED;
         else return Quadrant::X_OPPOSITE;
     }
-    if (std::abs (vec.X()) < 1e-5) {
-        if (vec.Y() > 0) return Quadrant::Y_ALIGNED;
+    if (std::abs (vec.X()) < Precision::float_tol) {
+        if (vec.Y() > 0.f) return Quadrant::Y_ALIGNED;
         else return Quadrant::Y_OPPOSITE;
     }
 

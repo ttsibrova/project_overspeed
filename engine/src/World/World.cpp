@@ -11,13 +11,14 @@
 #endif
 
 GameWorld::GameWorld (Level&& lvl):
-    m_player ({"mage_idle", 128.f, 128.f, phs::Vector2D (100, 100)}),
+    m_player ({128.f, 128.f}),
     m_currentLevel (std::move (lvl))
 {
     m_playerInputLayer.AddAction (GAMEPAD_BUTTON_UNKNOWN, KEY_A, ActionType::HOLD, PlayerMovement::MovePlayer);
     m_playerInputLayer.AddAction (GAMEPAD_BUTTON_UNKNOWN, KEY_W, ActionType::HOLD, PlayerMovement::MovePlayer);
     m_playerInputLayer.AddAction (GAMEPAD_BUTTON_UNKNOWN, KEY_S, ActionType::HOLD, PlayerMovement::MovePlayer);
     m_playerInputLayer.AddAction (GAMEPAD_BUTTON_UNKNOWN, KEY_D, ActionType::HOLD, PlayerMovement::MovePlayer);
+    m_playerInputLayer.AddAction (GAMEPAD_BUTTON_UNKNOWN, KEY_SPACE, ActionType::PRESS, PlayerMovement::JumpPlayer);
 }
 
 

@@ -24,8 +24,8 @@ MovementMode ResolveMMonIDLE (MovementMode currentMode)
         return MovementMode::NONE;
     case MovementMode::JUMPING:
         return MovementMode::NONE;
-    case MovementMode::FALLING:
-        return MovementMode::FALLING;
+    case MovementMode::AIR_MOVEMENT:
+        return MovementMode::AIR_MOVEMENT;
     }
 
     assert (false); // should not be there
@@ -42,8 +42,8 @@ MovementMode ResolveMMonMOVE (MovementMode currentMode)
         return MovementMode::RUNNING;
     case MovementMode::JUMPING:
         return MovementMode::JUMPING;
-    case MovementMode::FALLING:
-        return MovementMode::FALLING;
+    case MovementMode::AIR_MOVEMENT:
+        return MovementMode::AIR_MOVEMENT;
     }
 
     assert (false); // should not be there
@@ -60,8 +60,8 @@ MovementMode ResolveMMonJUMP (MovementMode currentMode)
         return MovementMode::JUMPING;
     case MovementMode::JUMPING:
         return MovementMode::JUMPING;
-    case MovementMode::FALLING:
-        return MovementMode::FALLING;
+    case MovementMode::AIR_MOVEMENT:
+        return MovementMode::AIR_MOVEMENT;
     }
 
     assert (false); // should not be there
@@ -76,10 +76,10 @@ MovementMode UpdateModeOnConditions (MovementMode targetMode, const Collider& pl
     {
     case MovementMode::NONE: case MovementMode::RUNNING: case MovementMode::JUMPING:
         if (!isGrounded) {
-            return MovementMode::FALLING;
+            return MovementMode::AIR_MOVEMENT;
         }
         break;
-    case MovementMode::FALLING:
+    case MovementMode::AIR_MOVEMENT:
         if (isGrounded) {
             return MovementMode::NONE;
         }
@@ -123,6 +123,11 @@ PhysicsUpdateState ComputeUpdatePlayerMovement (float dt, const Player& player, 
     //{
 
     //}
+    float simulationTime = playerState.currentSimTime;
+    if (targetMode != playerState.currentMode)
+    {
+        simulationTime = 0.f;
+    }
 
     switch (targetMode)
     {
@@ -133,18 +138,28 @@ PhysicsUpdateState ComputeUpdatePlayerMovement (float dt, const Player& player, 
     }
     case MovementMode::RUNNING:
     {
-        auto physUpdate = PlayerMovement::SimulatePhysRunning (dt, playerState.currentSimTime, playerState.m_velocity);
+        auto physUpdate = PlayerMovement::SimulatePhysRunning (dt, simulationTime, playerState.m_velocity);
         auto adjustedVec = Collision::HitScanGround (playerCollider, physUpdate.trsf.GetTranslationPart(), ground);
         if (adjustedVec.has_value()) {
             physUpdate.trsf.SetTranslation (adjustedVec.value());
         }
         return physUpdate;
     }
-    case MovementMode::FALLING:
+    case MovementMode::AIR_MOVEMENT:
     {
-        auto physUpdate = PlayerMovement::SimulatePhysAirMovement (dt, playerState.currentSimTime, playerState.m_velocity);
+        auto physUpdate = PlayerMovement::SimulatePhysAirMovement (dt, simulationTime, playerState.m_velocity);
         auto adjustedVec = Collision::HitScanGround (playerCollider, physUpdate.trsf.GetTranslationPart(), ground);
-        if (adjustedVec.has_value ()) {
+        if (adjustedVec.has_value()) {
+            physUpdate.trsf.SetTranslation (adjustedVec.value());
+        }
+        return physUpdate;
+        break;
+    }
+    case MovementMode::JUMPING:
+    {
+        auto physUpdate = PlayerMovement::SimulatePhysJumping (dt, simulationTime, playerState.m_velocity);
+        auto adjustedVec = Collision::HitScanGround (playerCollider, physUpdate.trsf.GetTranslationPart(), ground);
+        if (adjustedVec.has_value()) {
             physUpdate.trsf.SetTranslation (adjustedVec.value());
         }
         return physUpdate;
@@ -214,26 +229,32 @@ PhysicsUpdateState SimulatePhysRunning (const float dt, float simulationTime, co
 
 PhysicsUpdateState SimulatePhysAirMovement (const float dt, const float simulationTime, const phs::Vector2D& playerVelocity)
 {
-    const float gravityAcceleration = 10.f;
-    const float maxFallSpeed = 500.f;
+    const float gravityAcceleration = 1200.f;
+    //const float maxFallSpeed = 500.f;
 
     float tickTime = std::max (dt, MIN_TICK_TIME);
     phs::Vector2D verticalVelocity = phs::StripByAxis (playerVelocity, phs::EAxis::Y);
-    phs::Vector2D addedVelocity = phs::DownVector() * gravityAcceleration * (simulationTime + tickTime);
+    phs::Vector2D addedVelocity = phs::DownVector() * gravityAcceleration * (tickTime);
     verticalVelocity = verticalVelocity + addedVelocity;
-    if (verticalVelocity.SquareMagnitude() > maxFallSpeed * maxFallSpeed) {
-        verticalVelocity = phs::DownVector() * maxFallSpeed;
-    }
+    //if (verticalVelocity.SquareMagnitude() > maxFallSpeed * maxFallSpeed) {
+    //    verticalVelocity = phs::DownVector() * maxFallSpeed;
+    //}
     phs::Vector2D newVelocity (playerVelocity.X(), verticalVelocity.Y());
     phs::Trsf2D trsl;
     trsl.AddTranslation (newVelocity * tickTime);
 
-    return {MovementMode::FALLING, newVelocity, trsl, simulationTime + tickTime};
+    if (newVelocity.Y() > 0.f) {
+        return {MovementMode::AIR_MOVEMENT, newVelocity, trsl, simulationTime + tickTime};
+    } else {
+        return {MovementMode::JUMPING, newVelocity, trsl, simulationTime + tickTime};
+    }
 }
 
-PhysicsUpdateState SimulatePhysJumping (const float /*dt*/, const phs::Vector2D& /*playerVelocity*/)
+PhysicsUpdateState SimulatePhysJumping (const float dt, float simulationTime, const phs::Vector2D& playerVelocity)
 {
-    return PhysicsUpdateState ();
+    if (simulationTime == 0.f) {
+        return SimulatePhysAirMovement (dt, simulationTime, phs::Vector2D (playerVelocity.X(), playerVelocity.Y() - 700.f));
+    } else return SimulatePhysAirMovement (dt, simulationTime, playerVelocity);
 }
 
 }

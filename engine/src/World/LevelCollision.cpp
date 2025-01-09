@@ -246,8 +246,12 @@ std::optional <phs::Vector2D> HitScanGround (const Collider& playerCollider, con
         }
     }
 
+    if (finalVector.has_value() && finalVector.value().SquareMagnitude() < phs::Precision::quarter_pixel) {
+        finalVector.value() = phs::Vector2D();
+    }
+
     // Slight push out of walls
-    if (finalVector.has_value() && finalVector.value().SquareMagnitude() > phs::Precision::quarter_pixel) {
+    if (finalVector.has_value()) {
         switch (vecQuadrant)
         {
         case phs::Quadrant::I:
@@ -344,8 +348,8 @@ bool IsPlayerGrounded (const Collider& playerCollider, const GroundData& groundD
 
     float center = minPnt.X() + playerCollider.Width() / 2;
     size_t tile_center = static_cast <size_t> (std::floorf (center / groundData.tile_width));
-    size_t tile_right = static_cast <size_t> (std::floorf (maxPnt.X() / groundData.tile_width));
-    size_t tile_left = static_cast <size_t> (std::floorf (minPnt.X() / groundData.tile_width));
+    size_t tile_right = static_cast <size_t> (std::floorf ((maxPnt.X() - phs::Precision::quarter_pixel) / groundData.tile_width));
+    size_t tile_left = static_cast <size_t> (std::floorf ((minPnt.X() + phs::Precision::quarter_pixel) / groundData.tile_width));
     size_t tile_y = static_cast <size_t> (std::ceilf (maxPnt.Y() / groundData.tile_height));
     tile_y = std::min (groundData.tiles.extent(1) - 1, tile_y);
     tile_center = std::min (groundData.tiles.extent(0) - 1, tile_center);
@@ -360,7 +364,7 @@ bool IsPlayerGrounded (const Collider& playerCollider, const GroundData& groundD
 
     std::print ("Distance to ground: {}\n", static_cast <float> (tile_y) * groundData.tile_height - maxPnt.Y());
 
-    return static_cast <float> (tile_y) * groundData.tile_height - maxPnt.Y() < 1.2f;
+    return static_cast <float> (tile_y) * groundData.tile_height - maxPnt.Y() < phs::Precision::pixel + phs::Precision::quarter_pixel;
 }
 
 }

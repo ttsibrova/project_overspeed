@@ -1,10 +1,8 @@
 #pragma once
 
 #include <Animation/Animation.h>
-#include <Characters/Character.h>
 #include <Characters/PlayerAction.h>
 #include <Characters/PlayerMovementMode.h>
-#include <Inputs/Command.h>
 #include <Physics/Collider.h>
 #include <Physics/PhysicsUpdateState.h>
 
@@ -21,10 +19,16 @@ struct PlayerMovementState
 };
 }
 
+struct PlayerProperties
+{
+    float height {1.f};
+    float width {1.f};
+};
+
 class Player
 {
 public:
-    Player (Properties props);
+    Player (PlayerProperties props);
     Player& operator= (const Player& other) = default;
 
     virtual void Draw();
@@ -70,5 +74,6 @@ private:
 namespace PlayerMovement
 {
 void MovePlayer (Player& player);
+void JumpPlayer (Player& player);
 }
 

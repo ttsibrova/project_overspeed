@@ -16,7 +16,7 @@ MovementMode SelectMovementModeOnAction (PlayerAction action, MovementMode curre
 
 PhysicsUpdateState SimulatePhysRunning     (const float dt, float simulationTime, const phs::Vector2D& playerVelocity);
 PhysicsUpdateState SimulatePhysAirMovement (const float dt, float simulationTime, const phs::Vector2D& playerVelocity);
-PhysicsUpdateState SimulatePhysJumping     (const float dt, const phs::Vector2D& playerVelocity);
+PhysicsUpdateState SimulatePhysJumping     (const float dt, float simulationTime, const phs::Vector2D& playerVelocity);
 }
 
 

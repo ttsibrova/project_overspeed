@@ -1,6 +1,4 @@
 #pragma once
-#include <Inputs/Command.h>
-#include <Object/IObject.h>
 #include <Physics/Vector2D.h>
 #include <raylib/raylib.h>
 #include <vector>
@@ -94,21 +92,19 @@ private:
         for (auto& action : currentLayer.m_layerActions) {
             switch (action.m_type)
             {
-            case ActionType::HOLD:
-                if (IsKeyDown (action.m_mappedKButton)) {
-                    action.m_command(obj);
-                    return true;
-                }
-                break;
             case ActionType::PRESS:
                 if (IsKeyPressed (action.m_mappedKButton)) {
                     action.m_command (obj);
-                    return true;
+                }
+                break;
+            case ActionType::HOLD:
+                if (IsKeyDown (action.m_mappedKButton)) {
+                    action.m_command(obj);
                 }
                 break;
             }
         }
-        return false;
+        return true;
     }
 
     template <typename Obj>

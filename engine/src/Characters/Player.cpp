@@ -10,13 +10,13 @@
 #include <Debug/DebugLog.h>
 
 
-Player::Player (Properties props):
+Player::Player (PlayerProperties props):
     m_flip (FLIP_NONE),
     m_nextAction (PlayerAction::IDLE),
     m_currentMM (MovementMode::NONE),
     m_currSimTime (0.f),
-    m_height (props.Height),
-    m_width (props.Width)
+    m_height (props.height),
+    m_width (props.width)
 {
     m_anim.SetProps ("mage_idle", 0, 8, m_height, m_width, 0.08f);
 }
@@ -79,7 +79,7 @@ void Player::ChangeActiveMM (MovementMode newMode)
         m_anim.SetProps ("mage_run", 0, 8, m_height, m_width, 0.08f);
         break;
     }
-    case MovementMode::FALLING:
+    case MovementMode::AIR_MOVEMENT:
         m_anim.SetProps ("mage_idle", 0, 8, m_height, m_width, 0.08f);
         break;
     default:
@@ -101,4 +101,9 @@ void Player::FlipRendering()
 void PlayerMovement::MovePlayer (Player& player)
 {
     player.AddAction (PlayerAction::MOVE);
+}
+
+void PlayerMovement::JumpPlayer (Player& player)
+{
+    player.AddAction (PlayerAction::JUMP);
 }
