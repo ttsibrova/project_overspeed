@@ -11,76 +11,7 @@
 namespace Collision
 {
 namespace {
-std::optional <phs::Point2D> GetCollidedPoint (const Collider& playerCollider,
-                                               phs::Quadrant quadrant,
-                                               const phs::Point2D& minTileCorner,
-                                               const phs::Point2D& maxTileCorner)
-{
-    auto min = playerCollider.Min();
-    auto max = playerCollider.Max();
-    float center_X = min.X() + playerCollider.Width() / 2;
-    float center_Y = min.Y() + playerCollider.Height() / 2;
 
-    std::vector <phs::Point2D> res;
-    switch (quadrant)
-    {
-    case phs::Quadrant::I:
-        res.push_back (max);
-        res.emplace_back (min.X(), max.Y());
-        res.emplace_back (max.X(), min.Y());
-        res.emplace_back (max.X(), center_Y);
-        res.emplace_back (center_X, max.Y());
-        break;
-    case phs::Quadrant::II:
-        res.emplace_back (min.X(), max.Y());
-        res.push_back (min);
-        res.push_back (max);
-        res.emplace_back (center_X, max.Y());
-        res.emplace_back (min.X(), center_Y);
-        break;
-    case phs::Quadrant::III:
-        res.push_back (min);
-        res.emplace_back (min.X(), max.Y());
-        res.emplace_back (min.X(), max.Y());
-        res.emplace_back (min.X(), center_Y);
-        res.emplace_back (center_X, min.Y());
-        break;
-    case phs::Quadrant::IV:
-        res.emplace_back (max.X(), min.Y());
-        res.push_back (min);
-        res.push_back (max);
-        res.emplace_back (center_X, min.Y());
-        res.emplace_back (max.X(), center_Y);
-        break;
-    case phs::Quadrant::X_ALIGNED:
-        res.emplace_back (max.X(), center_Y);
-        res.emplace_back (max.X(), min.Y());
-        res.emplace_back (max.X(), max.Y());
-        break;
-    case phs::Quadrant::Y_ALIGNED:
-        res.emplace_back (center_X, max.Y());
-        res.push_back (max);
-        res.emplace_back (min.X(), max.Y());
-        break;
-    case phs::Quadrant::X_OPPOSITE:
-        res.emplace_back (min.X(), center_Y);
-        res.push_back (min);
-        res.emplace_back (min.X(), max.Y());
-        break;
-    case phs::Quadrant::Y_OPPOSITE:
-        res.emplace_back (center_X, min.Y());
-        res.push_back (min);
-        res.emplace_back (max.X(), min.Y());
-        break;
-    }
-
-    for (const auto& pnt : res) {
-        if (pnt.X() >= minTileCorner.X() && pnt.X() <= maxTileCorner.X() && pnt.Y() >= minTileCorner.Y() && pnt.Y() <= maxTileCorner.Y()) {
-            return pnt;
-        }
-    }
-    return std::nullopt;
-}
 
 std::vector <std::pair <phs::Point2D, phs::Point2D>> GetTileLines (phs::Quadrant quadrant,
                                                                    const phs::Point2D& minTileCorner,
@@ -107,23 +38,15 @@ std::vector <std::pair <phs::Point2D, phs::Point2D>> GetTileLines (phs::Quadrant
         break;
     case phs::Quadrant::X_ALIGNED:
         res.emplace_back (maxTileCorner, phs::Point2D (maxTileCorner.X(), minTileCorner.Y()));
-        res.emplace_back (minTileCorner, phs::Point2D (maxTileCorner.X(), minTileCorner.Y()));
-        res.emplace_back (phs::Point2D (minTileCorner.X(), maxTileCorner.Y()), maxTileCorner);
         break;
     case phs::Quadrant::Y_ALIGNED:
         res.emplace_back (maxTileCorner, phs::Point2D (minTileCorner.X(), maxTileCorner.Y()));
-        res.emplace_back (maxTileCorner, phs::Point2D (maxTileCorner.X(), minTileCorner.Y()));
-        res.emplace_back (minTileCorner, phs::Point2D (minTileCorner.X(), maxTileCorner.Y()));
         break;
     case phs::Quadrant::X_OPPOSITE:
         res.emplace_back (minTileCorner, phs::Point2D (minTileCorner.X(), maxTileCorner.Y()));
-        res.emplace_back (phs::Point2D (minTileCorner.X(), maxTileCorner.Y()), maxTileCorner);
-        res.emplace_back (minTileCorner, phs::Point2D (maxTileCorner.X(), minTileCorner.Y()));
         break;
     case phs::Quadrant::Y_OPPOSITE:
         res.emplace_back (minTileCorner, phs::Point2D (maxTileCorner.X(), minTileCorner.Y()));
-        res.emplace_back (minTileCorner, phs::Point2D (minTileCorner.X(), maxTileCorner.Y()));
-        res.emplace_back (maxTileCorner, phs::Point2D (maxTileCorner.X(), minTileCorner.Y()));
         break;
     }
     return res;
@@ -136,71 +59,121 @@ bool IsBelongToSegment (const phs::Point2D& p, const phs::Point2D& p1, const phs
 
 }
 
-phs::Vector2D ComputeAdjustment (const phs::Point2D& anchorPnt,
-                                 const phs::Vector2D& fullVector,
-                                 const std::vector <std::pair <phs::Point2D, phs::Point2D>>& tileLines)
+
+std::optional <phs::Vector2D> SweepCollision (const Collider& playerCollider,
+                                              const phs::Vector2D& playerTrsl,
+                                              phs::Point2D tileMinCorner,
+                                              phs::Point2D tileMaxCorner)
 {
-    auto inversedVec = fullVector.Fipped();
-    auto secondPnt = anchorPnt.Translated (inversedVec);
+    float colliderHalfHeight = playerCollider.Height() / 2.f;
+    float colliderHalfWidth = playerCollider.Width() / 2.f;
+    phs::Point2D colliderKeyPnt (playerCollider.Min().X() + colliderHalfWidth, playerCollider.Min().Y() + colliderHalfHeight);
+    phs::Point2D trajectoryEndPnt = colliderKeyPnt.Translated (playerTrsl);
 
-    for (const auto& line: tileLines) {
-        auto intersectPnt = geom::IntersectLines (anchorPnt, secondPnt, line.first, line.second);
+    //std::print ("Collider min pnt - X: {}, Y: {}\n", playerCollider.Min().X(), playerCollider.Min().Y());
+    //std::print ("Collider max pnt - X: {}, Y: {}\n", playerCollider.Max().X(), playerCollider.Max().Y());
+
+    //std::print ("Collider key pnt - X: {}, Y: {}\n", colliderKeyPnt.X(), colliderKeyPnt.Y());
+    //std::print ("Trajectory end pnt - X: {}, Y: {}\n", trajectoryEndPnt.X(), trajectoryEndPnt.Y());
+
+    //std::print ("Tile min pnt - X: {}, Y: {}\n", tileMinCorner.X(), tileMinCorner.Y());
+    //std::print ("Tile max pnt - X: {}, Y: {}\n", tileMaxCorner.X(), tileMaxCorner.Y());
+
+    tileMinCorner.X() -= colliderHalfWidth;
+    tileMinCorner.Y() -= colliderHalfHeight;
+
+    tileMaxCorner.X() += colliderHalfWidth;
+    tileMaxCorner.Y() += colliderHalfHeight;
+
+    //std::print ("Updated tile min pnt - X: {}, Y: {}\n", tileMinCorner.X(), tileMinCorner.Y());
+    //std::print ("Updated tile max pnt - X: {}, Y: {}\n", tileMaxCorner.X(), tileMaxCorner.Y());
+
+
+
+    auto tileLines = GetTileLines (phs::GetInversedQuadrant (phs::GetVectorQudrant (playerTrsl)), tileMinCorner, tileMaxCorner);
+
+    std::optional <phs::Vector2D> newTrsl;
+    for (const auto line: tileLines) {
+        auto intersectPnt = geom::IntersectLines (colliderKeyPnt, trajectoryEndPnt, line.first, line.second);
         if (!intersectPnt.has_value()) {
-            std::print ("Intersector failed to find value, manual branch\n");
-            //Embracing a specific issue where our vector from chosen point strinctly aligned with
-            //tile side. Selecting the point that is basically closes to original character position
-            phs::Quadrant vQ = phs::GetVectorQudrant (fullVector);
-            switch (vQ)
-            {
-            case phs::Quadrant::I:
-            case phs::Quadrant::II:
-            case phs::Quadrant::III:
-            case phs::Quadrant::IV:
-                //TODO update this after adding slopes
-                break;
-            case phs::Quadrant::X_ALIGNED:
-            {
-                float minX = std::min ({anchorPnt.X(), line.first.X(), line.second.X()});
-                assert (anchorPnt.Y() == secondPnt.Y() && line.first.Y() == line.second.Y());
-                intersectPnt = phs::Point2D (minX, anchorPnt.Y());
-                break;
-            }
-            case phs::Quadrant::Y_ALIGNED:
-            {
-                float minY = std::min ({anchorPnt.Y(), line.first.Y(), line.second.Y()});
-                assert (anchorPnt.X() == secondPnt.X() && line.first.X() == line.second.X());
-                intersectPnt = phs::Point2D (anchorPnt.X(), minY);
-                break;
-            }
-            case phs::Quadrant::X_OPPOSITE:
-            {
-                float maxX = std::max ({anchorPnt.X(), line.first.X(), line.second.X()});
-                assert (anchorPnt.Y() == secondPnt.Y() && line.first.Y() == line.second.Y());
-                intersectPnt = phs::Point2D (maxX, anchorPnt.Y());
-                break;
-            }
-            case phs::Quadrant::Y_OPPOSITE:
-            {
-                float maxY = std::max ({anchorPnt.Y(), line.first.Y(), line.second.Y()});
-                assert (anchorPnt.X() == secondPnt.X() && line.first.X() == line.second.X());
-                intersectPnt = phs::Point2D (anchorPnt.X(), maxY);
-                break;
-            }
-            default:
-                break;
-            }
-
-        } else if (!IsBelongToSegment (intersectPnt.value(), anchorPnt, secondPnt) ||
-                   !IsBelongToSegment (intersectPnt.value(), line.first, line.second))
+            std::print ("Intersector failed to find value, manual branch DISABLED\n");
+            ////Embracing a specific issue where our vector from chosen point strinctly aligned with
+            ////tile side. Selecting the point that is basically closes to original character position
+            //phs::Quadrant vQ = phs::GetVectorQudrant (playerTrsl);
+            //switch (vQ)
+            //{
+            //case phs::Quadrant::I:
+            //case phs::Quadrant::II:
+            //case phs::Quadrant::III:
+            //case phs::Quadrant::IV:
+            //    //TODO update this after adding slopes
+            //    break;
+            //case phs::Quadrant::X_ALIGNED:
+            //{
+            //    float minX = std::min ({trajectoryEndPnt.X(), line.first.X(), line.second.X()});
+            //    assert (trajectoryEndPnt.Y() == colliderKeyPnt.Y() && line.first.Y() == line.second.Y());
+            //    intersectPnt = phs::Point2D (minX, trajectoryEndPnt.Y());
+            //    break;
+            //}
+            //case phs::Quadrant::Y_ALIGNED:
+            //{
+            //    float minY = std::min ({trajectoryEndPnt.Y(), line.first.Y(), line.second.Y()});
+            //    assert (trajectoryEndPnt.X() == colliderKeyPnt.X() && line.first.X() == line.second.X());
+            //    intersectPnt = phs::Point2D (trajectoryEndPnt.X(), minY);
+            //    break;
+            //}
+            //case phs::Quadrant::X_OPPOSITE:
+            //{
+            //    float maxX = std::max ({trajectoryEndPnt.X(), line.first.X(), line.second.X()});
+            //    assert (trajectoryEndPnt.Y() == colliderKeyPnt.Y() && line.first.Y() == line.second.Y());
+            //    intersectPnt = phs::Point2D (maxX, trajectoryEndPnt.Y());
+            //    break;
+            //}
+            //case phs::Quadrant::Y_OPPOSITE:
+            //{
+            //    float maxY = std::max ({trajectoryEndPnt.Y(), line.first.Y(), line.second.Y()});
+            //    assert (trajectoryEndPnt.X() == colliderKeyPnt.X() && line.first.X() == line.second.X());
+            //    intersectPnt = phs::Point2D (trajectoryEndPnt.X(), maxY);
+            //    break;
+            //}
+            //default:
+            //    break;
+            //}
+        } 
+        else if (!IsBelongToSegment (intersectPnt.value(), colliderKeyPnt, trajectoryEndPnt) ||
+                 !IsBelongToSegment (intersectPnt.value(), line.first, line.second))
         {
-            std::print ("Intersector found the value X:{}, Y:{}, but it was rejected\n", intersectPnt.value().X(), intersectPnt.value().Y());
+            //std::print ("Intersector found the value X:{}, Y:{}, but it was rejected\n", intersectPnt.value().X(), intersectPnt.value().Y());
             continue;
         }
         Debug::Log (line, Debug::Collision);
-        return phs::Vector2D (intersectPnt.value().X() - secondPnt.X(), intersectPnt.value().Y() - secondPnt.Y());
+        if (intersectPnt.has_value()) {
+            //std::print ("Current line - X: {}, Y: {} -- X: {}, Y: {}\n", line.first.X(), line.first.Y(), line.second.X(), line.second.Y());
+            //std::print ("Intersect pnt - X: {}, Y: {}\n", intersectPnt.value().X(), intersectPnt.value().Y());
+        }
+        if (!newTrsl.has_value() && intersectPnt.has_value()) {
+            newTrsl = phs::Vector2D (intersectPnt.value().X() - colliderKeyPnt.X(), intersectPnt.value().Y() - colliderKeyPnt.Y());
+        }
+        if (newTrsl.has_value() && intersectPnt.has_value()) {
+            auto candidate = phs::Vector2D (intersectPnt.value().X() - colliderKeyPnt.X(), intersectPnt.value().Y() - colliderKeyPnt.Y());
+            if (candidate.SquareMagnitude() < newTrsl.value().SquareMagnitude()) {
+                newTrsl = candidate;
+            }
+        }
     }
-    assert (false);
-    return phs::Vector2D();
+
+    if (newTrsl.has_value()) {
+        auto dir = playerTrsl.Normalized();
+        float newLength = newTrsl.value().Magnitude();
+        //std::print ("Computed adj vector - X: {}, Y: {}\n", newTrsl.value().X(), newTrsl.value().Y());
+        if (newLength < phs::Precision::float_tol) {
+            newTrsl = phs::Vector2D();
+        } else {
+            newTrsl = dir * newLength;
+        }
+        //std::print ("Adjusted adj vector - X: {}, Y: {}\n", newTrsl.value().X(), newTrsl.value().Y());
+    }
+    return newTrsl;
 }
 
 }
@@ -212,20 +185,19 @@ std::optional <phs::Vector2D> HitScanGround (const Collider& playerCollider, con
     auto minPnt = playerNewCollider.Min();
     auto maxPnt = playerNewCollider.Max();
 
-    size_t left_tile = static_cast <size_t> (std::floorf (minPnt.X() / groundData.tile_width));
+    size_t left_tile = static_cast <size_t> (std::floorf ((minPnt.X() + phs::Precision::quarter_pixel) / groundData.tile_width));
     if (left_tile > groundData.tiles.extent (0) - 1) {
         left_tile = 0U;
     }
-    size_t right_tile = static_cast <size_t> (std::floorf (maxPnt.X() / groundData.tile_width));
+    size_t right_tile = static_cast <size_t> (std::floorf ((maxPnt.X() - phs::Precision::quarter_pixel) / groundData.tile_width));
     right_tile = std::min (right_tile, groundData.tiles.extent (0) - 1);
-    size_t top_tile = static_cast <size_t> (std::floorf (minPnt.Y() / groundData.tile_height));
+    size_t top_tile = static_cast <size_t> (std::floorf ((minPnt.Y() + phs::Precision::quarter_pixel) / groundData.tile_height));
     if (top_tile > groundData.tiles.extent (1) - 1) {
         top_tile = 0U;
     }
-    size_t bottom_tile = static_cast <size_t> (std::floorf (maxPnt.Y() / groundData.tile_height));
+    size_t bottom_tile = static_cast <size_t> (std::floorf ((maxPnt.Y() - phs::Precision::quarter_pixel) / groundData.tile_height));
     bottom_tile = std::min (bottom_tile, groundData.tiles.extent (1) - 1);
 
-    auto vecQuadrant = phs::GetVectorQudrant (playerTrsl);
     std::optional <phs::Vector2D> finalVector;
     for (size_t i = left_tile; i <= right_tile; i++) {
         for (size_t j = top_tile; j <= bottom_tile; j++) {
@@ -233,57 +205,12 @@ std::optional <phs::Vector2D> HitScanGround (const Collider& playerCollider, con
                 phs::Point2D tileMinCorner (static_cast <float> (i) * groundData.tile_width, static_cast <float> (j) * groundData.tile_height);
                 phs::Point2D tileMaxCorner (tileMinCorner.X() + groundData.tile_width, tileMinCorner.Y() + groundData.tile_height);
                 Debug::Log (std::make_pair (tileMinCorner, tileMaxCorner), Debug::Collision);
-                auto collidedPnt = GetCollidedPoint (playerNewCollider, vecQuadrant, tileMinCorner, tileMaxCorner);
-                if (!collidedPnt.has_value()) {
-                    continue;
-                }
-                auto tileLines = GetTileLines (phs::GetInversedQuadrant (vecQuadrant), tileMinCorner, tileMaxCorner);
-                auto adjustedVec = ComputeAdjustment (collidedPnt.value(), playerTrsl, tileLines);
-                if (!finalVector.has_value() || finalVector.value().SquareMagnitude() > adjustedVec.SquareMagnitude()) {
+                auto adjustedVec = SweepCollision (playerCollider, playerTrsl, tileMinCorner, tileMaxCorner);
+                if (!finalVector.has_value() ||
+                    finalVector.has_value() && adjustedVec.has_value() && finalVector.value().SquareMagnitude() > adjustedVec.value().SquareMagnitude()) {
                     finalVector = adjustedVec;
                 }
             }
-        }
-    }
-
-    if (finalVector.has_value() && finalVector.value().SquareMagnitude() < phs::Precision::quarter_pixel) {
-        finalVector.value() = phs::Vector2D();
-    }
-
-    // Slight push out of walls
-    if (finalVector.has_value()) {
-        switch (vecQuadrant)
-        {
-        case phs::Quadrant::I:
-            finalVector.value().X() -= phs::Precision::pixel;
-            finalVector.value().Y() -= phs::Precision::pixel;
-            break;
-        case phs::Quadrant::II:
-            finalVector.value().X() += phs::Precision::pixel;
-            finalVector.value().Y() -= phs::Precision::pixel;
-            break;
-        case phs::Quadrant::III:
-            finalVector.value().X() += phs::Precision::pixel;
-            finalVector.value().Y() += phs::Precision::pixel;
-            break;
-        case phs::Quadrant::IV:
-            finalVector.value().X() -= phs::Precision::pixel;
-            finalVector.value().Y() += phs::Precision::pixel;
-            break;
-        case phs::Quadrant::X_ALIGNED:
-            finalVector.value().X() -= phs::Precision::pixel;
-            break;
-        case phs::Quadrant::Y_ALIGNED:
-            finalVector.value().Y() -= phs::Precision::pixel;
-            break;
-        case phs::Quadrant::X_OPPOSITE:
-            finalVector.value().X() += phs::Precision::pixel;
-            break;
-        case phs::Quadrant::Y_OPPOSITE:
-            finalVector.value().Y() += phs::Precision::pixel;
-            break;
-        default:
-            break;
         }
     }
 
@@ -364,7 +291,7 @@ bool IsPlayerGrounded (const Collider& playerCollider, const GroundData& groundD
 
     std::print ("Distance to ground: {}\n", static_cast <float> (tile_y) * groundData.tile_height - maxPnt.Y());
 
-    return static_cast <float> (tile_y) * groundData.tile_height - maxPnt.Y() < phs::Precision::pixel + phs::Precision::quarter_pixel;
+    return static_cast <float> (tile_y) * groundData.tile_height - maxPnt.Y() < phs::Precision::quarter_pixel;
 }
 
 }

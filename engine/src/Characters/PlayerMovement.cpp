@@ -118,11 +118,7 @@ PhysicsUpdateState ComputeUpdatePlayerMovement (float dt, const Player& player, 
 
     std::vector <MovementMode> appliedModes;
     appliedModes.push_back (targetMode);
-    //float remainingTime = dt;
-    //while (dt > 0.f)
-    //{
 
-    //}
     float simulationTime = playerState.currentSimTime;
     if (targetMode != playerState.currentMode)
     {
@@ -142,6 +138,7 @@ PhysicsUpdateState ComputeUpdatePlayerMovement (float dt, const Player& player, 
         auto adjustedVec = Collision::HitScanGround (playerCollider, physUpdate.trsf.GetTranslationPart(), ground);
         if (adjustedVec.has_value()) {
             physUpdate.trsf.SetTranslation (adjustedVec.value());
+            physUpdate.velocity = phs::Vector2D();
         }
         return physUpdate;
     }
@@ -151,6 +148,7 @@ PhysicsUpdateState ComputeUpdatePlayerMovement (float dt, const Player& player, 
         auto adjustedVec = Collision::HitScanGround (playerCollider, physUpdate.trsf.GetTranslationPart(), ground);
         if (adjustedVec.has_value()) {
             physUpdate.trsf.SetTranslation (adjustedVec.value());
+            physUpdate.velocity = phs::Vector2D();
         }
         return physUpdate;
         break;
@@ -161,6 +159,7 @@ PhysicsUpdateState ComputeUpdatePlayerMovement (float dt, const Player& player, 
         auto adjustedVec = Collision::HitScanGround (playerCollider, physUpdate.trsf.GetTranslationPart(), ground);
         if (adjustedVec.has_value()) {
             physUpdate.trsf.SetTranslation (adjustedVec.value());
+            physUpdate.velocity = phs::Vector2D();
         }
         return physUpdate;
         break;

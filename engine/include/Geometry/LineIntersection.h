@@ -38,7 +38,7 @@ namespace geom
     const float C2 = y3 * x4 - x3 * y4;
 
     const float D = A1 * B2 - B1 * A2;
-    if (std::abs (D) < 1e-4)
+    if (std::abs (D) < phs::Precision::float_tol)
         return std::nullopt;
 
     const float x = (C1 * B2 - B1 * C2) / D;
