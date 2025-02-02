@@ -35,7 +35,7 @@ void CollisionDebugger::AddCollisionLine (std::pair<phs::Point2D, phs::Point2D> 
 {
     m_collisionLines.push_back (std::move (line));
 }
-void CollisionDebugger::AddCollider (Collider collider)
+void CollisionDebugger::AddCollider (phs::Collider collider)
 {
     m_colliders.push_back (std::move (collider));
 }

@@ -1,6 +1,8 @@
 #pragma once
 #include <Physics/Point2D.h>
 
+namespace phs {
+
 class Collider
 {
 public:
@@ -46,3 +48,5 @@ private:
     phs::Point2D m_min;
     phs::Point2D m_max;
 };
+
+}

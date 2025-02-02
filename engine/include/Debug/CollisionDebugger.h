@@ -19,7 +19,7 @@ public:
     void Draw();
 
     void AddCollisionLine (std::pair <phs::Point2D, phs::Point2D> line);
-    void AddCollider (Collider collider);
+    void AddCollider (phs::Collider collider);
     void AddPoint (phs::Point2D pnt);
 
 private:
@@ -27,7 +27,7 @@ private:
 
 private:
     std::vector <std::pair <phs::Point2D, phs::Point2D>> m_collisionLines;
-    std::vector <Collider> m_colliders;
+    std::vector <phs::Collider> m_colliders;
     std::vector <phs::Point2D> m_points;
 }; 
 }

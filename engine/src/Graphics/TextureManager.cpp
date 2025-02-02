@@ -35,6 +35,19 @@ size_t TextureManager::Load (std::string filename)
     return hash;
 }
 
+bool TextureManager::Load (size_t id, std::string filename)
+{
+    if (m_hashedTexturesMap.contains (id)) {
+        return true;
+    }
+    auto texture = LoadTexture (filename.c_str());
+    if (!IsTextureReady (texture))
+        return false;
+
+    m_hashedTexturesMap[id] = texture;
+    return true;
+}
+
 void TextureManager::Drop (std::string id)
 {
     UnloadTexture (m_texturesMap[id]);
@@ -61,6 +74,13 @@ void TextureManager::Draw (std::string id, const phs::Point2D& pos)
 void TextureManager::Draw (size_t id, const phs::Point2D& pos)
 {
     DrawTextureV (m_hashedTexturesMap[id], pos, WHITE);
+}
+
+void TextureManager::DrawRotated (size_t id, const phs::Point2D& pos, float width, float height, const phs::Point2D& origin, float rot)
+{
+    Rectangle source {.x = 0.f, .y = 0.f, .width = width, .height = height};
+    Rectangle dest {.x = pos.X(), .y = pos.Y(), .width = width, .height = height};
+    DrawTexturePro (m_hashedTexturesMap[id], source, dest, origin, rot, WHITE);
 }
 
 void TextureManager::DrawTile (size_t id, const phs::Point2D& pos, float width, float height, TilePos tilePos)

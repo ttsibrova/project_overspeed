@@ -16,13 +16,15 @@ public:
 
     bool Load (std::string id, std::string filename);
     //returns hash\id
-    [[nodiscard]] size_t Load (std::string filename);
+    [[nodiscard]] size_t Load (std::string filename); //make it return optional?
+    bool Load (size_t id, std::string filename);
     
     void Drop (std::string id);
     void Clean();
 
     void Draw (std::string id, const phs::Point2D& pos);
     void Draw (size_t id, const phs::Point2D& pos);
+    void DrawRotated (size_t id, const phs::Point2D& pos, float width, float height, const phs::Point2D& origin, float rot);
     void DrawTile (size_t id, const phs::Point2D& pos, float width, float height, TilePos tilePos);
     void DrawFrame (std::string id, const phs::Point2D& pos, float width, float height, int row, int frame, RenderFlip flip = RenderFlip::FLIP_NONE);
 

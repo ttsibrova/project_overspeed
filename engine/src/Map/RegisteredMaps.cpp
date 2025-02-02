@@ -13,7 +13,7 @@ std::string GetPath (Maps map)
     switch (map)
     {
     case Maps::level_1:
-        path+="1_swamp";
+        path+="1_tmp";
         break;
     default:
         assert (false);

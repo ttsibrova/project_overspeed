@@ -23,7 +23,8 @@ Player::Player (PlayerProperties props):
 
 void Player::Draw()
 {
-    m_anim.Draw (TransformedPos(), m_flip);
+    //m_anim.Draw (TransformedPos(), m_flip);
+    m_procAnim.Draw (m_pos, m_velocity);
 }
 
 void Player::Update (const PhysicsUpdateState& updateState)
@@ -53,7 +54,7 @@ void Player::Update (const PhysicsUpdateState& updateState)
     m_nextAction = PlayerAction::IDLE;
 
     Debug::Log (std::move (GetCollider()));
-    Debug::Log (updateState, m_pos);
+    //Debug::Log (updateState, m_pos);
 }
 
 void Player::AddAction (PlayerAction action)
@@ -65,13 +66,11 @@ void Player::AddAction (PlayerAction action)
 
 void Player::ChangeActiveMM (MovementMode newMode)
 {
-    m_currSimTime = 0.f;
     switch (newMode)
     {
     case MovementMode::NONE:
     {
         m_anim.SetProps ("mage_idle", 0, 8, m_height, m_width, 0.08f);
-        m_velocity = phs::Vector2D();
         break;
     }
     case MovementMode::RUNNING:

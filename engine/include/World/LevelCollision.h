@@ -6,14 +6,14 @@
 
 namespace Collision
 {
-std::optional <phs::Vector2D> HitScanGround (const Collider& playerCollider,
+std::optional <phs::Vector2D> HitScanGround (const phs::Collider& playerCollider,
                                              const phs::Vector2D& playerTrsl,
                                              const GroundData& groundData);
 
-std::optional <phs::Vector2D> GetGroundNormalUnderPlayer (const Collider& playerCollider,
+std::optional <phs::Vector2D> GetGroundNormalUnderPlayer (const phs::Collider& playerCollider,
                                                           phs::Quadrant playerVelocityQuadrant,
                                                           const GroundData& groundData);
 
-bool IsPlayerGrounded (const Collider& playerCollider, const GroundData& groundData);
+bool IsPlayerGrounded (const phs::Collider& playerCollider, const GroundData& groundData);
 
 }

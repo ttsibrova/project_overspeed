@@ -3,10 +3,10 @@
 
 namespace phs
 {
+class Collider;
 class Point2D;
 class Vector2D;
 }
-class Collider;
 struct PhysicsUpdateState;
 
 
@@ -21,7 +21,7 @@ enum Designation : uint8_t
 #if _DEBUG
 
 void Log (const std::pair <phs::Point2D, phs::Point2D>& line, Designation des);
-void Log (const Collider& collider);
+void Log (const phs::Collider& collider);
 void Log (const PhysicsUpdateState& pus, const phs::Point2D& playerPos);
 void Log (const phs::Point2D& pnt, Designation des);
 

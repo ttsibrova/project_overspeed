@@ -133,20 +133,20 @@ private:
     Vector2 m_XY;
 };
 
-inline Vector2D DownVector()
+inline Vector2D GetDownVector()
 {
     return Vector2D (0.f, 1.f);
 }
-inline Vector2D UpVector()
+inline Vector2D GetUpVector()
 {
     return Vector2D (0.f, -1.f);
 }
-inline Vector2D RightVector()
+inline Vector2D GetRightVector()
 {
     return Vector2D (1.f, 0.f);
 }
 
-inline Vector2D LeftVector()
+inline Vector2D GetLeftVector()
 {
     return Vector2D (-1.f, 0.f);
 }

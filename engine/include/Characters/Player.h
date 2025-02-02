@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Animation/Animation.h>
+#include <Animation/PlayerAnimation.h>
 #include <Characters/PlayerAction.h>
 #include <Characters/PlayerMovementMode.h>
 #include <Physics/Collider.h>
@@ -47,7 +48,7 @@ public:
     const phs::Vector2D& Velocity() const { return m_velocity; }
     phs::Vector2D& Velocity() { return m_velocity; }
 
-    Collider GetCollider() const { return Collider (m_pos, m_height, m_width); }
+    phs::Collider GetCollider() const { return m_procAnim.ComputeCurrentCollider (m_pos); }
     PlayerMovement::PlayerMovementState GetMovementState() const { return {m_nextAction, m_currentMM, m_currSimTime, m_velocity};}
 
 private:
@@ -67,7 +68,8 @@ private:
     phs::Point2D m_pos;
     phs::Trsf2D m_trsf;
 
-    Animation         m_anim;
+    Animation             m_anim;
+    anim::PlayerAnimation m_procAnim;
 };
 
 

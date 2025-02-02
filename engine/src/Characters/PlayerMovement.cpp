@@ -69,7 +69,7 @@ MovementMode ResolveMMonJUMP (MovementMode currentMode)
 }
 
 
-MovementMode UpdateModeOnConditions (MovementMode targetMode, const Collider& playerCollider, const GroundData& ground)
+MovementMode UpdateModeOnConditions (MovementMode targetMode, const phs::Collider& playerCollider, const GroundData& ground)
 {
     bool isGrounded = Collision::IsPlayerGrounded (playerCollider, ground);
     switch (targetMode)
@@ -233,7 +233,7 @@ PhysicsUpdateState SimulatePhysAirMovement (const float dt, const float simulati
 
     float tickTime = std::max (dt, MIN_TICK_TIME);
     phs::Vector2D verticalVelocity = phs::StripByAxis (playerVelocity, phs::EAxis::Y);
-    phs::Vector2D addedVelocity = phs::DownVector() * gravityAcceleration * (tickTime);
+    phs::Vector2D addedVelocity = phs::GetDownVector() * gravityAcceleration * (tickTime);
     verticalVelocity = verticalVelocity + addedVelocity;
     //if (verticalVelocity.SquareMagnitude() > maxFallSpeed * maxFallSpeed) {
     //    verticalVelocity = phs::DownVector() * maxFallSpeed;

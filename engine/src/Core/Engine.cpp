@@ -1,6 +1,7 @@
 #include <Core/Engine.h>
 #include <Inputs/InputHandler.h>
 #include <Graphics/TextureManager.h>
+#include <Animation/RegisteredPlayerSprites.h>
 #include <Timer/Timer.h>
 #include <raylib/raylib.h>
 
@@ -29,6 +30,7 @@ bool Engine::Init()
 
     TextureManager::GetInstance().Load ("mage_idle", "assets/idle.png");
     TextureManager::GetInstance().Load ("mage_run", "assets/run.png");
+    anim::RegisterPlayerSprites();
 
     m_world = GameWorld::CreateGameWorld (Maps::level_1);
     if (!m_world.has_value()) {
@@ -60,7 +62,7 @@ void Engine::Update()
 void Engine::Render()
 {
     BeginDrawing();
-    ClearBackground (GRAY);
+    ClearBackground (Color {61,119,109});
     if (m_world.has_value()) {
         m_world.value().Draw();
     }

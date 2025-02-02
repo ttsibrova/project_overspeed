@@ -18,7 +18,7 @@ void DrawTriangle (const phs::Point2D& pos, float height, float rotation, const 
 #pragma endregion HELPERS
 
 
-void Draw (const Collider& collider, const Color& color)
+void Draw (const phs::Collider& collider, const Color& color)
 {
     Vector2 min = collider.Min();
     Vector2 max = collider.Max();
@@ -41,7 +41,7 @@ void Draw (const phs::Point2D& pos, const phs::Vector2D& vec, const Color& color
     if (vec.SquareMagnitude() < 1.e-6) {
         return;
     }
-    auto oX = phs::RightVector();
+    auto oX = phs::GetRightVector();
     auto dir = vec.Normalized();
     float angle = std::acos (dir.Dot (oX)) * 180 / PI;
 

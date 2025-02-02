@@ -21,7 +21,7 @@ void Log (const std::pair<phs::Point2D, phs::Point2D>& line, Designation des)
     }
 }
 
-void Log (const Collider& collider)
+void Log (const phs::Collider& collider)
 {
     CollisionDebugger::GetInstance().AddCollider (collider);
 }

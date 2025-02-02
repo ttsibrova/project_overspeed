@@ -15,8 +15,8 @@ GameWorld::GameWorld (Level&& lvl):
     m_currentLevel (std::move (lvl))
 {
     m_playerInputLayer.AddAction (GAMEPAD_BUTTON_UNKNOWN, KEY_A, ActionType::HOLD, PlayerMovement::MovePlayer);
-    m_playerInputLayer.AddAction (GAMEPAD_BUTTON_UNKNOWN, KEY_W, ActionType::HOLD, PlayerMovement::MovePlayer);
-    m_playerInputLayer.AddAction (GAMEPAD_BUTTON_UNKNOWN, KEY_S, ActionType::HOLD, PlayerMovement::MovePlayer);
+    //m_playerInputLayer.AddAction (GAMEPAD_BUTTON_UNKNOWN, KEY_W, ActionType::HOLD, PlayerMovement::MovePlayer);
+    //m_playerInputLayer.AddAction (GAMEPAD_BUTTON_UNKNOWN, KEY_S, ActionType::HOLD, PlayerMovement::MovePlayer);
     m_playerInputLayer.AddAction (GAMEPAD_BUTTON_UNKNOWN, KEY_D, ActionType::HOLD, PlayerMovement::MovePlayer);
     m_playerInputLayer.AddAction (GAMEPAD_BUTTON_UNKNOWN, KEY_SPACE, ActionType::PRESS, PlayerMovement::JumpPlayer);
 }

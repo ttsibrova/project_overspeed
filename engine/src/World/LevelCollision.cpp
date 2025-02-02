@@ -60,7 +60,7 @@ bool IsBelongToSegment (const phs::Point2D& p, const phs::Point2D& p1, const phs
 }
 
 
-std::optional <phs::Vector2D> SweepCollision (const Collider& playerCollider,
+std::optional <phs::Vector2D> SweepCollision (const phs::Collider& playerCollider,
                                               const phs::Vector2D& playerTrsl,
                                               phs::Point2D tileMinCorner,
                                               phs::Point2D tileMaxCorner)
@@ -178,9 +178,9 @@ std::optional <phs::Vector2D> SweepCollision (const Collider& playerCollider,
 
 }
 
-std::optional <phs::Vector2D> HitScanGround (const Collider& playerCollider, const phs::Vector2D& playerTrsl, const GroundData& groundData)
+std::optional <phs::Vector2D> HitScanGround (const phs::Collider& playerCollider, const phs::Vector2D& playerTrsl, const GroundData& groundData)
 {
-    Collider playerNewCollider = playerCollider.Translated (playerTrsl);
+    phs::Collider playerNewCollider = playerCollider.Translated (playerTrsl);
 
     auto minPnt = playerNewCollider.Min();
     auto maxPnt = playerNewCollider.Max();
@@ -217,7 +217,7 @@ std::optional <phs::Vector2D> HitScanGround (const Collider& playerCollider, con
     return finalVector;
 }
 
-std::optional<phs::Vector2D> GetGroundNormalUnderPlayer (const Collider& playerCollider,
+std::optional<phs::Vector2D> GetGroundNormalUnderPlayer (const phs::Collider& playerCollider,
                                                          phs::Quadrant playerVelocityQuadrant,
                                                          const GroundData& groundData)
 {
@@ -265,10 +265,10 @@ std::optional<phs::Vector2D> GetGroundNormalUnderPlayer (const Collider& playerC
     }
 
     //TODO return vector should depend on block type
-    return phs::UpVector();
+    return phs::GetUpVector();
 }
 
-bool IsPlayerGrounded (const Collider& playerCollider, const GroundData& groundData)
+bool IsPlayerGrounded (const phs::Collider& playerCollider, const GroundData& groundData)
 {
     auto minPnt = playerCollider.Min();
     auto maxPnt = playerCollider.Max();
