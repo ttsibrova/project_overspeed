@@ -23,7 +23,7 @@ void PlayerAnimation::Draw (const phs::Point2D& playerPos, const phs::Vector2D& 
 
     float rotationPointer = m_lastPointerAngle;
     float rotationThruster = 90.f;
-    phs::Vector2D pointerOffset = m_lastVelocity;
+    phs::Vector2D pointerOffset = m_lastPointerDir;
     phs::Point2D thrusterPos;
 
     if (playerVelocity.SquareMagnitude() > phs::Precision::quarter_pixel) {
@@ -34,19 +34,19 @@ void PlayerAnimation::Draw (const phs::Point2D& playerPos, const phs::Vector2D& 
             rotationPointer = -rotationPointer;
         }
         m_lastPointerAngle = rotationPointer;
-        m_lastVelocity = pointerOffset;
+        m_lastPointerDir = pointerOffset;
         thrusterPos = playerPos.Translated (pointerOffset.Fipped() * thrusterOffsetFromCore);
         rotationThruster = rotationPointer;
     }
     else {
         float positiveAngle = std::abs (m_lastPointerAngle);
         if (positiveAngle > 0.5f && positiveAngle < 179.5f) {
-            if (m_lastVelocity.X() > 0) {
+            if (m_lastPointerDir.X() > 0) {
                 m_lastPointerAngle = 180.f;
-                m_lastVelocity = phs::GetRightVector();
+                m_lastPointerDir = phs::GetRightVector();
             } else {
                 m_lastPointerAngle = 0.f;
-                m_lastVelocity = phs::GetLeftVector();
+                m_lastPointerDir = phs::GetLeftVector();
             }
         }
         thrusterPos = playerPos.Translated (phs::GetDownVector() * thrusterOffsetFromCore);
@@ -112,7 +112,7 @@ phs::Collider PlayerAnimation::ComputeCurrentCollider (const phs::Point2D& playe
     float maxX = minX + coreWidth;
     float maxY = minY + coreHeight + 2 * groundHoverDistance;
 
-    phs::Point2D pointerEndPos = playerPos.Translated (m_lastVelocity * (30 + pointerLength));
+    phs::Point2D pointerEndPos = playerPos.Translated (m_lastPointerDir * (30 + pointerLength));
 
     minX = std::min (minX, pointerEndPos.X());
     minY = std::min (minY, pointerEndPos.Y());

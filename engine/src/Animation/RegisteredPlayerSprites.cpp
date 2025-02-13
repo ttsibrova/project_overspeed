@@ -22,6 +22,8 @@ size_t GetTextureId (PlayerSprite sprite)
         return 1003;
     case anim::PlayerSprite::BodyThruster:
         return 1004;
+    case anim::PlayerSprite::BodyPointerShield:
+        return 1005;
     default:
         assert (false); // add new cases
         break;
@@ -40,6 +42,8 @@ SpriteInfo GetSpriteInfo (PlayerSprite sprite)
         return SpriteInfo {.width = 43.f, .height = 42.f, .id = GetTextureId (sprite)};
     case anim::PlayerSprite::BodyThruster:
         return SpriteInfo {.width = 12.f, .height = 17.f, .id = GetTextureId (sprite)};
+    case anim::PlayerSprite::BodyPointerShield:
+        return SpriteInfo {.width = 47.f, .height = 45.f, .id = GetTextureId (sprite)};
     default:
         break;
     }
@@ -54,6 +58,7 @@ void RegisterPlayerSprites()
     tManager.Load (GetTextureId (PlayerSprite::BodyCoreEmpty), "assets/overspeeder/core_empty.png");
     tManager.Load (GetTextureId (PlayerSprite::BodyCoreFull), "assets/overspeeder/core_full_glow.png");
     tManager.Load (GetTextureId (PlayerSprite::BodyThruster), "assets/overspeeder/thruster_glow.png");
+    tManager.Load (GetTextureId (PlayerSprite::BodyPointerShield), "assets/overspeeder/shield.png");
 
 }
 

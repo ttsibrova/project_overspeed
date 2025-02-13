@@ -11,65 +11,75 @@ struct GroundData;
 
 namespace PlayerMovement
 {
-struct PlayerMovementState
+struct State
 {
     PlayerAction nextAction;
-    MovementMode currentMode;
+    player::MovementMode currentMode;
     float currentSimTime;
     phs::Vector2D m_velocity;
 };
 }
 
-struct PlayerProperties
-{
-    float height {1.f};
-    float width {1.f};
+namespace player {
+struct State {
+    PlayerAction nextAction;
+    MovementMode currentMode;
+    ColliderMode currentColliderMode;
+    float currentSimTime;
+    phs::Vector2D m_velocity;
 };
+}
 
 class Player
 {
 public:
-    Player (PlayerProperties props);
+    Player();
     Player& operator= (const Player& other) = default;
 
     virtual void Draw();
-    virtual void Update (const PhysicsUpdateState& updateState);
+    virtual void Update (const player::UpdateState& updateState);
 
     void AddAction (PlayerAction action);
 
     const phs::Point2D& Pos() const { return m_pos; }
     phs::Point2D& Pos() { return m_pos; }
 
-    const phs::Trsf2D& Trsf() const { return m_trsf; }
-    phs::Trsf2D& Trsf() { return m_trsf; }
-
-    phs::Point2D TransformedPos() const { return m_pos.Translated (m_trsf.GetTranslationPart()); }
-
     const phs::Vector2D& Velocity() const { return m_velocity; }
     phs::Vector2D& Velocity() { return m_velocity; }
 
-    phs::Collider GetCollider() const { return m_procAnim.ComputeCurrentCollider (m_pos); }
-    PlayerMovement::PlayerMovementState GetMovementState() const { return {m_nextAction, m_currentMM, m_currSimTime, m_velocity};}
+    phs::Collider getCollider() const;
+    phs::Collider getCollider (player::ColliderMode mode) const;
+    //PlayerMovement::State GetMovementState() const
+    //{
+    //    return { m_nextAction, m_currentMovementMode, m_currSimTime, m_velocity };
+    //}
+
+    player::State getState() const 
+    {
+        return {m_nextAction, m_currentMovementMode, m_currentColliderMode, m_currSimTime, m_velocity};
+    }
 
 private:
-    void ChangeActiveMM (MovementMode newMode);
-    void FlipRendering();
+    void ChangeActiveMM (player::MovementMode newMode);
 
 private:
-    RenderFlip   m_flip;
     PlayerAction m_nextAction;
-    MovementMode m_currentMM;
+    player::MovementMode m_currentMovementMode;
+    player::ColliderMode m_currentColliderMode;
 
     float m_currSimTime;
-    float m_height;
-    float m_width;
 
     phs::Vector2D m_velocity;
     phs::Point2D m_pos;
-    phs::Trsf2D m_trsf;
 
-    Animation             m_anim;
-    anim::PlayerAnimation m_procAnim;
+    //anim::PlayerAnimation m_procAnim;
+
+    //vis part
+    anim::PlayerSprite  m_currentSprite{anim::PlayerSprite::BodyCoreFull};
+    uint8_t             m_currentFrame{0};
+    float               m_lastPointerAngle{0.};
+    float               m_lastThrusterAngle{0.};
+    phs::Vector2D       m_lastPointerDir = phs::Vector2D (-1, 0);
 };
 
 

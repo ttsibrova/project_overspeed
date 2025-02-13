@@ -1,6 +1,8 @@
 #pragma once
 #include <cstdint>
 
+namespace player {
+
 enum class MovementMode: uint8_t
 {
     NONE,
@@ -8,4 +10,13 @@ enum class MovementMode: uint8_t
     JUMPING,
     AIR_MOVEMENT
 };
+
+enum class ColliderMode: uint8_t
+{
+    NOT_SET,
+    FULL,
+    TIGHT
+};
+
+}
 

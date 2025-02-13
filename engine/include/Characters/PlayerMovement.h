@@ -10,9 +10,9 @@ class Player;
 namespace PlayerMovement
 {
 
-PhysicsUpdateState ComputeUpdatePlayerMovement (float dt, const Player& player, const GroundData& ground);
+player::UpdateState ComputeUpdatePlayerMovement (float dt, const Player& player, const GroundData& ground);
 
-MovementMode SelectMovementModeOnAction (PlayerAction action, MovementMode currentMode);
+player::MovementMode SelectMovementModeOnAction (PlayerAction action, player::MovementMode currentMode);
 
 PhysicsUpdateState SimulatePhysRunning     (const float dt, float simulationTime, const phs::Vector2D& playerVelocity);
 PhysicsUpdateState SimulatePhysAirMovement (const float dt, float simulationTime, const phs::Vector2D& playerVelocity);

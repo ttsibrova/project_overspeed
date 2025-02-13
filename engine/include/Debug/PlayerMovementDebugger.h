@@ -21,7 +21,7 @@ private:
     PlayerMovementDebugger() {}
 
 private:
-    MovementMode m_movementMode {MovementMode::NONE};
+    player::MovementMode m_movementMode {player::MovementMode::NONE};
     float m_simulationTime {0.f};
     phs::Point2D m_playerPos;
     phs::Vector2D m_playerVelocity;

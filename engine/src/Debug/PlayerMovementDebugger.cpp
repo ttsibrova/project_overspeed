@@ -14,7 +14,7 @@ void PlayerMovementDebugger::Update (const PhysicsUpdateState& pus, const phs::P
     m_movementMode = pus.nextMode;
     m_playerVelocity = pus.velocity;
     m_simulationTime = pus.simTime;
-    m_trslVec = pus.trsf.GetTranslationPart();
+    m_trslVec = pus.trsl;
 }
 void PlayerMovementDebugger::Draw()
 {

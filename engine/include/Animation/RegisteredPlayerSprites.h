@@ -8,7 +8,8 @@ enum class PlayerSprite: uint8_t
     BodyPointer,
     BodyCoreEmpty,
     BodyCoreFull,
-    BodyThruster
+    BodyThruster,
+    BodyPointerShield,
 };
 
 struct SpriteInfo {

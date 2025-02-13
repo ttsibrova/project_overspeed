@@ -217,6 +217,34 @@ std::optional <phs::Vector2D> HitScanGround (const phs::Collider& playerCollider
     return finalVector;
 }
 
+bool IsPlayerCollidesWithGround (const phs::Collider& playerCollider, const GroundData& groundData)
+{
+    auto minPnt = playerCollider.Min();
+    auto maxPnt = playerCollider.Max();
+
+    size_t left_tile = static_cast <size_t> (std::floorf ((minPnt.X () + phs::Precision::quarter_pixel) / groundData.tile_width));
+    if (left_tile > groundData.tiles.extent (0) - 1) {
+        left_tile = 0U;
+    }
+    size_t right_tile = static_cast <size_t> (std::floorf ((maxPnt.X () - phs::Precision::quarter_pixel) / groundData.tile_width));
+    right_tile = std::min (right_tile, groundData.tiles.extent (0) - 1);
+    size_t top_tile = static_cast <size_t> (std::floorf ((minPnt.Y () + phs::Precision::quarter_pixel) / groundData.tile_height));
+    if (top_tile > groundData.tiles.extent (1) - 1) {
+        top_tile = 0U;
+    }
+    size_t bottom_tile = static_cast <size_t> (std::floorf ((maxPnt.Y () - phs::Precision::quarter_pixel) / groundData.tile_height));
+    bottom_tile = std::min (bottom_tile, groundData.tiles.extent (1) - 1);
+
+    for (size_t i = left_tile; i <= right_tile; i++) {
+        for (size_t j = top_tile; j <= bottom_tile; j++) {
+            if (groundData.tiles[std::array{i, j}] != 0) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 std::optional<phs::Vector2D> GetGroundNormalUnderPlayer (const phs::Collider& playerCollider,
                                                          phs::Quadrant playerVelocityQuadrant,
                                                          const GroundData& groundData)

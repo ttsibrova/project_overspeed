@@ -11,7 +11,7 @@
 #endif
 
 GameWorld::GameWorld (Level&& lvl):
-    m_player ({128.f, 128.f}),
+    m_player(),
     m_currentLevel (std::move (lvl))
 {
     m_playerInputLayer.AddAction (GAMEPAD_BUTTON_UNKNOWN, KEY_A, ActionType::HOLD, PlayerMovement::MovePlayer);

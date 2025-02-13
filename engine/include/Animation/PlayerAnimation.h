@@ -18,6 +18,6 @@ private:
     uint8_t       m_currentFrame{0};
     float         m_lastPointerAngle{0.};
     float         m_lastThrusterAngle {0.};
-    phs::Vector2D m_lastVelocity = phs::Vector2D (-1, 0);
+    phs::Vector2D m_lastPointerDir = phs::Vector2D (-1, 0);
 };
 }
