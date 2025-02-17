@@ -14,7 +14,7 @@ public:
     phs::Collider ComputeCurrentCollider (const phs::Point2D& playerPos) const;
 
 private:
-    PlayerSprite  m_currentSprite{PlayerSprite::BodyCoreFull};
+    PlayerSprite  m_currentCoreSprite{PlayerSprite::BodyCoreFull};
     uint8_t       m_currentFrame{0};
     float         m_lastPointerAngle{0.};
     float         m_lastThrusterAngle {0.};

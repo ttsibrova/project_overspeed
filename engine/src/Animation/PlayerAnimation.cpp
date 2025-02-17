@@ -15,7 +15,7 @@ void PlayerAnimation::Draw (const phs::Point2D& playerPos, const phs::Vector2D& 
     const float pointerOffsetFromCore = 30.f;
     const float thrusterOffsetFromCore = 22.f;
 
-    auto spriteInfo = anim::GetSpriteInfo (m_currentSprite);
+    auto spriteInfo = anim::GetSpriteInfo (m_currentCoreSprite);
     float halfWidth = spriteInfo.width / 2.f;
     float halfHeight = spriteInfo.height / 2.f;
 

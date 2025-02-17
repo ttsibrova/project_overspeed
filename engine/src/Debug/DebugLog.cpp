@@ -21,9 +21,9 @@ void Log (const std::pair<phs::Point2D, phs::Point2D>& line, Designation des)
     }
 }
 
-void Log (const phs::Collider& collider)
+void Log (const phs::Collider& collider, const Color& color)
 {
-    CollisionDebugger::GetInstance().AddCollider (collider);
+    CollisionDebugger::GetInstance().AddCollider (collider, color);
 }
 
 void Log (const PhysicsUpdateState& pus, const phs::Point2D& playerPos)

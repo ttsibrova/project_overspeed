@@ -3,6 +3,7 @@
 #include <Characters/PlayerMovement.h>
 #include <Inputs/InputHandler.h>
 #include <Timer/Timer.h>
+#include <WorldInteraction/PlayerWithWorldInteraction.h>
 
 #include <print>
 
@@ -40,8 +41,11 @@ void GameWorld::Update()
     InputHandler::GlobalInstance().HandleInput (m_playerInputLayer, m_player);
 
     float dt = static_cast <float> (Timer::GlobalInstance().GetDeltaTime());
-    auto playerUpdateState = PlayerMovement::ComputeUpdatePlayerMovement (dt, m_player, m_currentLevel.GetGroundData());
-    m_player.Update (playerUpdateState);
+    auto groundData = m_currentLevel.GetGroundData();
+    auto newPhysicsState = PlayerMovement::ComputeUpdatePlayerMovement (dt, m_player, m_currentLevel.GetGroundData());
+    m_player.Update (newPhysicsState);
+    auto newBodyState = interaction::updateBodyStateOnInteraction (m_player.getCollider(player::ColliderType::INTERACTION), m_player.getBodyState(), groundData);
+    m_player.Update (newBodyState);
 }
 
 void GameWorld::Draw()

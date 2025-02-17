@@ -1,6 +1,7 @@
 #pragma once
 #include <Physics/Precisions.h>
 #include <raylib/raylib.h>
+#include <cassert>
 #include <iostream>
 
 namespace phs
@@ -242,6 +243,20 @@ inline Quadrant GetInversedQuadrant (Quadrant quadrant)
         return Quadrant::Y_ALIGNED;
     }
     std::unreachable();
+}
+
+inline float computeAngleBetweenVectors (phs::Vector2D v1, phs::Vector2D v2) // in degree
+{
+    assert (v1.SquareMagnitude() > phs::Precision::quarter_pixel);
+    assert (v2.SquareMagnitude() > phs::Precision::quarter_pixel);
+    v1.Normalize();
+    v2.Normalize();
+    float dot = v1.Dot (v2);
+    float angle = std::acos (dot) * 180 / PI;
+    if (v1.X() * v2.Y() - v1.Y() * v2.X() < 0) { // Z-component of cross product
+        angle = -angle;
+    }
+    return angle;
 }
 
 }

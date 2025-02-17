@@ -90,17 +90,17 @@ player::MovementMode UpdateModeOnConditions (player::MovementMode targetMode, co
 
 }
 
-player::MovementMode SelectMovementModeOnAction (PlayerAction action, player::MovementMode currentMode)
+player::MovementMode SelectMovementModeOnAction (player::Action action, player::MovementMode currentMode)
 {
     switch (action)
     {
-    case PlayerAction::IDLE:
+    case player::Action::IDLE:
         return ResolveMMonIDLE (currentMode);
-    case PlayerAction::MOVE:
+    case player::Action::MOVE:
         return ResolveMMonMOVE (currentMode);
-    case PlayerAction::SLIDE:
+    case player::Action::SLIDE:
         break;
-    case PlayerAction::JUMP:
+    case player::Action::JUMP:
         return ResolveMMonJUMP (currentMode);
     default:
         break;
@@ -110,48 +110,24 @@ player::MovementMode SelectMovementModeOnAction (PlayerAction action, player::Mo
 }
 
 template <class PhysSim, class ... PhysArgs>
-player::UpdateState SimulatePhys (const Player& player, const GroundData& ground, player::ColliderMode colliderMode,
-                                 PhysSim physSim, PhysArgs ... args)
+PhysicsUpdateState SimulatePhys (const Player& player, const GroundData& ground,
+                                  PhysSim physSim, PhysArgs ... args)
 {
     PhysicsUpdateState physUpdate = physSim (args...);
     auto playerCollider = player.getCollider();
     auto adjustedVec = Collision::HitScanGround (playerCollider, physUpdate.trsl, ground);
-    if (!adjustedVec.has_value()) {
-        player::ColliderMode newColliderState = colliderMode;
-        if (colliderMode == player::ColliderMode::TIGHT) {
-            auto fullPlayerCollider = player.getCollider (player::ColliderMode::FULL);
-            if (!Collision::IsPlayerCollidesWithGround (fullPlayerCollider, ground)) {
-                adjustedVec = Collision::HitScanGround (fullPlayerCollider, physUpdate.trsl, ground);
-                if (!adjustedVec.has_value()) {
-                    newColliderState = player::ColliderMode::FULL;
-                }
-            }
-        }
-        return {newColliderState, std::move (physUpdate)};
-    }
-
-    player::ColliderMode newColliderState = colliderMode;
-    if (colliderMode == player::ColliderMode::FULL) {
+    if (adjustedVec.has_value()) {
         physUpdate.trsl = adjustedVec.value();
-        auto tightPlayerCollider = player.getCollider (player::ColliderMode::TIGHT);
-        adjustedVec = Collision::HitScanGround (tightPlayerCollider, physUpdate.trsl, ground);
-        if (adjustedVec.has_value()) {
-            physUpdate.trsl = adjustedVec.value();
-        }
-        newColliderState = player::ColliderMode::TIGHT;
+        physUpdate.velocity = phs::Vector2D(); // temporary velocity reset on collision
+        return physUpdate;
     }
-    else if (colliderMode == player::ColliderMode::TIGHT)
-    {
-        physUpdate.trsl = adjustedVec.value();
-        physUpdate.velocity = phs::Vector2D(); // Still I think this is a temporary option
-    }
-    return {newColliderState, std::move (physUpdate)};
+    return physUpdate;
 }
 
 
-player::UpdateState ComputeUpdatePlayerMovement (float dt, const Player& player, const GroundData& ground)
+PhysicsUpdateState ComputeUpdatePlayerMovement (float dt, const Player& player, const GroundData& ground)
 {
-    auto playerState = player.getState();
+    auto playerState = player.getPhysicalState();
     player::MovementMode targetMode = PlayerMovement::SelectMovementModeOnAction (playerState.nextAction, playerState.currentMode);
     targetMode = UpdateModeOnConditions (targetMode, player.getCollider(), ground);
 
@@ -172,19 +148,19 @@ player::UpdateState ComputeUpdatePlayerMovement (float dt, const Player& player,
                                          .velocity = phs::Vector2D(),
                                          .trsl = phs::Vector2D(),
                                          .simTime = dt}; 
-        return { playerState.currentColliderMode, physicsState };
+        return physicsState;
     }
     case player::MovementMode::RUNNING:
     {
-        return SimulatePhys (player, ground, playerState.currentColliderMode, PlayerMovement::SimulatePhysRunning, dt, simulationTime, playerState.m_velocity);
+        return SimulatePhys (player, ground, PlayerMovement::SimulatePhysRunning, dt, simulationTime, playerState.m_velocity);
     }
     case player::MovementMode::AIR_MOVEMENT:
     {
-        return SimulatePhys (player, ground, playerState.currentColliderMode, PlayerMovement::SimulatePhysAirMovement, dt, simulationTime, playerState.m_velocity);
+        return SimulatePhys (player, ground, PlayerMovement::SimulatePhysAirMovement, dt, simulationTime, playerState.m_velocity);
     }
     case player::MovementMode::JUMPING:
     {
-        return SimulatePhys (player, ground, playerState.currentColliderMode, PlayerMovement::SimulatePhysJumping, dt, simulationTime, playerState.m_velocity);
+        return SimulatePhys (player, ground, PlayerMovement::SimulatePhysJumping, dt, simulationTime, playerState.m_velocity);
     }
     }
     float newSimTime = dt;
@@ -192,7 +168,7 @@ player::UpdateState ComputeUpdatePlayerMovement (float dt, const Player& player,
         newSimTime += playerState.currentSimTime;
     }
     PhysicsUpdateState emptyPhysicsUpdate {targetMode, playerState.m_velocity, phs::Vector2D(), newSimTime};
-    return { playerState.currentColliderMode, std::move (emptyPhysicsUpdate) };
+    return emptyPhysicsUpdate;
 }
 
 

@@ -1,4 +1,5 @@
 #pragma once
+#include <raylib/raylib.h>
 #include <utility>
 
 namespace phs
@@ -21,7 +22,7 @@ enum Designation : uint8_t
 #if _DEBUG
 
 void Log (const std::pair <phs::Point2D, phs::Point2D>& line, Designation des);
-void Log (const phs::Collider& collider);
+void Log (const phs::Collider& collider, const Color& color = BLUE);
 void Log (const PhysicsUpdateState& pus, const phs::Point2D& playerPos);
 void Log (const phs::Point2D& pnt, Designation des);
 
