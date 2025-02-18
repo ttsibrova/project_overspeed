@@ -1,15 +1,14 @@
 #pragma once
 
-#include <Physics/Point2D.h>
+#include <Geom/Point2D.h>
 #include <optional>
 
-namespace geom
-{
+namespace geom::algo {
 
-[[nodiscard]] std::optional <phs::Point2D> IntersectLines (const phs::Point2D& start1,
-                                                           const phs::Point2D& end1,
-                                                           const phs::Point2D& start2,
-                                                           const phs::Point2D& end2)
+[[nodiscard]] std::optional <Point2D> IntersectLines (const Point2D& start1,
+                                                      const Point2D& end1,
+                                                      const Point2D& start2,
+                                                      const Point2D& end2)
 {
 
     if (start1 == start2 || start1 == end2) {
@@ -38,12 +37,12 @@ namespace geom
     const float C2 = y3 * x4 - x3 * y4;
 
     const float D = A1 * B2 - B1 * A2;
-    if (std::abs (D) < phs::Precision::float_tol)
+    if (std::abs (D) < precision::float_tol)
         return std::nullopt;
 
     const float x = (C1 * B2 - B1 * C2) / D;
     const float y = (A1 * C2 - C1 * A2) / D;
-    return phs::Point2D (x, y);
+    return Point2D (x, y);
 }
 
 }

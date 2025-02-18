@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 
-namespace anim {
+namespace graphics {
 
 enum class PlayerSprite: uint8_t
 {
@@ -18,9 +18,9 @@ struct SpriteInfo {
     size_t id;
 };
 
-size_t GetTextureId (PlayerSprite sprite);
-SpriteInfo GetSpriteInfo (PlayerSprite sprite);
+size_t getTextureId (PlayerSprite sprite);
+SpriteInfo getSpriteInfo (PlayerSprite sprite);
 
-void RegisterPlayerSprites();
+void registerPlayerSprites();
 
 }

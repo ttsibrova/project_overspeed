@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 
+namespace map {
+
 class Layer
 {
 public:
@@ -8,9 +10,11 @@ public:
         m_tileIDs (std::move (tileIDs))
     {}
 
-    inline const std::vector <int>& Tiles() const { return m_tileIDs; }
-    inline size_t TilesNum() const { return m_tileIDs.size(); }
+    inline const std::vector <int>& getTiles() const { return m_tileIDs; }
+    inline size_t getTilesNum() const { return m_tileIDs.size(); }
 
 private:
     const std::vector <int> m_tileIDs;
 };
+
+}

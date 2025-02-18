@@ -1,13 +1,12 @@
 #pragma once
-#include <Physics/Precisions.h>
+#include <Geom/Precision.h>
 #include <raylib/raylib.h>
 #include <cassert>
 #include <iostream>
 
-namespace phs
-{
+namespace geom {
 
-enum class EAxis : uint8_t
+enum class Axis : uint8_t
 {
     X,
     Y
@@ -134,33 +133,33 @@ private:
     Vector2 m_XY;
 };
 
-inline Vector2D GetDownVector()
+inline Vector2D getDownVector()
 {
     return Vector2D (0.f, 1.f);
 }
-inline Vector2D GetUpVector()
+inline Vector2D getUpVector()
 {
     return Vector2D (0.f, -1.f);
 }
-inline Vector2D GetRightVector()
+inline Vector2D getRightVector()
 {
     return Vector2D (1.f, 0.f);
 }
 
-inline Vector2D GetLeftVector()
+inline Vector2D getLeftVector()
 {
     return Vector2D (-1.f, 0.f);
 }
 
-inline Vector2D StripByAxis (const Vector2D& vec, EAxis axis)
+inline Vector2D stripByAxis (const Vector2D& vec, Axis axis)
 {
     Vector2D res;
     switch (axis)
     {
-    case phs::EAxis::X:
+    case Axis::X:
         res.X() = vec.X();
         break;
-    case phs::EAxis::Y:
+    case Axis::Y:
         res.Y() = vec.Y();
         break;
     default:
@@ -169,7 +168,7 @@ inline Vector2D StripByAxis (const Vector2D& vec, EAxis axis)
     return res;
 }
 
-inline bool IsOpposite (const Vector2D& v1, const Vector2D& v2, float precision = Precision::float_tol)
+inline bool isOpposite (const Vector2D& v1, const Vector2D& v2, float precision = geom::precision::float_tol)
 {
     if (v1.SquareMagnitude() < precision || v2.SquareMagnitude() < precision) {
         return false;
@@ -195,13 +194,13 @@ inline void Log (const Vector2D& vec, std::string prefix = "") {
     std::cout << prefix << "(X Y) = (" << vec.X() << " " << vec.Y() << ")" << std::endl;
 }
 
-inline Quadrant GetVectorQudrant (const Vector2D& vec)
+inline Quadrant getVectorQudrant (const Vector2D& vec)
 {
-    if (std::abs (vec.Y()) < Precision::float_tol) {
+    if (std::abs (vec.Y()) < precision::float_tol) {
         if (vec.X() > 0.f) return Quadrant::X_ALIGNED;
         else return Quadrant::X_OPPOSITE;
     }
-    if (std::abs (vec.X()) < Precision::float_tol) {
+    if (std::abs (vec.X()) < precision::float_tol) {
         if (vec.Y() > 0.f) return Quadrant::Y_ALIGNED;
         else return Quadrant::Y_OPPOSITE;
     }
@@ -221,34 +220,34 @@ inline Quadrant GetVectorQudrant (const Vector2D& vec)
     std::unreachable();
 }
 
-inline Quadrant GetInversedQuadrant (Quadrant quadrant)
+inline Quadrant getInversedQuadrant (Quadrant quadrant)
 {
     switch (quadrant)
     {
-    case phs::Quadrant::I:
+    case Quadrant::I:
         return Quadrant::III;
-    case phs::Quadrant::II:
+    case Quadrant::II:
         return Quadrant::IV;
-    case phs::Quadrant::III:
+    case Quadrant::III:
         return Quadrant::I;
-    case phs::Quadrant::IV:
+    case Quadrant::IV:
         return Quadrant::II;
-    case phs::Quadrant::X_ALIGNED:
+    case Quadrant::X_ALIGNED:
         return Quadrant::X_OPPOSITE;
-    case phs::Quadrant::Y_ALIGNED:
+    case Quadrant::Y_ALIGNED:
         return Quadrant::Y_OPPOSITE;
-    case phs::Quadrant::X_OPPOSITE:
+    case Quadrant::X_OPPOSITE:
         return Quadrant::X_ALIGNED;
-    case phs::Quadrant::Y_OPPOSITE:
+    case Quadrant::Y_OPPOSITE:
         return Quadrant::Y_ALIGNED;
     }
     std::unreachable();
 }
 
-inline float computeAngleBetweenVectors (phs::Vector2D v1, phs::Vector2D v2) // in degree
+inline float computeAngleBetweenVectors (Vector2D v1, Vector2D v2) // in degree
 {
-    assert (v1.SquareMagnitude() > phs::Precision::quarter_pixel);
-    assert (v2.SquareMagnitude() > phs::Precision::quarter_pixel);
+    assert (v1.SquareMagnitude() > precision::quarter_pixel);
+    assert (v2.SquareMagnitude() > precision::quarter_pixel);
     v1.Normalize();
     v2.Normalize();
     float dot = v1.Dot (v2);

@@ -3,9 +3,9 @@
 class Timer
 {
 public:
-    static Timer& GlobalInstance();
+    static Timer& getInstance();
 
-    void Update();
+    void update();
 
     inline double GetDeltaTime() const { return m_deltaTime; }
 

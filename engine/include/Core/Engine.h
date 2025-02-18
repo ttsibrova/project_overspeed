@@ -10,7 +10,7 @@ public:
     void Clean();
     void Quit();
 
-    void Update();
+    void update();
     void Render();
     void HandleEvents();
 
@@ -25,5 +25,5 @@ private:
     {}
 
     bool m_bIsRunning;
-    std::optional <GameWorld> m_world;
+    std::optional <world::GameWorld> m_world;
 };

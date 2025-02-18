@@ -1,7 +1,7 @@
 #include <World/World.h>
 
-#include <Characters/PlayerMovement.h>
-#include <Inputs/InputHandler.h>
+#include <Physics/MovementSimulation.h>
+#include <Input/InputHandler.h>
 #include <Timer/Timer.h>
 #include <WorldInteraction/PlayerWithWorldInteraction.h>
 
@@ -11,21 +11,23 @@
 #include <Debug/GlobalDebugger.h>
 #endif
 
+namespace world {
+
 GameWorld::GameWorld (Level&& lvl):
     m_player(),
     m_currentLevel (std::move (lvl))
 {
-    m_playerInputLayer.AddAction (GAMEPAD_BUTTON_UNKNOWN, KEY_A, ActionType::HOLD, PlayerMovement::MovePlayer);
-    //m_playerInputLayer.AddAction (GAMEPAD_BUTTON_UNKNOWN, KEY_W, ActionType::HOLD, PlayerMovement::MovePlayer);
-    //m_playerInputLayer.AddAction (GAMEPAD_BUTTON_UNKNOWN, KEY_S, ActionType::HOLD, PlayerMovement::MovePlayer);
-    m_playerInputLayer.AddAction (GAMEPAD_BUTTON_UNKNOWN, KEY_D, ActionType::HOLD, PlayerMovement::MovePlayer);
-    m_playerInputLayer.AddAction (GAMEPAD_BUTTON_UNKNOWN, KEY_SPACE, ActionType::PRESS, PlayerMovement::JumpPlayer);
+    m_playerInputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_A, input::ActionType::HOLD, player::MovePlayer);
+    //m_playerInputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_W, input::ActionType::HOLD, PlayerMovement::MovePlayer);
+    //m_playerInputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_S, input::ActionType::HOLD, PlayerMovement::MovePlayer);
+    m_playerInputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_D, input::ActionType::HOLD, player::MovePlayer);
+    m_playerInputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_SPACE, input::ActionType::PRESS, player::JumpPlayer);
 }
 
 
-std::optional<GameWorld> GameWorld::CreateGameWorld (Maps map)
+std::optional<GameWorld> GameWorld::createGameWorld (map::RegisteredMap map)
 {
-    auto level = Level::CreateLevel (map);
+    auto level = Level::createLevel (map);
     if (!level.has_value()) {
         return {};
     }
@@ -33,27 +35,29 @@ std::optional<GameWorld> GameWorld::CreateGameWorld (Maps map)
     return GameWorld (std::move (level.value()));
 }
 
-void GameWorld::Update()
+void GameWorld::update()
 {
 #if _DEBUG
-    Debug::GlobalDebugger::GetInstance().Update();
+    Debug::GlobalDebugger::GetInstance().update();
 #endif
-    InputHandler::GlobalInstance().HandleInput (m_playerInputLayer, m_player);
+    InputHandler::getInstance().handleInput (m_playerInputLayer, m_player);
 
-    float dt = static_cast <float> (Timer::GlobalInstance().GetDeltaTime());
-    auto groundData = m_currentLevel.GetGroundData();
-    auto newPhysicsState = PlayerMovement::ComputeUpdatePlayerMovement (dt, m_player, m_currentLevel.GetGroundData());
-    m_player.Update (newPhysicsState);
+    float dt = static_cast <float> (Timer::getInstance().GetDeltaTime());
+    auto groundData = m_currentLevel.getGroundData();
+    auto newPhysicsState = physics::movement::computeUpdatePlayerMovement (dt, m_player, m_currentLevel.getGroundData());
+    m_player.update (newPhysicsState);
     auto newBodyState = interaction::updateBodyStateOnInteraction (m_player.getCollider(player::ColliderType::INTERACTION), m_player.getBodyState(), groundData);
-    m_player.Update (newBodyState);
+    m_player.update (newBodyState);
 }
 
-void GameWorld::Draw()
+void GameWorld::draw()
 {
-    m_currentLevel.Draw();
-    m_player.Draw();
+    m_currentLevel.draw();
+    m_player.draw();
 
 #if _DEBUG
-    Debug::GlobalDebugger::GetInstance().Draw();
+    Debug::GlobalDebugger::GetInstance().draw();
 #endif
+}
+
 }

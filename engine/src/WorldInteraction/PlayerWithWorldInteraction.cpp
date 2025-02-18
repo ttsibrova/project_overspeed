@@ -1,9 +1,10 @@
 #include <WorldInteraction/PlayerWithWorldInteraction.h>
-#include <World/LevelCollision.h>
 
-player::BodyState interaction::updateBodyStateOnInteraction (const phs::Collider& interactionPlayerCollider,
+#include <WorldInteraction/GroundCollision.h>
+
+player::BodyState interaction::updateBodyStateOnInteraction (const physics::Collider& interactionPlayerCollider,
                                                              player::BodyState playerBodyState,
-                                                             const GroundData& ground)
+                                                             const world::GroundData& ground)
 {
     player::BodyState newBodyState;
     if (Collision::IsPlayerCollidesWithGround(interactionPlayerCollider, ground)) {

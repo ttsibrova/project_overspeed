@@ -1,10 +1,12 @@
 #pragma once
 #include <vector>
 
+namespace map {
+
 class Tileset
 {
 public:
-    Tileset ():
+    Tileset():
         m_startID (0),
         m_numElems (0)
     {}
@@ -45,14 +47,14 @@ private:
 };
 
 struct TilePos {
-    int col {0};
-    int row {0};
+    int col{0};
+    int row{0};
 };
 
 class EmbeddedTileset: public Tileset
 {
 public:
-    EmbeddedTileset ():
+    EmbeddedTileset():
         m_numColumns (0),
         m_tileHeight (0),
         m_tileWidth (0),
@@ -77,3 +79,5 @@ private:
     float m_tileWidth;
     size_t m_imagePathID;
 };
+
+}

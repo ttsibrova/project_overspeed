@@ -1,23 +1,14 @@
-#include <Inputs/InputHandler.h>
-#include <iostream>
+#include <Input/InputGlobalGetters.h>
 
-static constexpr int gamepadID = 0;
+#include <Geom/Vector2D.h>
+#include <Input/InputHandler.h>
 
+namespace input {
 
-
-InputHandler& InputHandler::GlobalInstance()
+geom::Vector2D getAxisVec()
 {
-    static InputHandler iHandler;
-    return iHandler;
-}
-
-
-
-
-phs::Vector2D Input::GetAxisVec()
-{
-    phs::Vector2D res;
-    auto device = GetActiveDevice();
+    geom::Vector2D res;
+    auto device = getActiveDevice();
     switch (device)
     {
     case Device::NONE:
@@ -58,3 +49,9 @@ phs::Vector2D Input::GetAxisVec()
     return res;
 }
 
+Device getActiveDevice()
+{
+    return InputHandler::getInstance().getActiveDevice();
+}
+
+} // namespace input

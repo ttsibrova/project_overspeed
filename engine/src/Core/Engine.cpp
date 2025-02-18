@@ -1,15 +1,9 @@
 #include <Core/Engine.h>
-#include <Inputs/InputHandler.h>
 #include <Graphics/TextureManager.h>
-#include <Animation/RegisteredPlayerSprites.h>
 #include <Timer/Timer.h>
 #include <raylib/raylib.h>
 
-#include <Characters/Player.h>
 #include <World/Level.h>
-#pragma warning(push, 0)
-#include <tinytmx/tinytmx.hpp>
-#pragma warning(pop)
 
 #include <iostream>
 
@@ -30,9 +24,9 @@ bool Engine::Init()
 
     TextureManager::GetInstance().Load ("mage_idle", "assets/idle.png");
     TextureManager::GetInstance().Load ("mage_run", "assets/run.png");
-    anim::RegisterPlayerSprites();
+    graphics::registerPlayerSprites();
 
-    m_world = GameWorld::CreateGameWorld (Maps::level_1);
+    m_world = world::GameWorld::createGameWorld (map::RegisteredMap::level_1);
     if (!m_world.has_value()) {
         return false;
     }
@@ -51,11 +45,11 @@ void Engine::Quit()
     m_bIsRunning = false;
 }
 
-void Engine::Update()
+void Engine::update()
 {
-    Timer::GlobalInstance().Update();
+    Timer::getInstance().update();
     if (m_world.has_value()) {
-        m_world.value().Update();
+        m_world.value().update();
     }
 }
 
@@ -64,7 +58,7 @@ void Engine::Render()
     BeginDrawing();
     ClearBackground (Color {61,119,109});
     if (m_world.has_value()) {
-        m_world.value().Draw();
+        m_world.value().draw();
     }
 
     EndDrawing();

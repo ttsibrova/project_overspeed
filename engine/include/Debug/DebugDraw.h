@@ -1,16 +1,16 @@
 #pragma once
-#include <Physics/Point2D.h>
-#include <Physics/Vector2D.h>
+#include <Geom/Point2D.h>
+#include <Geom/Vector2D.h>
 #include <raylib/raylib.h>
 
-namespace phs {
+namespace physics {
 class Collider;
 }
 namespace Debug
 {
-void Draw (const phs::Collider& collider, const Color& color);
-void Draw (const phs::Point2D& pnt1, const phs::Point2D& pnt2, const Color& color = RED);
-void Draw (const phs::Point2D& pos, const phs::Vector2D& vec, const Color& color = GREEN);
-void Draw (const phs::Point2D& pnt, const Color& color = RED);
+void draw (const physics::Collider& collider, const Color& color);
+void draw (const geom::Point2D& pnt1, const geom::Point2D& pnt2, const Color& color = RED);
+void draw (const geom::Point2D& pos, const geom::Vector2D& vec, const Color& color = GREEN);
+void draw (const geom::Point2D& pnt, const Color& color = RED);
 }
 

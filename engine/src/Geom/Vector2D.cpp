@@ -1,11 +1,11 @@
-#include <Physics/Vector2D.h>
+#include <Geom/Vector2D.h>
 
-#include <Physics/Trsf2D.h>
+#include <Geom/Trsf2D.h>
 
 
-namespace phs {
+namespace geom {
 
-Vector2D phs::Vector2D::Transformed (const Trsf2D& trsf) const
+Vector2D Vector2D::Transformed (const Trsf2D& trsf) const
 {
     return trsf * *(this);
 }
@@ -16,6 +16,5 @@ void Vector2D::Transform (const Trsf2D& trsf)
     m_XY.x = res.X();
     m_XY.y = res.Y();
 }
-
 
 }

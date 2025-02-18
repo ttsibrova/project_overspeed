@@ -8,7 +8,7 @@
 
 
 namespace Debug {
-void Log (const std::pair<phs::Point2D, phs::Point2D>& line, Designation des)
+void Log (const std::pair<geom::Point2D, geom::Point2D>& line, Designation des)
 {
     switch (des)
     {
@@ -21,17 +21,17 @@ void Log (const std::pair<phs::Point2D, phs::Point2D>& line, Designation des)
     }
 }
 
-void Log (const phs::Collider& collider, const Color& color)
+void Log (const physics::Collider& collider, const Color& color)
 {
     CollisionDebugger::GetInstance().AddCollider (collider, color);
 }
 
-void Log (const PhysicsUpdateState& pus, const phs::Point2D& playerPos)
+void Log (const physics::movement::UpdateState& pus, const geom::Point2D& playerPos)
 {
-    PlayerMovementDebugger::GetInstance().Update (pus, playerPos);
+    PlayerMovementDebugger::GetInstance().update (pus, playerPos);
 }
 
-void Log (const phs::Point2D& pnt, Designation des)
+void Log (const geom::Point2D& pnt, Designation des)
 {
     switch (des)
     {

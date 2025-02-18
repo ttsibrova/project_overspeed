@@ -1,11 +1,12 @@
 #pragma once
 
-#include <Characters/Player.h>
-#include <Inputs/InputHandler.h>
+#include <Player/Player.h>
+#include <Input/InputHandler.h>
 #include <World/Level.h>
 #include <Map/RegisteredMaps.h>
 #include <optional>
 
+namespace world {
 
 class GameWorld
 {
@@ -14,16 +15,18 @@ public:
     GameWorld (GameWorld&&) = default;
     GameWorld& operator= (GameWorld&&) = default;
     GameWorld& operator= (const GameWorld&) = default;
-    static std::optional <GameWorld> CreateGameWorld (Maps map);
+    static std::optional <GameWorld> createGameWorld (map::RegisteredMap map);
 
-    void Update();
-    void Draw();
+    void update();
+    void draw();
 
 private:
     GameWorld (Level&& lvl);
 
 private:
-    Player m_player;
-    InputLayer <Player> m_playerInputLayer;
-    Level m_currentLevel;
+    player::Player                m_player;
+    input::Layer <player::Player> m_playerInputLayer;
+    Level                         m_currentLevel;
 };
+
+}

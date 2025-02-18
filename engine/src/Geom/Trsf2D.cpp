@@ -1,8 +1,8 @@
-#include <Physics/Trsf2D.h>
+#include <Geom/Trsf2D.h>
 
-#include <Physics/Vector2D.h>
+#include <Geom/Vector2D.h>
 
-namespace phs {
+namespace geom {
 
 void Trsf2D::SetRotation (float rad)
 {

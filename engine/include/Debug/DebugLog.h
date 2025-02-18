@@ -2,14 +2,16 @@
 #include <raylib/raylib.h>
 #include <utility>
 
-namespace phs
-{
+namespace physics {
 class Collider;
+}
+namespace geom {
 class Point2D;
 class Vector2D;
 }
-struct PhysicsUpdateState;
-
+namespace physics::movement {
+struct UpdateState;
+}
 
 namespace Debug
 {
@@ -21,10 +23,10 @@ enum Designation : uint8_t
 
 #if _DEBUG
 
-void Log (const std::pair <phs::Point2D, phs::Point2D>& line, Designation des);
-void Log (const phs::Collider& collider, const Color& color = BLUE);
-void Log (const PhysicsUpdateState& pus, const phs::Point2D& playerPos);
-void Log (const phs::Point2D& pnt, Designation des);
+void Log (const std::pair <geom::Point2D, geom::Point2D>& line, Designation des);
+void Log (const physics::Collider& collider, const Color& color = BLUE);
+void Log (const physics::movement::UpdateState& pus, const geom::Point2D& playerPos);
+void Log (const geom::Point2D& pnt, Designation des);
 
 #elif 
 

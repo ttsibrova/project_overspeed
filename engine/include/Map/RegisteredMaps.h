@@ -1,13 +1,14 @@
 #pragma once
 #include <string>
 
-enum class Maps: uint8_t
+namespace map
+{
+
+enum class RegisteredMap: uint8_t
 {
     level_1 = 1,
 };
 
-namespace maps
-{
-std::string GetPath (Maps map);
+std::string GetPath (RegisteredMap map);
 
 }

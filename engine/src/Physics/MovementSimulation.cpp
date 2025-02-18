@@ -1,7 +1,9 @@
-#include <Characters/PlayerMovement.h>
-#include <Characters/Player.h>
-#include <Inputs/InputHandler.h>
-#include <World/LevelCollision.h>
+#include <Physics/MovementSimulation.h>
+
+#include <Input/InputGlobalGetters.h>
+#include <Player/Player.h>
+#include <WorldInteraction/GroundCollision.h>
+
 #include <cassert>
 #include <print>
 
@@ -10,11 +12,11 @@
 #define FUZZY_COMPARE_VALUE 1.e-7f
 
 
-namespace PlayerMovement {
+namespace physics::movement {
 
 namespace {
 
-player::MovementMode ResolveMMonIDLE (player::MovementMode currentMode)
+player::MovementMode resolveMovementModeOnIDLE (player::MovementMode currentMode)
 {
     switch (currentMode)
     {
@@ -32,7 +34,7 @@ player::MovementMode ResolveMMonIDLE (player::MovementMode currentMode)
     return player::MovementMode::NONE;
 }
 
-player::MovementMode ResolveMMonMOVE (player::MovementMode currentMode)
+player::MovementMode resolveMovementModeOnMOVE (player::MovementMode currentMode)
 {
     switch (currentMode)
     {
@@ -50,7 +52,7 @@ player::MovementMode ResolveMMonMOVE (player::MovementMode currentMode)
     return player::MovementMode::NONE;
 }
 
-player::MovementMode ResolveMMonJUMP (player::MovementMode currentMode)
+player::MovementMode resolveMovementModeOnJUMP (player::MovementMode currentMode)
 {
     switch (currentMode)
     {
@@ -69,7 +71,7 @@ player::MovementMode ResolveMMonJUMP (player::MovementMode currentMode)
 }
 
 
-player::MovementMode UpdateModeOnConditions (player::MovementMode targetMode, const phs::Collider& playerCollider, const GroundData& ground)
+player::MovementMode updateModeOnConditions (player::MovementMode targetMode, const physics::Collider& playerCollider, const world::GroundData& ground)
 {
     bool isGrounded = Collision::IsPlayerGrounded (playerCollider, ground);
     switch (targetMode)
@@ -90,18 +92,18 @@ player::MovementMode UpdateModeOnConditions (player::MovementMode targetMode, co
 
 }
 
-player::MovementMode SelectMovementModeOnAction (player::Action action, player::MovementMode currentMode)
+player::MovementMode selectMovementModeOnAction (player::Action action, player::MovementMode currentMode)
 {
     switch (action)
     {
     case player::Action::IDLE:
-        return ResolveMMonIDLE (currentMode);
+        return resolveMovementModeOnIDLE (currentMode);
     case player::Action::MOVE:
-        return ResolveMMonMOVE (currentMode);
+        return resolveMovementModeOnMOVE (currentMode);
     case player::Action::SLIDE:
         break;
     case player::Action::JUMP:
-        return ResolveMMonJUMP (currentMode);
+        return resolveMovementModeOnJUMP (currentMode);
     default:
         break;
     }
@@ -110,26 +112,26 @@ player::MovementMode SelectMovementModeOnAction (player::Action action, player::
 }
 
 template <class PhysSim, class ... PhysArgs>
-PhysicsUpdateState SimulatePhys (const Player& player, const GroundData& ground,
+UpdateState simulatePhys (const player::Player& player, const world::GroundData& ground,
                                   PhysSim physSim, PhysArgs ... args)
 {
-    PhysicsUpdateState physUpdate = physSim (args...);
+    UpdateState physUpdate = physSim (args...);
     auto playerCollider = player.getCollider();
     auto adjustedVec = Collision::HitScanGround (playerCollider, physUpdate.trsl, ground);
     if (adjustedVec.has_value()) {
         physUpdate.trsl = adjustedVec.value();
-        physUpdate.velocity = phs::Vector2D(); // temporary velocity reset on collision
+        physUpdate.velocity = geom::Vector2D(); // temporary velocity reset on collision
         return physUpdate;
     }
     return physUpdate;
 }
 
 
-PhysicsUpdateState ComputeUpdatePlayerMovement (float dt, const Player& player, const GroundData& ground)
+UpdateState computeUpdatePlayerMovement (float dt, const player::Player& player, const world::GroundData& ground)
 {
     auto playerState = player.getPhysicalState();
-    player::MovementMode targetMode = PlayerMovement::SelectMovementModeOnAction (playerState.nextAction, playerState.currentMode);
-    targetMode = UpdateModeOnConditions (targetMode, player.getCollider(), ground);
+    player::MovementMode targetMode = selectMovementModeOnAction (playerState.nextAction, playerState.currentMode);
+    targetMode = updateModeOnConditions (targetMode, player.getCollider(), ground);
 
     std::vector <player::MovementMode> appliedModes;
     appliedModes.push_back (targetMode);
@@ -144,35 +146,35 @@ PhysicsUpdateState ComputeUpdatePlayerMovement (float dt, const Player& player, 
     {
     case player::MovementMode::NONE:
     {
-        PhysicsUpdateState physicsState {.nextMode = targetMode,
-                                         .velocity = phs::Vector2D(),
-                                         .trsl = phs::Vector2D(),
+        UpdateState physicsState {.nextMode = targetMode,
+                                         .velocity = geom::Vector2D(),
+                                         .trsl = geom::Vector2D(),
                                          .simTime = dt}; 
         return physicsState;
     }
     case player::MovementMode::RUNNING:
     {
-        return SimulatePhys (player, ground, PlayerMovement::SimulatePhysRunning, dt, simulationTime, playerState.m_velocity);
+        return simulatePhys (player, ground, simulatePhysRunning, dt, simulationTime, playerState.m_velocity);
     }
     case player::MovementMode::AIR_MOVEMENT:
     {
-        return SimulatePhys (player, ground, PlayerMovement::SimulatePhysAirMovement, dt, simulationTime, playerState.m_velocity);
+        return simulatePhys (player, ground, simulatePhysAirMovement, dt, simulationTime, playerState.m_velocity);
     }
     case player::MovementMode::JUMPING:
     {
-        return SimulatePhys (player, ground, PlayerMovement::SimulatePhysJumping, dt, simulationTime, playerState.m_velocity);
+        return simulatePhys (player, ground, simulatePhysJumping, dt, simulationTime, playerState.m_velocity);
     }
     }
     float newSimTime = dt;
     if (targetMode == playerState.currentMode) {
         newSimTime += playerState.currentSimTime;
     }
-    PhysicsUpdateState emptyPhysicsUpdate {targetMode, playerState.m_velocity, phs::Vector2D(), newSimTime};
+    UpdateState emptyPhysicsUpdate {targetMode, playerState.m_velocity, geom::Vector2D(), newSimTime};
     return emptyPhysicsUpdate;
 }
 
 
-PhysicsUpdateState SimulatePhysRunning (const float dt, float simulationTime, const phs::Vector2D& playerVelocity)
+UpdateState simulatePhysRunning (const float dt, float simulationTime, const geom::Vector2D& playerVelocity)
 {
     const float playerMaxSpeed = 400.f;
     const float maxSpeedDelay = .2f;
@@ -182,20 +184,20 @@ PhysicsUpdateState SimulatePhysRunning (const float dt, float simulationTime, co
     __assume (simulationTime >= 0.f);
     __assume (dt >= 0.f);
 
-    auto inputVec = phs::StripByAxis (Input::GetAxisVec(), phs::EAxis::X);
+    auto inputVec = geom::stripByAxis (input::getAxisVec(), geom::Axis::X);
     if (inputVec.SquareMagnitude() < 1e-5 || std::abs (inputVec.X()) < 1e-5) {
-        return {player::MovementMode::NONE, playerVelocity, phs::Vector2D(), 0.}; //no direction
+        return {player::MovementMode::NONE, playerVelocity, geom::Vector2D(), 0.}; //no direction
     }
 
-    phs::Vector2D newVelocity = phs::StripByAxis (playerVelocity, phs::EAxis::X);
+    geom::Vector2D newVelocity = geom::stripByAxis (playerVelocity, geom::Axis::X);
     auto currHorizontalSpeed = newVelocity.Magnitude();
-    if (currHorizontalSpeed > FUZZY_COMPARE_VALUE && phs::IsOpposite (playerVelocity, inputVec)) {
+    if (currHorizontalSpeed > FUZZY_COMPARE_VALUE && geom::isOpposite (playerVelocity, inputVec)) {
         newVelocity.FlipX();
     }
 
     float tickTime = std::max (dt, MIN_TICK_TIME);
     float remainingTime = 0.f;
-    phs::Vector2D trsl;
+    geom::Vector2D trsl;
 
     while (tickTime > 0.f) {
         if (tickTime > MAX_SIM_TICK_TIME) {
@@ -224,20 +226,20 @@ PhysicsUpdateState SimulatePhysRunning (const float dt, float simulationTime, co
     return {player::MovementMode::RUNNING, newVelocity, trsl, simulationTime};
 }
 
-PhysicsUpdateState SimulatePhysAirMovement (const float dt, const float simulationTime, const phs::Vector2D& playerVelocity)
+UpdateState simulatePhysAirMovement (const float dt, const float simulationTime, const geom::Vector2D& playerVelocity)
 {
     const float gravityAcceleration = 1200.f;
     //const float maxFallSpeed = 500.f;
 
     float tickTime = std::max (dt, MIN_TICK_TIME);
-    phs::Vector2D verticalVelocity = phs::StripByAxis (playerVelocity, phs::EAxis::Y);
-    phs::Vector2D addedVelocity = phs::GetDownVector() * gravityAcceleration * (tickTime);
+    geom::Vector2D verticalVelocity = geom::stripByAxis (playerVelocity, geom::Axis::Y);
+    geom::Vector2D addedVelocity = geom::getDownVector() * gravityAcceleration * (tickTime);
     verticalVelocity = verticalVelocity + addedVelocity;
     //if (verticalVelocity.SquareMagnitude() > maxFallSpeed * maxFallSpeed) {
-    //    verticalVelocity = phs::DownVector() * maxFallSpeed;
+    //    verticalVelocity = physics::DownVector() * maxFallSpeed;
     //}
-    phs::Vector2D newVelocity (playerVelocity.X(), verticalVelocity.Y());
-    phs::Vector2D trsl = newVelocity * tickTime;
+    geom::Vector2D newVelocity (playerVelocity.X(), verticalVelocity.Y());
+    geom::Vector2D trsl = newVelocity * tickTime;
 
     if (newVelocity.Y() > 0.f) {
         return {player::MovementMode::AIR_MOVEMENT, newVelocity, trsl, simulationTime + tickTime};
@@ -246,11 +248,11 @@ PhysicsUpdateState SimulatePhysAirMovement (const float dt, const float simulati
     }
 }
 
-PhysicsUpdateState SimulatePhysJumping (const float dt, float simulationTime, const phs::Vector2D& playerVelocity)
+UpdateState simulatePhysJumping (const float dt, float simulationTime, const geom::Vector2D& playerVelocity)
 {
     if (simulationTime == 0.f) {
-        return SimulatePhysAirMovement (dt, simulationTime, phs::Vector2D (playerVelocity.X(), playerVelocity.Y() - 700.f));
-    } else return SimulatePhysAirMovement (dt, simulationTime, playerVelocity);
+        return simulatePhysAirMovement (dt, simulationTime, geom::Vector2D (playerVelocity.X(), playerVelocity.Y() - 700.f));
+    } else return simulatePhysAirMovement (dt, simulationTime, playerVelocity);
 }
 
 }

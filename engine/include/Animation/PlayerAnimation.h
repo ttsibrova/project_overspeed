@@ -1,23 +1,23 @@
 #pragma once
-#include <Animation/RegisteredPlayerSprites.h>
+#include <Geom/Point2D.h>
+#include <Geom/Vector2D.h>
+#include <Graphics/RegisteredPlayerSprites.h>
 #include <Physics/Collider.h>
-#include <Physics/Point2D.h>
-#include <Physics/Vector2D.h>
 
 namespace anim {
 class PlayerAnimation
 {
 public:
-    void Draw (const phs::Point2D& playerPos, const phs::Vector2D& playerVelocity);
-    //void Update();
+    void draw (const geom::Point2D& playerPos, const geom::Vector2D& playerVelocity);
+    //void update();
 
-    phs::Collider ComputeCurrentCollider (const phs::Point2D& playerPos) const;
+    physics::Collider ComputeCurrentCollider (const geom::Point2D& playerPos) const;
 
 private:
-    PlayerSprite  m_currentCoreSprite{PlayerSprite::BodyCoreFull};
-    uint8_t       m_currentFrame{0};
-    float         m_lastPointerAngle{0.};
-    float         m_lastThrusterAngle {0.};
-    phs::Vector2D m_lastPointerDir = phs::Vector2D (-1, 0);
+    graphics::PlayerSprite  m_currentCoreSprite{graphics::PlayerSprite::BodyCoreFull};
+    uint8_t                 m_currentFrame{0};
+    float                   m_lastPointerAngle{0.};
+    float                   m_lastThrusterAngle {0.};
+    geom::Vector2D          m_lastPointerDir = geom::Vector2D (-1, 0);
 };
 }

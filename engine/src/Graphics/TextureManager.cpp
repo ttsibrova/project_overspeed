@@ -66,24 +66,24 @@ void TextureManager::Clean()
     m_hashedTexturesMap.clear();
 }
 
-void TextureManager::Draw (std::string id, const phs::Point2D& pos)
+void TextureManager::draw (std::string id, const geom::Point2D& pos)
 {
     DrawTextureV (m_texturesMap[id], pos, WHITE);
 }
 
-void TextureManager::Draw (size_t id, const phs::Point2D& pos)
+void TextureManager::draw (size_t id, const geom::Point2D& pos)
 {
     DrawTextureV (m_hashedTexturesMap[id], pos, WHITE);
 }
 
-void TextureManager::DrawRotated (size_t id, const phs::Point2D& pos, float width, float height, const phs::Point2D& origin, float rot)
+void TextureManager::DrawRotated (size_t id, const geom::Point2D& pos, float width, float height, const geom::Point2D& origin, float rot)
 {
     Rectangle source {.x = 0.f, .y = 0.f, .width = width, .height = height};
     Rectangle dest {.x = pos.X(), .y = pos.Y(), .width = width, .height = height};
     DrawTexturePro (m_hashedTexturesMap[id], source, dest, origin, rot, WHITE);
 }
 
-void TextureManager::DrawTile (size_t id, const phs::Point2D& pos, float width, float height, TilePos tilePos)
+void TextureManager::DrawTile (size_t id, const geom::Point2D& pos, float width, float height, map::TilePos tilePos)
 {
     float x0 = tilePos.col * width;
     float y0 = tilePos.row * height;
@@ -92,15 +92,15 @@ void TextureManager::DrawTile (size_t id, const phs::Point2D& pos, float width, 
     DrawTextureRec (m_hashedTexturesMap[id], rec, pos, WHITE);
 }
 
-void TextureManager::DrawFrame (std::string id, const phs::Point2D& pos, float width, float height, int row, int frame, RenderFlip flip)
+void TextureManager::DrawFrame (std::string id, const geom::Point2D& pos, float width, float height, int row, int frame, graphics::RenderFlip flip)
 {
     float x0 = frame * width;
     float y0 = row * height;
 
-    if (flip & RenderFlip::FLIP_VERTICAL) {
+    if (flip & graphics::RenderFlip::FLIP_VERTICAL) {
         height = -height;
     }
-    if (flip & RenderFlip::FLIP_HORIZONTAL) {
+    if (flip & graphics::RenderFlip::FLIP_HORIZONTAL) {
         width = -width;
     }
     Rectangle rec {x0, y0, width, height};

@@ -11,15 +11,15 @@ GlobalDebugger& GlobalDebugger::GetInstance()
     static GlobalDebugger instance;
     return instance;
 }
-void GlobalDebugger::Update()
+void GlobalDebugger::update()
 {
-    CollisionDebugger::GetInstance().Update();
+    CollisionDebugger::GetInstance().update();
 }
 
-void GlobalDebugger::Draw()
+void GlobalDebugger::draw()
 {
-    CollisionDebugger::GetInstance().Draw();
-    PlayerMovementDebugger::GetInstance().Draw();
+    CollisionDebugger::GetInstance().draw();
+    PlayerMovementDebugger::GetInstance().draw();
 }
 
 }

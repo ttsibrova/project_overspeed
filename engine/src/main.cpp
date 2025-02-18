@@ -9,7 +9,7 @@ int main() {
     while (eng.IsRunning() && !WindowShouldClose())
     {
         eng.HandleEvents();
-        eng.Update();
+        eng.update();
         eng.Render();
     }
  

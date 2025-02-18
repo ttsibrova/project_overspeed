@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 
-namespace phs {
+namespace geom {
 
 class Vector2D;
 

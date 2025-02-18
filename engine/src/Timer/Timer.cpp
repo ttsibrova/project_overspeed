@@ -8,13 +8,13 @@ Timer::Timer():
     m_lastTime (0)
 {}
 
-Timer& Timer::GlobalInstance()
+Timer& Timer::getInstance()
 {
     static Timer timer;
     return timer;
 }
 
-void Timer::Update()
+void Timer::update()
 {
     double currTime = GetTime();
     m_deltaTime = currTime - m_lastTime;

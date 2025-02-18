@@ -11,36 +11,36 @@ CollisionDebugger& CollisionDebugger::GetInstance()
     return instance;
 }
 
-void CollisionDebugger::Update()
+void CollisionDebugger::update()
 {
     m_collisionLines.clear();
     m_colliders.clear();
     m_points.clear();
 }
 
-void CollisionDebugger::Draw()
+void CollisionDebugger::draw()
 {
     for (const auto& [pnt1, pnt2]: m_collisionLines) {
-        Debug::Draw (pnt1, pnt2);
+        Debug::draw (pnt1, pnt2);
     }
     for (size_t i = 0, size = m_colliders.size(); i < size; i++) {
-        Debug::Draw (m_colliders[i], m_colliderColors[i]);
+        Debug::draw (m_colliders[i], m_colliderColors[i]);
     }
     for (const auto& pnt: m_points) {
-        Debug::Draw (pnt);
+        Debug::draw (pnt);
     }
 }
 
-void CollisionDebugger::AddCollisionLine (std::pair<phs::Point2D, phs::Point2D> line)
+void CollisionDebugger::AddCollisionLine (std::pair<geom::Point2D, geom::Point2D> line)
 {
     m_collisionLines.push_back (std::move (line));
 }
-void CollisionDebugger::AddCollider (phs::Collider collider, Color colliderColor)
+void CollisionDebugger::AddCollider (physics::Collider collider, Color colliderColor)
 {
     m_colliders.push_back (std::move (collider));
     m_colliderColors.push_back (std::move (colliderColor));
 }
-void CollisionDebugger::AddPoint (phs::Point2D pnt)
+void CollisionDebugger::AddPoint (geom::Point2D pnt)
 {
     m_points.push_back (std::move (pnt));
 }

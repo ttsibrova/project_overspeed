@@ -1,14 +1,13 @@
 #pragma once
-#include <Physics/Vector2D.h>
+#include <Geom/Vector2D.h>
 #include <raylib/raylib.h>
 
-namespace phs
-{
+namespace geom {
 
 class Point2D
 {
 public:
-    Point2D ():
+    Point2D():
         m_x (0),
         m_y (0)
     {}
@@ -23,12 +22,12 @@ public:
     inline float  Y() const { return m_y; }
     inline float& Y() { return m_y; }
 
-    inline void Translate (const phs::Vector2D& trsl)
+    inline void Translate (const geom::Vector2D& trsl)
     {
         m_x += trsl.X(); m_y += trsl.Y();
     }
 
-    [[nodiscard]] inline Point2D Translated (const phs::Vector2D& trsl) const
+    [[nodiscard]] inline Point2D Translated (const geom::Vector2D& trsl) const
     {
         return Point2D (m_x + trsl.X(), m_y + trsl.Y());
     }
@@ -46,6 +45,5 @@ private:
     float m_x;
     float m_y;
 };
-
 
 }

@@ -1,6 +1,6 @@
 #pragma once
+#include <Geom/Point2D.h>
 #include <Physics/PhysicsUpdateState.h>
-#include <Physics/Point2D.h>
 
 namespace Debug
 {
@@ -14,8 +14,8 @@ public:
     PlayerMovementDebugger operator= (const PlayerMovementDebugger&) = delete;
 
 public:
-    void Update (const PhysicsUpdateState& pus, const phs::Point2D& playerPos);
-    void Draw();
+    void update (const physics::movement::UpdateState& pmUpdateState, const geom::Point2D& playerPos);
+    void draw();
 
 private:
     PlayerMovementDebugger() {}
@@ -23,8 +23,8 @@ private:
 private:
     player::MovementMode m_movementMode {player::MovementMode::NONE};
     float m_simulationTime {0.f};
-    phs::Point2D m_playerPos;
-    phs::Vector2D m_playerVelocity;
-    phs::Vector2D m_trslVec;
+    geom::Point2D m_playerPos;
+    geom::Vector2D m_playerVelocity;
+    geom::Vector2D m_trslVec;
 };
 }

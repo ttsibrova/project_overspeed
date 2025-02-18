@@ -8,17 +8,17 @@ PlayerMovementDebugger& PlayerMovementDebugger::GetInstance()
     static PlayerMovementDebugger instance;
     return instance;
 }
-void PlayerMovementDebugger::Update (const PhysicsUpdateState& pus, const phs::Point2D& playerPos)
+void PlayerMovementDebugger::update (const physics::movement::UpdateState& pmUpdateState, const geom::Point2D& playerPos)
 {
     m_playerPos = playerPos;
-    m_movementMode = pus.nextMode;
-    m_playerVelocity = pus.velocity;
-    m_simulationTime = pus.simTime;
-    m_trslVec = pus.trsl;
+    m_movementMode = pmUpdateState.nextMode;
+    m_playerVelocity = pmUpdateState.velocity;
+    m_simulationTime = pmUpdateState.simTime;
+    m_trslVec = pmUpdateState.trsl;
 }
-void PlayerMovementDebugger::Draw()
+void PlayerMovementDebugger::draw()
 {
-    Debug::Draw (m_playerPos, m_playerVelocity);
-    Debug::Draw (phs::Point2D (m_playerPos.X(), m_playerPos.Y() - 30), m_trslVec, RED);
+    Debug::draw (m_playerPos, m_playerVelocity);
+    Debug::draw (geom::Point2D (m_playerPos.X(), m_playerPos.Y() - 30), m_trslVec, RED);
 }
 }

@@ -2,14 +2,20 @@
 
 #include <Animation/Animation.h>
 #include <Animation/PlayerAnimation.h>
-#include <Characters/PlayerAction.h>
-#include <Characters/PlayerMovementMode.h>
-#include <Characters/PlayerStates.h>
 #include <Physics/Collider.h>
 #include <Physics/PhysicsUpdateState.h>
+#include <Player/PlayerBodyState.h>
+#include <Player/PlayerPhysicalState.h>
 
 struct GroundData;
 
+namespace player {
+enum class ColliderType: uint8_t
+{
+    UNDEFINED,
+    INTERACTION,
+    PHYSICAL
+};
 
 class Player
 {
@@ -17,20 +23,20 @@ public:
     Player();
     Player& operator= (const Player& other) = default;
 
-    void Draw();
-    void Update (const PhysicsUpdateState& updateState);
-    void Update (const player::BodyState& newBodyState);
+    void draw();
+    void update (const physics::movement::UpdateState& updateState);
+    void update (const player::BodyState& newBodyState);
 
-    void AddAction (player::Action action);
+    void addAction (player::Action action);
 
-    const phs::Point2D& Pos() const { return m_pos; }
-    phs::Point2D& Pos() { return m_pos; }
+    const geom::Point2D& getPosition() const { return m_pos; }
+    geom::Point2D& getPosition() { return m_pos; }
 
-    const phs::Vector2D& Velocity() const { return m_velocity; }
-    phs::Vector2D& Velocity() { return m_velocity; }
+    const geom::Vector2D& getVelocity() const { return m_velocity; }
+    geom::Vector2D& getVelocity() { return m_velocity; }
 
-    phs::Collider getCollider() const;
-    phs::Collider getCollider (player::ColliderType mode) const;
+    physics::Collider getCollider() const;
+    physics::Collider getCollider (player::ColliderType mode) const;
 
     player::PhysicalState getPhysicalState() const 
     {
@@ -43,7 +49,7 @@ public:
     }
 
 private:
-    void ChangeActiveMM (player::MovementMode newMode);
+    void changeMovementMode (player::MovementMode newMode);
 
 private:
     player::Action m_nextAction;
@@ -51,22 +57,19 @@ private:
 
     float m_currSimTime;
 
-    phs::Vector2D m_velocity;
-    phs::Point2D m_pos;
+    geom::Vector2D m_velocity;
+    geom::Point2D m_pos;
 
-    //anim::PlayerAnimation m_procAnim;
+    //PlayerAnimation m_procAnim;
 
     //vis part
     player::CoreState    m_currentCoreSprite{player::CoreState::EMPTY};
     player::PointerState m_currentPointerSprite{player::PointerState::SHARP};
     uint8_t              m_currentFrame{0};
     float                m_lastThrusterAngle{0.};
-    phs::Vector2D        m_lastPointerDir = phs::Vector2D (-1, 0);
+    geom::Vector2D       m_lastPointerDir = geom::Vector2D (-1, 0);
 };
 
-
-namespace PlayerMovement
-{
 void MovePlayer (Player& player);
 void JumpPlayer (Player& player);
 }

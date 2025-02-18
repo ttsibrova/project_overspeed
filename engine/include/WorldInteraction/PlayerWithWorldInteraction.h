@@ -1,9 +1,9 @@
 #pragma once
-#include <Characters/Player.h>
+#include <Player/Player.h>
+#include <World/Level.h>
 
 namespace interaction
 {
-
-player::BodyState updateBodyStateOnInteraction (const phs::Collider& interactionPlayerCollider, player::BodyState playerBodyState, const GroundData& ground);
+player::BodyState updateBodyStateOnInteraction (const physics::Collider& interactionPlayerCollider, player::BodyState playerBodyState, const world::GroundData& ground);
 
 }

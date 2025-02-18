@@ -11,8 +11,8 @@ public:
     GlobalDebugger operator= (const GlobalDebugger&) = delete;
 
 public:
-    void Update();
-    void Draw();
+    void update();
+    void draw();
 
 private:
     GlobalDebugger(){}

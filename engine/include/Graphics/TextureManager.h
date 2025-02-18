@@ -1,13 +1,15 @@
 #pragma once
 
-#include <Physics/Point2D.h>
+#include <Geom/Point2D.h>
 #include <Graphics/RenderFlip.h>
 
 #include <raylib/raylib.h>
 #include <string>
 #include <unordered_map>
 
+namespace map {
 struct TilePos;
+}
 
 class TextureManager
 {
@@ -22,11 +24,11 @@ public:
     void Drop (std::string id);
     void Clean();
 
-    void Draw (std::string id, const phs::Point2D& pos);
-    void Draw (size_t id, const phs::Point2D& pos);
-    void DrawRotated (size_t id, const phs::Point2D& pos, float width, float height, const phs::Point2D& origin, float rot);
-    void DrawTile (size_t id, const phs::Point2D& pos, float width, float height, TilePos tilePos);
-    void DrawFrame (std::string id, const phs::Point2D& pos, float width, float height, int row, int frame, RenderFlip flip = RenderFlip::FLIP_NONE);
+    void draw (std::string id, const geom::Point2D& pos);
+    void draw (size_t id, const geom::Point2D& pos);
+    void DrawRotated (size_t id, const geom::Point2D& pos, float width, float height, const geom::Point2D& origin, float rot);
+    void DrawTile (size_t id, const geom::Point2D& pos, float width, float height, map::TilePos tilePos);
+    void DrawFrame (std::string id, const geom::Point2D& pos, float width, float height, int row, int frame, graphics::RenderFlip flip = graphics::RenderFlip::FLIP_NONE);
 
 public:
     TextureManager (const TextureManager&) = delete;

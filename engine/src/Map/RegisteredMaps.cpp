@@ -4,15 +4,15 @@
 #include <vector>
 #include <utility>
 
-namespace maps
+namespace map
 {
 
-std::string GetPath (Maps map)
+std::string GetPath (RegisteredMap map)
 {
     std::string path ("assets/lvl_");
     switch (map)
     {
-    case Maps::level_1:
+    case RegisteredMap::level_1:
         path+="1_tmp";
         break;
     default:
