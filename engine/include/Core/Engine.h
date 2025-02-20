@@ -16,7 +16,7 @@ public:
 
     bool IsRunning() { return m_bIsRunning; }
 
-    Engine (const Engine&) = delete;
+    Engine (const Engine&)           = delete;
     Engine operator= (const Engine&) = delete;
 
 private:
@@ -24,6 +24,6 @@ private:
         m_bIsRunning (false)
     {}
 
-    bool m_bIsRunning;
-    std::optional <world::GameWorld> m_world;
+    bool                            m_bIsRunning;
+    std::optional<world::GameWorld> m_world;
 };

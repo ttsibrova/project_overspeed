@@ -1,18 +1,15 @@
 #pragma once
 
-namespace geom
-{
+namespace geom {
 class Vector2D;
 }
-namespace input
-{
+namespace input {
 enum class Device;
 }
 
-namespace input
-{
+namespace input {
+
 geom::Vector2D getAxisVec();
-Device getActiveDevice();
-}
+Device         getActiveDevice();
 
-
+} // namespace input

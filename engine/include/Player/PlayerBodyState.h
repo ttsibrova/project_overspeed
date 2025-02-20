@@ -3,22 +3,22 @@
 
 namespace player {
 
-enum class CoreState: uint8_t
+enum class CoreState : uint8_t
 {
     FULL,
     EMPTY
 };
 
-enum class PointerState: uint8_t
+enum class PointerState : uint8_t
 {
     SHARP,
     SHIELD
 };
 
-struct BodyState {
-    CoreState core;
+struct BodyState
+{
+    CoreState    core;
     PointerState pointer;
 };
 
-}
-
+} // namespace player

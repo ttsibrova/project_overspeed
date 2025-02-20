@@ -8,22 +8,21 @@ namespace input {
 geom::Vector2D getAxisVec()
 {
     geom::Vector2D res;
-    auto device = getActiveDevice();
-    switch (device)
-    {
+    auto           device = getActiveDevice();
+    switch (device) {
     case Device::NONE:
         break;
     case Device::KEYBOARD:
     {
-        //if (IsKeyDown (KEY_W) || IsKeyDown (KEY_UP)) {
-        //    res.Y() += 1;
-        //}
+        // if (IsKeyDown (KEY_W) || IsKeyDown (KEY_UP)) {
+        //     res.Y() += 1;
+        // }
         if (IsKeyDown (KEY_A) || IsKeyDown (KEY_LEFT)) {
             res.X() += -1;
         }
-        //if (IsKeyDown (KEY_S) || IsKeyDown (KEY_DOWN)) {
-        //    res.Y() += -1;
-        //}
+        // if (IsKeyDown (KEY_S) || IsKeyDown (KEY_DOWN)) {
+        //     res.Y() += -1;
+        // }
         if (IsKeyDown (KEY_D) || IsKeyDown (KEY_RIGHT)) {
             res.X() += 1;
         }
@@ -31,15 +30,15 @@ geom::Vector2D getAxisVec()
     }
     case Device::GAMEPAD:
     {
-        //if (IsGamepadButtonDown (0, GAMEPAD_BUTTON_LEFT_FACE_UP)) {
-        //    res.Y() +=1;
-        //}
+        // if (IsGamepadButtonDown (0, GAMEPAD_BUTTON_LEFT_FACE_UP)) {
+        //     res.Y() +=1;
+        // }
         if (IsGamepadButtonDown (0, GAMEPAD_BUTTON_LEFT_FACE_RIGHT)) {
             res.X() += 1;
         }
-        //if (IsGamepadButtonDown (0, GAMEPAD_BUTTON_LEFT_FACE_DOWN)) {
-        //    res.Y() += -1;
-        //}
+        // if (IsGamepadButtonDown (0, GAMEPAD_BUTTON_LEFT_FACE_DOWN)) {
+        //     res.Y() += -1;
+        // }
         if (IsGamepadButtonDown (0, GAMEPAD_BUTTON_LEFT_FACE_LEFT)) {
             res.X() += -1;
         }

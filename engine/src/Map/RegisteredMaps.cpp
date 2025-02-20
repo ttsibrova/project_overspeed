@@ -1,19 +1,17 @@
 #include <Map/RegisteredMaps.h>
 #include <Tools/CompileTimeFunctions.h>
 #include <cassert>
-#include <vector>
 #include <utility>
+#include <vector>
 
-namespace map
-{
+namespace map {
 
 std::string GetPath (RegisteredMap map)
 {
     std::string path ("assets/lvl_");
-    switch (map)
-    {
+    switch (map) {
     case RegisteredMap::level_1:
-        path+="1_tmp";
+        path += "1_tmp";
         break;
     default:
         assert (false);
@@ -22,5 +20,4 @@ std::string GetPath (RegisteredMap map)
     return path + ".tmx";
 }
 
-}
-
+} // namespace map

@@ -1,13 +1,13 @@
 #pragma once
 
-namespace Debug
-{
+namespace Debug {
+
 class GlobalDebugger
 {
 public:
     static GlobalDebugger& GetInstance();
 
-    GlobalDebugger (const GlobalDebugger&) = delete;
+    GlobalDebugger (const GlobalDebugger&)           = delete;
     GlobalDebugger operator= (const GlobalDebugger&) = delete;
 
 public:
@@ -15,6 +15,7 @@ public:
     void draw();
 
 private:
-    GlobalDebugger(){}
+    GlobalDebugger() {}
 };
-}
+
+} // namespace Debug

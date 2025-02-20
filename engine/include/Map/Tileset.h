@@ -18,7 +18,8 @@ public:
 
     inline int GetStartID() { return m_startID; }
 
-    inline bool IsTileBelongsToSet (const int tileID) const {
+    inline bool IsTileBelongsToSet (const int tileID) const
+    {
         return tileID >= m_startID && tileID < (m_startID + m_numElems);
     }
 
@@ -27,28 +28,26 @@ private:
     int m_numElems;
 };
 
-class CollectionTileset : public Tileset
+class CollectionTileset: public Tileset
 {
 public:
-    CollectionTileset()
-    {}
+    CollectionTileset() {}
 
-    CollectionTileset (std::vector <size_t>&& imagePathIDs, int startID, int numElems):
+    CollectionTileset (std::vector<size_t>&& imagePathIDs, int startID, int numElems):
         Tileset (startID, numElems),
         m_imagePathIDs (std::move (imagePathIDs))
     {}
 
-    inline size_t GetImageID (int tileID) {
-        return m_imagePathIDs[tileID - GetStartID()];
-    }
+    inline size_t GetImageID (int tileID) { return m_imagePathIDs[tileID - GetStartID()]; }
 
 private:
-    std::vector <size_t> m_imagePathIDs;
+    std::vector<size_t> m_imagePathIDs;
 };
 
-struct TilePos {
-    int col{0};
-    int row{0};
+struct TilePos
+{
+    int col { 0 };
+    int row { 0 };
 };
 
 class EmbeddedTileset: public Tileset
@@ -69,15 +68,20 @@ public:
         m_imagePathID (imagePathID)
     {}
 
-    inline TilePos GetTilePosition (const int TileID) { return {(TileID - 1) % m_numColumns, (TileID - 1) / m_numColumns}; }
-    inline std::pair <float, float> GetHeightWidth() { return {m_tileHeight, m_tileWidth}; }
+    inline TilePos GetTilePosition (const int TileID)
+    {
+        return { (TileID - 1) % m_numColumns, (TileID - 1) / m_numColumns };
+    }
+
+    inline std::pair<float, float> GetHeightWidth() { return { m_tileHeight, m_tileWidth }; }
+
     inline size_t GetImageID() { return m_imagePathID; }
 
 private:
-    int m_numColumns;
-    float m_tileHeight;
-    float m_tileWidth;
+    int    m_numColumns;
+    float  m_tileHeight;
+    float  m_tileWidth;
     size_t m_imagePathID;
 };
 
-}
+} // namespace map

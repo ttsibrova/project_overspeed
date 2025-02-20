@@ -24,7 +24,8 @@ public:
 
     inline void Translate (const geom::Vector2D& trsl)
     {
-        m_x += trsl.X(); m_y += trsl.Y();
+        m_x += trsl.X();
+        m_y += trsl.Y();
     }
 
     [[nodiscard]] inline Point2D Translated (const geom::Vector2D& trsl) const
@@ -37,13 +38,11 @@ public:
         return std::abs (m_x - other.m_x) < 1.e-7f && std::abs (m_y - other.m_y) < 1.e-7f;
     }
 
-    operator Vector2() const {
-        return {m_x, m_y};
-    }
+    operator Vector2() const { return { m_x, m_y }; }
 
 private:
     float m_x;
     float m_y;
 };
 
-}
+} // namespace geom

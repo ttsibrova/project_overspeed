@@ -1,10 +1,10 @@
 #pragma once
-#include <cstdint>
 #include <Geom/Vector2D.h>
+#include <cstdint>
 
 namespace player {
 
-enum class Action: uint8_t
+enum class Action : uint8_t
 {
     IDLE,
     MOVE,
@@ -12,7 +12,7 @@ enum class Action: uint8_t
     JUMP,
 };
 
-enum class MovementMode: uint8_t
+enum class MovementMode : uint8_t
 {
     NONE,
     RUNNING,
@@ -20,12 +20,12 @@ enum class MovementMode: uint8_t
     AIR_MOVEMENT
 };
 
-struct PhysicalState {
-    Action nextAction;
-    MovementMode currentMode;
-    float currentSimTime;
-    geom::Vector2D m_velocity;
+struct PhysicalState
+{
+    Action         nextAction;
+    MovementMode   currentMode;
+    float          currentSimTime;
+    geom::Vector2D velocity;
 };
 
-}
-
+} // namespace player

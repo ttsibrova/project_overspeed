@@ -6,15 +6,15 @@ namespace map {
 class Layer
 {
 public:
-    Layer (std::vector <int>&& tileIDs):
+    Layer (std::vector<int>&& tileIDs):
         m_tileIDs (std::move (tileIDs))
     {}
 
-    inline const std::vector <int>& getTiles() const { return m_tileIDs; }
-    inline size_t getTilesNum() const { return m_tileIDs.size(); }
+    inline const std::vector<int>& getTiles() const { return m_tileIDs; }
+    inline size_t                  getTilesNum() const { return m_tileIDs.size(); }
 
 private:
-    const std::vector <int> m_tileIDs;
+    const std::vector<int> m_tileIDs;
 };
 
-}
+} // namespace map

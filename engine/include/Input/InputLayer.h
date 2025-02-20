@@ -1,12 +1,12 @@
 #pragma once
-#include <raylib/raylib.h>
 #include <functional>
+#include <raylib/raylib.h>
 #include <vector>
 
+namespace input {
 
-namespace input
+enum class ActionType
 {
-enum class ActionType {
     HOLD,
     PRESS
 };
@@ -14,22 +14,23 @@ enum class ActionType {
 template <typename Obj>
 struct Action
 {
-    GamepadButton             mappedGButton = GAMEPAD_BUTTON_UNKNOWN;
-    KeyboardKey               mappedKButton = KEY_NULL;
-    ActionType                type;
-    std::function<void(Obj&)> command;
+    GamepadButton              mappedGButton = GAMEPAD_BUTTON_UNKNOWN;
+    KeyboardKey                mappedKButton = KEY_NULL;
+    ActionType                 type;
+    std::function<void (Obj&)> command;
 };
 
 template <typename Obj>
-struct Layer {
+struct Layer
+{
 public:
-    void addAction (GamepadButton button, KeyboardKey key, ActionType type, std::function <void(Obj&)> command)
+    void addAction (GamepadButton button, KeyboardKey key, ActionType type, std::function<void (Obj&)> command)
     {
         actions.emplace_back (button, key, type, std::move (command));
     }
 
 public:
-    std::vector <Action<Obj>> actions;
+    std::vector<Action<Obj>> actions;
 };
 
-}
+} // namespace input

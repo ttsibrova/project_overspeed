@@ -6,12 +6,11 @@
 #include <Physics/Collider.h>
 #include <cassert>
 
-
 namespace Debug {
+
 void Log (const std::pair<geom::Point2D, geom::Point2D>& line, Designation des)
 {
-    switch (des)
-    {
+    switch (des) {
     case Debug::Collision:
         Debug::CollisionDebugger::GetInstance().AddCollisionLine (line);
         break;
@@ -33,8 +32,7 @@ void Log (const physics::movement::UpdateState& pus, const geom::Point2D& player
 
 void Log (const geom::Point2D& pnt, Designation des)
 {
-    switch (des)
-    {
+    switch (des) {
     case Debug::Collision:
         Debug::CollisionDebugger::GetInstance().AddPoint (pnt);
         break;
@@ -44,5 +42,4 @@ void Log (const geom::Point2D& pnt, Designation des)
     }
 }
 
-
-}
+} // namespace Debug

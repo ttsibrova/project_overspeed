@@ -6,7 +6,6 @@ namespace physics {
 class Collider
 {
 public:
-
     Collider() = delete;
     Collider (geom::Point2D min, geom::Point2D max):
         m_min (min),
@@ -25,8 +24,10 @@ public:
 
     [[nodiscard]] inline float Width() const { return m_max.X() - m_min.X(); }
     [[nodiscard]] inline float Height() const { return m_max.Y() - m_min.Y(); }
+
     [[nodiscard]] inline const geom::Point2D& Min() const { return m_min; }
     [[nodiscard]] inline const geom::Point2D& Max() const { return m_max; }
+
     [[nodiscard]] inline geom::Point2D RightCorner() const { return geom::Point2D (m_max.X(), m_min.Y()); }
     [[nodiscard]] inline geom::Point2D LeftCorner() const { return geom::Point2D (m_min.X(), m_max.Y()); }
 
@@ -49,4 +50,4 @@ private:
     geom::Point2D m_max;
 };
 
-}
+} // namespace physics

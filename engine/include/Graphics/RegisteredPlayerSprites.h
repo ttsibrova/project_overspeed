@@ -3,7 +3,7 @@
 
 namespace graphics {
 
-enum class PlayerSprite: uint8_t
+enum class PlayerSprite : uint8_t
 {
     BodyPointer,
     BodyCoreEmpty,
@@ -12,15 +12,16 @@ enum class PlayerSprite: uint8_t
     BodyPointerShield,
 };
 
-struct SpriteInfo {
-    float width;
-    float height;
+struct SpriteInfo
+{
+    float  width;
+    float  height;
     size_t id;
 };
 
-size_t getTextureId (PlayerSprite sprite);
+size_t     getTextureId (PlayerSprite sprite);
 SpriteInfo getSpriteInfo (PlayerSprite sprite);
 
 void registerPlayerSprites();
 
-}
+} // namespace graphics

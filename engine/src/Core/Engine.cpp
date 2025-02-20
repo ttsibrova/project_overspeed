@@ -3,11 +3,6 @@
 #include <Timer/Timer.h>
 #include <raylib/raylib.h>
 
-#include <World/Level.h>
-
-#include <iostream>
-
-
 Engine& Engine::GetInstance()
 {
     static Engine m_Instance;
@@ -56,15 +51,13 @@ void Engine::update()
 void Engine::Render()
 {
     BeginDrawing();
-    ClearBackground (Color {61,119,109});
+    ClearBackground (Color { 61, 119, 109 });
     if (m_world.has_value()) {
         m_world.value().draw();
     }
 
     EndDrawing();
-
 }
 
 void Engine::HandleEvents()
-{
-}
+{}

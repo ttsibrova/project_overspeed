@@ -2,15 +2,14 @@
 #include <Geom/Point2D.h>
 #include <Physics/PhysicsUpdateState.h>
 
-namespace Debug
-{
+namespace Debug {
 
 class PlayerMovementDebugger
 {
 public:
     static PlayerMovementDebugger& GetInstance();
 
-    PlayerMovementDebugger (const PlayerMovementDebugger&) = delete;
+    PlayerMovementDebugger (const PlayerMovementDebugger&)           = delete;
     PlayerMovementDebugger operator= (const PlayerMovementDebugger&) = delete;
 
 public:
@@ -21,10 +20,11 @@ private:
     PlayerMovementDebugger() {}
 
 private:
-    player::MovementMode m_movementMode {player::MovementMode::NONE};
-    float m_simulationTime {0.f};
-    geom::Point2D m_playerPos;
-    geom::Vector2D m_playerVelocity;
-    geom::Vector2D m_trslVec;
+    player::MovementMode m_movementMode { player::MovementMode::NONE };
+    float                m_simulationTime { 0.f };
+    geom::Point2D        m_playerPos;
+    geom::Vector2D       m_playerVelocity;
+    geom::Vector2D       m_trslVec;
 };
-}
+
+} // namespace Debug

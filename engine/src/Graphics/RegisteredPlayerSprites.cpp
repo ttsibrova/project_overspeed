@@ -2,16 +2,13 @@
 
 #include <Graphics/TextureManager.h>
 
-
 #include <cassert>
 
-namespace graphics
-{
+namespace graphics {
 
 size_t getTextureId (PlayerSprite sprite)
 {
-    switch (sprite)
-    {
+    switch (sprite) {
     case PlayerSprite::BodyPointer:
         return 1001;
     case PlayerSprite::BodyCoreEmpty:
@@ -31,22 +28,21 @@ size_t getTextureId (PlayerSprite sprite)
 
 SpriteInfo getSpriteInfo (PlayerSprite sprite)
 {
-    switch (sprite)
-    {
+    switch (sprite) {
     case PlayerSprite::BodyPointer:
-        return SpriteInfo {.width = 45.f, .height = 43.f, .id = getTextureId (sprite)};
+        return SpriteInfo { .width = 45.f, .height = 43.f, .id = getTextureId (sprite) };
     case PlayerSprite::BodyCoreEmpty:
     case PlayerSprite::BodyCoreFull:
-        return SpriteInfo {.width = 43.f, .height = 42.f, .id = getTextureId (sprite)};
+        return SpriteInfo { .width = 43.f, .height = 42.f, .id = getTextureId (sprite) };
     case PlayerSprite::BodyThruster:
-        return SpriteInfo {.width = 12.f, .height = 17.f, .id = getTextureId (sprite)};
+        return SpriteInfo { .width = 12.f, .height = 17.f, .id = getTextureId (sprite) };
     case PlayerSprite::BodyPointerShield:
-        return SpriteInfo {.width = 47.f, .height = 45.f, .id = getTextureId (sprite)};
+        return SpriteInfo { .width = 47.f, .height = 45.f, .id = getTextureId (sprite) };
     default:
         break;
     }
     assert (false);
-    return SpriteInfo{};
+    return SpriteInfo {};
 }
 
 void registerPlayerSprites()
@@ -57,7 +53,6 @@ void registerPlayerSprites()
     tManager.Load (getTextureId (PlayerSprite::BodyCoreFull), "assets/overspeeder/core_full_glow.png");
     tManager.Load (getTextureId (PlayerSprite::BodyThruster), "assets/overspeeder/thruster_glow.png");
     tManager.Load (getTextureId (PlayerSprite::BodyPointerShield), "assets/overspeeder/shield.png");
-
 }
 
-}
+} // namespace graphics

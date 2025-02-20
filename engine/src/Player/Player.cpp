@@ -1,7 +1,7 @@
 #include <Player/Player.h>
 
 #include <Graphics/TextureManager.h>
-#include <Input/InputGlobalGetters.h> 
+#include <Input/InputGlobalGetters.h>
 #include <raylib/raylib.h>
 
 #include <cassert>
@@ -10,8 +10,6 @@
 
 #include <Debug/DebugLog.h>
 
-
-
 namespace player {
 
 namespace {
@@ -19,21 +17,23 @@ namespace {
 template <class BodyState>
 graphics::PlayerSprite convertToSprite (BodyState state)
 {
-    if constexpr (std::is_same <BodyState, CoreState>()) {
-        switch (state)
-        {
-        case CoreState::EMPTY: return graphics::PlayerSprite::BodyCoreEmpty;
-        case CoreState::FULL: return graphics::PlayerSprite::BodyCoreFull;
+    if constexpr (std::is_same<BodyState, CoreState>()) {
+        switch (state) {
+        case CoreState::EMPTY:
+            return graphics::PlayerSprite::BodyCoreEmpty;
+        case CoreState::FULL:
+            return graphics::PlayerSprite::BodyCoreFull;
         default:
             assert (false);
             return graphics::PlayerSprite::BodyCoreEmpty;
         }
     }
-    if constexpr (std::is_same <BodyState, PointerState>()) {
-        switch (state)
-        {
-        case PointerState::SHARP: return graphics::PlayerSprite::BodyPointer;
-        case PointerState::SHIELD: return graphics::PlayerSprite::BodyPointerShield;
+    if constexpr (std::is_same<BodyState, PointerState>()) {
+        switch (state) {
+        case PointerState::SHARP:
+            return graphics::PlayerSprite::BodyPointer;
+        case PointerState::SHIELD:
+            return graphics::PlayerSprite::BodyPointerShield;
         default:
             assert (false);
             return graphics::PlayerSprite::BodyPointer;
@@ -43,42 +43,41 @@ graphics::PlayerSprite convertToSprite (BodyState state)
 
 } // anonymous namespace
 
-
 Player::Player():
     m_nextAction (Action::IDLE),
     m_currentMovementMode (MovementMode::NONE),
     m_currSimTime (0.f)
-{
-}
+{}
 
 void Player::draw()
 {
-    //m_anim.draw (TransformedPos(), m_flip);
-    //m_procAnim.draw (m_pos, m_velocity);
+    // m_anim.draw (TransformedPos(), m_flip);
+    // m_procAnim.draw (m_pos, velocity);
 
-    const float pointerOffsetFromCore = 30.f;
+    const float pointerOffsetFromCore  = 30.f;
     const float thrusterOffsetFromCore = 22.f;
 
-    auto spriteInfo = getSpriteInfo (convertToSprite (m_currentCoreSprite));
-    float halfWidth = spriteInfo.width / 2.f;
+    auto  spriteInfo = getSpriteInfo (convertToSprite (m_currentCoreSprite));
+    float halfWidth  = spriteInfo.width / 2.f;
     float halfHeight = spriteInfo.height / 2.f;
 
-    geom::Point2D corePos{m_pos.X() - halfWidth, m_pos.Y() - halfHeight};
+    geom::Point2D corePos { m_pos.X() - halfWidth, m_pos.Y() - halfHeight };
 
-    float rotationPointer = 0.f;
-    float rotationThruster = 90.f;
-    geom::Vector2D pointerOffset = m_lastPointerDir;
-    geom::Point2D thrusterPos;
+    float          rotationPointer  = 0.f;
+    float          rotationThruster = 90.f;
+    geom::Vector2D pointerOffset    = m_lastPointerDir;
+    geom::Point2D  thrusterPos;
 
-    if (m_velocity.SquareMagnitude() > geom::precision::quarter_pixel) {
-        pointerOffset = m_velocity.Normalized();
-        float dot = pointerOffset.Dot (geom::getLeftVector());
+    if (velocity.SquareMagnitude() > geom::precision::quarter_pixel) {
+        pointerOffset   = velocity.Normalized();
+        float dot       = pointerOffset.Dot (geom::getLeftVector());
         rotationPointer = std::acos (dot) * 180 / PI;
-        if (-pointerOffset.Y() < 0) { //special case for these calculations: Z component of cross product computation when second vector is -1,0
+        if (-pointerOffset.Y() < 0) { // special case for these calculations: Z component of cross product computation
+                                      // when second vector is -1,0
             rotationPointer = -rotationPointer;
         }
         m_lastPointerDir = pointerOffset;
-        thrusterPos = m_pos.Translated (pointerOffset.Fipped() * thrusterOffsetFromCore);
+        thrusterPos      = m_pos.Translated (pointerOffset.Fipped() * thrusterOffsetFromCore);
         rotationThruster = rotationPointer;
     }
     else {
@@ -87,15 +86,15 @@ void Player::draw()
             m_lastPointerDir = inputVec.Normalized();
         }
 
-        rotationPointer = geom::computeAngleBetweenVectors (geom::getLeftVector(), m_lastPointerDir);
+        rotationPointer     = geom::computeAngleBetweenVectors (geom::getLeftVector(), m_lastPointerDir);
         float positiveAngle = std::abs (rotationPointer);
         if (positiveAngle > 0.5f && positiveAngle < 179.5f) {
             if (m_lastPointerDir.X() > 0) {
-                rotationPointer = 180.f;
+                rotationPointer  = 180.f;
                 m_lastPointerDir = geom::getRightVector();
             }
             else {
-                rotationPointer = 0.f;
+                rotationPointer  = 0.f;
                 m_lastPointerDir = geom::getLeftVector();
             }
         }
@@ -105,8 +104,7 @@ void Player::draw()
     geom::Vector2D playerInputVec = input::getAxisVec();
     if (playerInputVec.SquareMagnitude() > geom::precision::quarter_pixel) {
         auto vectorQuadrant = geom::getInversedQuadrant (geom::getVectorQudrant (playerInputVec));
-        switch (vectorQuadrant)
-        {
+        switch (vectorQuadrant) {
         case geom::Quadrant::I:
         case geom::Quadrant::II:
         case geom::Quadrant::III:
@@ -115,19 +113,19 @@ void Player::draw()
             break;
         case geom::Quadrant::X_ALIGNED:
             rotationThruster = 0;
-            thrusterPos = m_pos.Translated (geom::getRightVector() * thrusterOffsetFromCore);
+            thrusterPos      = m_pos.Translated (geom::getRightVector() * thrusterOffsetFromCore);
             break;
         case geom::Quadrant::Y_ALIGNED:
             rotationThruster = 90.f;
-            thrusterPos = m_pos.Translated (geom::getDownVector() * thrusterOffsetFromCore);
+            thrusterPos      = m_pos.Translated (geom::getDownVector() * thrusterOffsetFromCore);
             break;
         case geom::Quadrant::X_OPPOSITE:
             rotationThruster = 180.f;
-            thrusterPos = m_pos.Translated (geom::getLeftVector() * thrusterOffsetFromCore);
+            thrusterPos      = m_pos.Translated (geom::getLeftVector() * thrusterOffsetFromCore);
             break;
         case geom::Quadrant::Y_OPPOSITE:
             rotationThruster = -90.f;
-            thrusterPos = m_pos.Translated (geom::getUpVector() * thrusterOffsetFromCore);
+            thrusterPos      = m_pos.Translated (geom::getUpVector() * thrusterOffsetFromCore);
             break;
         default:
             break;
@@ -136,46 +134,48 @@ void Player::draw()
 
     auto& textureManager = TextureManager::GetInstance();
     textureManager.draw (spriteInfo.id, corePos);
-    //std::print ("Rotation for pointer is {}\n", rotationPointer);
+    // std::print ("Rotation for pointer is {}\n", rotationPointer);
 
     geom::Point2D pointerPos = m_pos;
     if (m_currentPointerSprite == PointerState::SHARP) {
         pointerPos = m_pos.Translated (pointerOffset * pointerOffsetFromCore);
     }
-    auto pointerSpriteInfo = getSpriteInfo (convertToSprite(m_currentPointerSprite));
+    auto          pointerSpriteInfo = getSpriteInfo (convertToSprite (m_currentPointerSprite));
     geom::Point2D pointerOrigin (pointerSpriteInfo.width / 2.f, pointerSpriteInfo.height / 2.f);
-    textureManager.DrawRotated (getTextureId (convertToSprite(m_currentPointerSprite)), pointerPos, pointerSpriteInfo.width, pointerSpriteInfo.height, pointerOrigin, rotationPointer);
+    textureManager.DrawRotated (getTextureId (convertToSprite (m_currentPointerSprite)), pointerPos,
+                                pointerSpriteInfo.width, pointerSpriteInfo.height, pointerOrigin, rotationPointer);
 
-    auto thrusterSpriteInfo = graphics::getSpriteInfo (graphics::PlayerSprite::BodyThruster);
+    auto          thrusterSpriteInfo = graphics::getSpriteInfo (graphics::PlayerSprite::BodyThruster);
     geom::Point2D thrusterOrigin (thrusterSpriteInfo.width / 2.f, thrusterSpriteInfo.height / 2.f);
-    textureManager.DrawRotated (graphics::getTextureId (graphics::PlayerSprite::BodyThruster), thrusterPos, thrusterSpriteInfo.width, thrusterSpriteInfo.height, thrusterOrigin, rotationThruster);
+    textureManager.DrawRotated (graphics::getTextureId (graphics::PlayerSprite::BodyThruster), thrusterPos,
+                                thrusterSpriteInfo.width, thrusterSpriteInfo.height, thrusterOrigin, rotationThruster);
 }
 
 void Player::update (const physics::movement::UpdateState& newPhysState)
 {
-    //std::print ("player mode: {} \n", std::to_underlying (m_currentMM));
+    // std::print ("player mode: {} \n", std::to_underlying (m_currentMM));
     if (newPhysState.nextMode != m_currentMovementMode) {
         changeMovementMode (newPhysState.nextMode);
     }
 
     m_currentMovementMode = newPhysState.nextMode;
-    m_currSimTime = newPhysState.simTime;
-    m_velocity = newPhysState.velocity;
+    m_currSimTime         = newPhysState.simTime;
+    velocity              = newPhysState.velocity;
     m_pos.Translate (newPhysState.trsl);
 
-    m_pos.X() = std::round (m_pos.X()); //snapping character to the pixel grid
-    m_pos.Y() = std::round (m_pos.Y()); //snapping character to the pixel grid
+    m_pos.X() = std::round (m_pos.X()); // snapping character to the pixel grid
+    m_pos.Y() = std::round (m_pos.Y()); // snapping character to the pixel grid
 
     m_nextAction = Action::IDLE;
 
     Debug::Log (std::move (getCollider()));
     Debug::Log (std::move (getCollider (ColliderType::INTERACTION)), RED);
-    //Debug::Log (updateState, m_pos);
+    // Debug::Log (updateState, m_pos);
 }
 
 void Player::update (const BodyState& newBodyState)
 {
-    m_currentCoreSprite = newBodyState.core;
+    m_currentCoreSprite    = newBodyState.core;
     m_currentPointerSprite = newBodyState.pointer;
 }
 
@@ -193,14 +193,13 @@ physics::Collider Player::getCollider() const
 
 physics::Collider Player::getCollider (ColliderType mode) const
 {
-    //const float coreWidth = 23;
-    //const float coreHeight = 22;
-    const float pointerLength = 26;
+    // const float coreWidth = 23;
+    // const float coreHeight = 22;
+    const float pointerLength       = 26;
     const float groundHoverDistance = 15;
-    const float shieldRadius = 29;
+    const float shieldRadius        = 29;
 
-    switch (mode)
-    {
+    switch (mode) {
     case ColliderType::UNDEFINED:
     {
         assert (false); // should not be there
@@ -236,20 +235,19 @@ physics::Collider Player::getCollider (ColliderType mode) const
 
 void Player::changeMovementMode (MovementMode newMode)
 {
-    switch (newMode)
-    {
+    switch (newMode) {
     case MovementMode::NONE:
     {
-        //m_anim.SetProps ("mage_idle", 0, 8, m_height, m_width, 0.08f);
+        // m_anim.SetProps ("mage_idle", 0, 8, m_height, m_width, 0.08f);
         break;
     }
     case MovementMode::RUNNING:
     {
-        //m_anim.SetProps ("mage_run", 0, 8, m_height, m_width, 0.08f);
+        // m_anim.SetProps ("mage_run", 0, 8, m_height, m_width, 0.08f);
         break;
     }
     case MovementMode::AIR_MOVEMENT:
-        //m_anim.SetProps ("mage_idle", 0, 8, m_height, m_width, 0.08f);
+        // m_anim.SetProps ("mage_idle", 0, 8, m_height, m_width, 0.08f);
         break;
     default:
         break;
@@ -267,4 +265,4 @@ void JumpPlayer (Player& player)
     player.addAction (Action::JUMP);
 }
 
-}
+} // namespace player

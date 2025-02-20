@@ -1,13 +1,13 @@
 #include <World/Level.h>
 
 #include <Graphics/TextureManager.h>
+#include <cassert>
 #include <tinytmx/tinytmxDataChunkTile.hpp>
 #include <tinytmx/tinytmxImage.hpp>
 #include <tinytmx/tinytmxMap.hpp>
 #include <tinytmx/tinytmxTile.hpp>
 #include <tinytmx/tinytmxTileLayer.hpp>
 #include <tinytmx/tinytmxTileset.hpp>
-#include <cassert>
 
 #include <print>
 
@@ -15,7 +15,7 @@ namespace world {
 
 map::CollectionTileset LoadCollectionTileset (const tinytmx::Tileset& tileset)
 {
-    std::vector <size_t> imgHashes;
+    std::vector<size_t> imgHashes;
     for (auto tile : tileset.GetTiles()) {
         auto img = tile->GetImage();
         assert (img->GetSource() != "");
@@ -24,9 +24,7 @@ map::CollectionTileset LoadCollectionTileset (const tinytmx::Tileset& tileset)
         }
     }
 
-    map::CollectionTileset res (std::move (imgHashes),
-                           tileset.GetFirstGid(),
-                           tileset.GetTileCount());
+    map::CollectionTileset res (std::move (imgHashes), tileset.GetFirstGid(), tileset.GetTileCount());
     return res;
 }
 
@@ -37,11 +35,8 @@ map::EmbeddedTileset LoadEmbeddedTileset (const tinytmx::Tileset& tileset)
 
     size_t imgHash = TextureManager::GetInstance().Load (image->GetSource());
 
-    map::EmbeddedTileset res (tileset.GetColumns(),
-                              static_cast <float> (tileset.GetTileHeight()),
-                              static_cast <float> (tileset.GetTileWidth()),
-                              imgHash,
-                              tileset.GetFirstGid(),
+    map::EmbeddedTileset res (tileset.GetColumns(), static_cast<float> (tileset.GetTileHeight()),
+                              static_cast<float> (tileset.GetTileWidth()), imgHash, tileset.GetFirstGid(),
                               tileset.GetTileCount());
     return res;
 }
@@ -70,8 +65,8 @@ Level::Level (const tinytmx::Map& tmxMap)
         else { // delete later
             assert (m_levelHeightInTiles == finiteLayer->GetHeight());
         }
-        std::vector <int> layerIDs;
-        auto widthInTiles = finiteLayer->GetWidth();
+        std::vector<int> layerIDs;
+        auto             widthInTiles = finiteLayer->GetWidth();
         layerIDs.reserve (widthInTiles * m_levelHeightInTiles);
         for (unsigned int i = 0; i < widthInTiles; i++) {
             for (unsigned int j = 0; j < m_levelHeightInTiles; j++) {
@@ -82,8 +77,7 @@ Level::Level (const tinytmx::Map& tmxMap)
     }
 }
 
-
-std::optional <Level> Level::createLevel (map::RegisteredMap map)
+std::optional<Level> Level::createLevel (map::RegisteredMap map)
 {
     tinytmx::Map levelMap;
     levelMap.ParseFile (map::GetPath (map));
@@ -99,19 +93,19 @@ void Level::draw()
     auto [tileHeight, tileWidth] = m_eTileset.GetHeightWidth();
     for (const auto& layer : m_layers) {
         const auto& tileIDs = layer.getTiles();
-        for (int i = 0; i < static_cast <int> (tileIDs.size()); i++) {
-            const float x = static_cast <float> (i / m_levelHeightInTiles);
-            const float y = static_cast <float> (i % m_levelHeightInTiles);
+        for (int i = 0; i < static_cast<int> (tileIDs.size()); i++) {
+            const float x = static_cast<float> (i / m_levelHeightInTiles);
+            const float y = static_cast<float> (i % m_levelHeightInTiles);
             if (m_eTileset.IsTileBelongsToSet (tileIDs[i])) {
                 TextureManager::GetInstance().DrawTile (m_eTileset.GetImageID(),
-                                                        {x * tileWidth, y * tileWidth}, //pixel position
+                                                        { x * tileWidth, y * tileWidth }, // pixel position
                                                         tileWidth, tileHeight,
-                                                        m_eTileset.GetTilePosition (tileIDs[i])); //position on texture
-            } else if (m_cTileset.IsTileBelongsToSet (tileIDs[i])) {
-                TextureManager::GetInstance().draw (m_cTileset.GetImageID (tileIDs[i]), {x * tileWidth, y * tileWidth});
+                                                        m_eTileset.GetTilePosition (tileIDs[i])); // position on texture
+            }
+            else if (m_cTileset.IsTileBelongsToSet (tileIDs[i])) {
+                TextureManager::GetInstance().draw (m_cTileset.GetImageID (tileIDs[i]), { x * tileWidth, y * tileWidth });
             }
         }
-
     }
 }
 
@@ -120,7 +114,7 @@ GroundData Level::getGroundData()
     const auto& groundLayer = m_layers[0];
     auto md = std::mdspan (groundLayer.getTiles().data(), groundLayer.getTilesNum() / m_levelHeightInTiles, m_levelHeightInTiles);
     auto [heiht, width] = m_eTileset.GetHeightWidth();
-    return {md, heiht, width};
+    return { md, heiht, width };
 }
 
-}
+} // namespace world

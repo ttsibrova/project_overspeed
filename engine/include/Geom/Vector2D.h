@@ -1,8 +1,8 @@
 #pragma once
 #include <Geom/Precision.h>
-#include <raylib/raylib.h>
 #include <cassert>
 #include <iostream>
+#include <raylib/raylib.h>
 
 namespace geom {
 
@@ -41,13 +41,12 @@ class Vector2D
 {
 public:
     Vector2D():
-        m_XY {0.f, 0.f}
+        m_XY { 0.f, 0.f }
     {}
 
     Vector2D (float x, float y):
-        m_XY {x, y}
+        m_XY { x, y }
     {}
-
 
     inline float  X() const { return m_XY.x; }
     inline float& X() { return m_XY.x; }
@@ -55,79 +54,56 @@ public:
     inline float& Y() { return m_XY.y; }
 
 public:
-    inline Vector2D operator+ (const Vector2D& rhs) const {
-        return Vector2D (X() + rhs.X(), Y() + rhs.Y());
-    }
+    inline Vector2D operator+ (const Vector2D& rhs) const { return Vector2D (X() + rhs.X(), Y() + rhs.Y()); }
 
-    inline void operator+= (const Vector2D& rhs) {
+    inline void operator+= (const Vector2D& rhs)
+    {
         m_XY.x += rhs.X();
         m_XY.y += rhs.Y();
     }
 
-    inline Vector2D operator- (const Vector2D& rhs) const {
-        return  Vector2D (X() - rhs.X(), Y() - rhs.Y());
-    }
+    inline Vector2D operator- (const Vector2D& rhs) const { return Vector2D (X() - rhs.X(), Y() - rhs.Y()); }
 
-    inline Vector2D operator-= (const Vector2D& rhs) {
+    inline Vector2D operator-= (const Vector2D& rhs)
+    {
         m_XY.x -= rhs.X();
         m_XY.y -= rhs.Y();
     }
 
-    inline Vector2D operator* (const float scalar) const {
-        return Vector2D (X() * scalar, Y() * scalar);
-    }
+    inline Vector2D operator* (const float scalar) const { return Vector2D (X() * scalar, Y() * scalar); }
 
-    [[nodiscard]] inline float Dot (const Vector2D& other) const {
-        return X() * other.X() + Y() * other.Y();
-    }
+    [[nodiscard]] inline float Dot (const Vector2D& other) const { return X() * other.X() + Y() * other.Y(); }
 
-    [[nodiscard]] inline float SquareMagnitude() const {
-        return X() * X() + Y() * Y();
-    }
+    [[nodiscard]] inline float SquareMagnitude() const { return X() * X() + Y() * Y(); }
 
-    [[nodiscard]] inline float Magnitude() const {
-        return std::sqrt (SquareMagnitude());
-    }
+    [[nodiscard]] inline float Magnitude() const { return std::sqrt (SquareMagnitude()); }
 
-    inline void Normalize() {
+    inline void Normalize()
+    {
         m_XY.x = m_XY.x / Magnitude();
         m_XY.y = m_XY.y / Magnitude();
     }
-    [[nodiscard]] inline Vector2D Normalized() const {
-        return Vector2D (m_XY.x / Magnitude(), m_XY.y / Magnitude());
-    }
+    [[nodiscard]] inline Vector2D Normalized() const { return Vector2D (m_XY.x / Magnitude(), m_XY.y / Magnitude()); }
 
-    inline void Translate (const Vector2D& trsl) {
-        *(this) += trsl;
-    }
-    [[nodiscard]] inline Vector2D Translated (const Vector2D& trsl) const {
-        return *(this) + trsl;
-    }
+    inline void                   Translate (const Vector2D& trsl) { *(this) += trsl; }
+    [[nodiscard]] inline Vector2D Translated (const Vector2D& trsl) const { return *(this) + trsl; }
 
-    void Transform (const Trsf2D& trsf);
+    void                   Transform (const Trsf2D& trsf);
     [[nodiscard]] Vector2D Transformed (const Trsf2D& trsf) const;
 
-    inline void Flip() {
-        m_XY.x = -m_XY.x;
-        m_XY.y = -m_XY.y;
-    }
-
-    [[nodiscard]] inline Vector2D Fipped() const
+    inline void Flip()
     {
-        return Vector2D (-m_XY.x, -m_XY.y);
-    }
-
-    inline void FlipX() {
         m_XY.x = -m_XY.x;
-    }
-
-    inline void FlipY() {
         m_XY.y = -m_XY.y;
     }
 
-    operator Vector2() const {
-        return m_XY;
-    }
+    [[nodiscard]] inline Vector2D Fipped() const { return Vector2D (-m_XY.x, -m_XY.y); }
+
+    inline void FlipX() { m_XY.x = -m_XY.x; }
+
+    inline void FlipY() { m_XY.y = -m_XY.y; }
+
+    operator Vector2() const { return m_XY; }
 
 private:
     Vector2 m_XY;
@@ -154,8 +130,7 @@ inline Vector2D getLeftVector()
 inline Vector2D stripByAxis (const Vector2D& vec, Axis axis)
 {
     Vector2D res;
-    switch (axis)
-    {
+    switch (axis) {
     case Axis::X:
         res.X() = vec.X();
         break;
@@ -175,12 +150,13 @@ inline bool isOpposite (const Vector2D& v1, const Vector2D& v2, float precision 
     }
     if (std::abs (v1.Y()) < precision && std::abs (v2.Y()) < precision) {
         return (v1.X() / v2.X()) < 0.f;
-    } else if (std::abs (v1.X()) < precision && std::abs (v2.X()) < precision) {
+    }
+    else if (std::abs (v1.X()) < precision && std::abs (v2.X()) < precision) {
         return (v1.Y() / v2.Y()) < 0.f;
     }
 
-    if (std::abs (v1.Y()) < precision || std::abs (v2.Y()) < precision ||
-        std::abs (v1.X()) < precision || std::abs (v2.X()) < precision) {
+    if (std::abs (v1.Y()) < precision || std::abs (v2.Y()) < precision || std::abs (v1.X()) < precision ||
+        std::abs (v2.X()) < precision) {
         return false;
     }
 
@@ -190,19 +166,28 @@ inline bool isOpposite (const Vector2D& v1, const Vector2D& v2, float precision 
     return std::abs (kx - ky) < precision && kx < 0.f;
 }
 
-inline void Log (const Vector2D& vec, std::string prefix = "") {
+inline void Log (const Vector2D& vec, std::string prefix = "")
+{
     std::cout << prefix << "(X Y) = (" << vec.X() << " " << vec.Y() << ")" << std::endl;
 }
 
 inline Quadrant getVectorQudrant (const Vector2D& vec)
 {
     if (std::abs (vec.Y()) < precision::float_tol) {
-        if (vec.X() > 0.f) return Quadrant::X_ALIGNED;
-        else return Quadrant::X_OPPOSITE;
+        if (vec.X() > 0.f) {
+            return Quadrant::X_ALIGNED;
+        }
+        else {
+            return Quadrant::X_OPPOSITE;
+        }
     }
     if (std::abs (vec.X()) < precision::float_tol) {
-        if (vec.Y() > 0.f) return Quadrant::Y_ALIGNED;
-        else return Quadrant::Y_OPPOSITE;
+        if (vec.Y() > 0.f) {
+            return Quadrant::Y_ALIGNED;
+        }
+        else {
+            return Quadrant::Y_OPPOSITE;
+        }
     }
 
     if (vec.X() > 0 && vec.Y() > 0) {
@@ -222,8 +207,7 @@ inline Quadrant getVectorQudrant (const Vector2D& vec)
 
 inline Quadrant getInversedQuadrant (Quadrant quadrant)
 {
-    switch (quadrant)
-    {
+    switch (quadrant) {
     case Quadrant::I:
         return Quadrant::III;
     case Quadrant::II:
@@ -250,7 +234,7 @@ inline float computeAngleBetweenVectors (Vector2D v1, Vector2D v2) // in degree
     assert (v2.SquareMagnitude() > precision::quarter_pixel);
     v1.Normalize();
     v2.Normalize();
-    float dot = v1.Dot (v2);
+    float dot   = v1.Dot (v2);
     float angle = std::acos (dot) * 180 / PI;
     if (v1.X() * v2.Y() - v1.Y() * v2.X() < 0) { // Z-component of cross product
         angle = -angle;
@@ -258,5 +242,4 @@ inline float computeAngleBetweenVectors (Vector2D v1, Vector2D v2) // in degree
     return angle;
 }
 
-}
-
+} // namespace geom
