@@ -5,7 +5,7 @@
 
 namespace physics::movement {
 
-UpdateState computeUpdatePlayerMovement (float dt, const player::Player& player, const world::GroundData& ground);
+UpdateState computeUpdatedMovementState (float dt, const player::Player& player, const world::GroundData& ground);
 
 UpdateState simulatePhysRunning (const float dt, float simulationTime, const geom::Vector2D& playerVelocity);
 UpdateState simulatePhysAirMovement (const float dt, float simulationTime, const geom::Vector2D& playerVelocity);

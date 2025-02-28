@@ -10,8 +10,11 @@
 #include <tinytmx/tinytmxTileset.hpp>
 
 #include <print>
+#include <unordered_set>
+#include <ranges>
 
 namespace world {
+namespace {
 
 map::CollectionTileset LoadCollectionTileset (const tinytmx::Tileset& tileset)
 {
@@ -35,11 +38,132 @@ map::EmbeddedTileset LoadEmbeddedTileset (const tinytmx::Tileset& tileset)
 
     size_t imgHash = TextureManager::GetInstance().Load (image->GetSource());
 
-    map::EmbeddedTileset res (tileset.GetColumns(), static_cast<float> (tileset.GetTileHeight()),
-                              static_cast<float> (tileset.GetTileWidth()), imgHash, tileset.GetFirstGid(),
+    map::EmbeddedTileset res (tileset.GetColumns(),
+                              static_cast<float> (tileset.GetTileHeight()),
+                              static_cast<float> (tileset.GetTileWidth()),
+                              imgHash,
+                              tileset.GetFirstGid(),
                               tileset.GetTileCount());
     return res;
 }
+
+enum class AdjacencyDirection : uint8_t
+{
+    UNDEFINED,
+    RIGHT,
+    DOWN
+};
+
+std::optional<int> findNextTileInDirection (const std::vector<int>& tiles,
+                                               const unsigned int layerHeightInTiles,
+                                               size_t lastIndex,
+                                               AdjacencyDirection dir)
+{
+    int x = static_cast<int> (lastIndex / layerHeightInTiles);
+    int y = static_cast<int> (lastIndex % layerHeightInTiles);
+
+    const int x_max = static_cast <int> (tiles.size() / layerHeightInTiles) - 1;
+    const int y_max = static_cast <int> (layerHeightInTiles) - 1;
+
+    if (dir == AdjacencyDirection::RIGHT) {
+        x += 1;
+        if (x > x_max) {
+            return {};
+        }
+        return x * layerHeightInTiles + y;
+    }
+
+    if (dir == AdjacencyDirection::DOWN) {
+        y += 1;
+        if (y > y_max) {
+            return {};
+        }
+        return x * layerHeightInTiles + y;
+    }
+    return {};
+}
+
+std::vector<int> findAdjacentTiles (const std::vector<int>& tiles, const unsigned int layerHeightInTiles,
+                                    size_t lastIndex, AdjacencyDirection dir, std::unordered_set<size_t>& cachedIndices)
+{
+    if (dir == AdjacencyDirection::UNDEFINED) {
+        auto tryValueRight = findNextTileInDirection (tiles, layerHeightInTiles, lastIndex, AdjacencyDirection::RIGHT);
+        if (tryValueRight.has_value() &&
+            map::recognizeTileType (tiles[tryValueRight.value()]) == map::recognizeTileType (tiles[lastIndex])) {
+            cachedIndices.insert(tryValueRight.value());
+            auto otherTiles = findAdjacentTiles (tiles, layerHeightInTiles, tryValueRight.value(),
+                                                 AdjacencyDirection::RIGHT, cachedIndices);
+            otherTiles.push_back (tryValueRight.value());
+            return otherTiles;
+        }
+        auto tryValueDown = findNextTileInDirection (tiles, layerHeightInTiles, lastIndex, AdjacencyDirection::DOWN);
+        if (tryValueDown.has_value() &&
+            map::recognizeTileType (tiles[tryValueDown.value()]) == map::recognizeTileType (tiles[lastIndex])) {
+            cachedIndices.insert (tryValueDown.value());
+            auto otherTiles = findAdjacentTiles (tiles, layerHeightInTiles, tryValueDown.value(),
+                                                 AdjacencyDirection::DOWN, cachedIndices);
+            otherTiles.push_back (tryValueDown.value());
+            return otherTiles;
+        }
+    }
+    else {
+        auto nextTileIndex = findNextTileInDirection(tiles, layerHeightInTiles, lastIndex, dir);
+        if (nextTileIndex.has_value()) {
+            const auto nextTileIndex_v = nextTileIndex.value();
+            const auto nextTileType    = map::recognizeTileType (tiles[nextTileIndex_v]);
+            if (nextTileType == map::InteractableTileType::INCOMPATIBLE) {
+                cachedIndices.insert (nextTileIndex_v);
+                return {};
+            }
+            if (nextTileType != map::recognizeTileType (tiles[lastIndex])) {
+                return {};
+            }
+            else {
+                cachedIndices.insert(nextTileIndex_v);
+                auto otherTiles = findAdjacentTiles (tiles, layerHeightInTiles, nextTileIndex_v, dir, cachedIndices);
+                otherTiles.push_back (nextTileIndex_v);
+                return otherTiles;
+            }
+        }
+        else {
+            return {};
+        }
+    }
+    return {};
+}
+
+std::vector<map::InteractableTile> recognizeInteractableTiles (const map::Layer& groundLayer, const unsigned int layerHeightInTiles)
+{
+    std::unordered_set<size_t> cachedIndices;
+    std::vector<map::InteractableTile> result;
+    for (const auto& [i, id] : groundLayer.getTiles() | std::ranges::views::enumerate) {
+        if (cachedIndices.contains (i)) {
+            continue;
+        }
+        const auto tileType = map::recognizeTileType (id);
+        if (tileType == map::InteractableTileType::INCOMPATIBLE) {
+            cachedIndices.insert (i);
+            continue;
+        }
+        else {
+            const auto adjacentTilesIndices = findAdjacentTiles(groundLayer.getTiles(), layerHeightInTiles, i, AdjacencyDirection::UNDEFINED, cachedIndices);
+            if (!adjacentTilesIndices.empty()) {
+                int x_start = static_cast<int> (i / layerHeightInTiles);
+                int y_start = static_cast<int> (i % layerHeightInTiles);
+
+                int x_end = static_cast<int> (adjacentTilesIndices.front() / layerHeightInTiles);
+                int y_end = static_cast<int> (adjacentTilesIndices.front() % layerHeightInTiles);
+
+                map::InteractableTile tile { .type = tileType, .start = { x_start, y_start }, .end = { x_end, y_end } };
+                result.push_back (std::move (tile));
+            }
+        }
+
+    }
+    return result;
+}
+
+} // namespace
 
 Level::Level (const tinytmx::Map& tmxMap)
 {
@@ -75,6 +199,8 @@ Level::Level (const tinytmx::Map& tmxMap)
         }
         m_layers.emplace_back (std::move (layerIDs));
     }
+
+    m_interactableTiles = recognizeInteractableTiles (m_layers[0], m_levelHeightInTiles);
 }
 
 std::optional<Level> Level::createLevel (map::RegisteredMap map)
@@ -115,6 +241,16 @@ GroundData Level::getGroundData()
     auto md = std::mdspan (groundLayer.getTiles().data(), groundLayer.getTilesNum() / m_levelHeightInTiles, m_levelHeightInTiles);
     auto [heiht, width] = m_eTileset.GetHeightWidth();
     return { md, heiht, width };
+}
+
+const std::vector<map::InteractableTile> Level::getInteractableTiles()
+{
+    return m_interactableTiles;
+}
+
+size_t GroundData::flattenTilePos (map::TilePos& tilePos)
+{
+    return tilePos.col * tiles.extent (1) + tilePos.row; // verify
 }
 
 } // namespace world

@@ -55,6 +55,7 @@ void Player::draw()
     // m_procAnim.draw (m_pos, velocity);
 
     const float pointerOffsetFromCore  = 30.f;
+    const float shieldOffsetFromCore  = 22.f;
     const float thrusterOffsetFromCore = 22.f;
 
     auto  spriteInfo = getSpriteInfo (convertToSprite (m_currentCoreSprite));
@@ -136,9 +137,9 @@ void Player::draw()
     textureManager.draw (spriteInfo.id, corePos);
     // std::print ("Rotation for pointer is {}\n", rotationPointer);
 
-    geom::Point2D pointerPos = m_pos;
-    if (m_currentPointerSprite == PointerState::SHARP) {
-        pointerPos = m_pos.Translated (pointerOffset * pointerOffsetFromCore);
+    geom::Point2D pointerPos = m_pos.Translated (pointerOffset * pointerOffsetFromCore);
+    if (m_currentPointerSprite == PointerState::SHIELD) {
+        pointerPos = m_pos.Translated (pointerOffset * shieldOffsetFromCore);
     }
     auto          pointerSpriteInfo = getSpriteInfo (convertToSprite (m_currentPointerSprite));
     geom::Point2D pointerOrigin (pointerSpriteInfo.width / 2.f, pointerSpriteInfo.height / 2.f);
@@ -197,7 +198,7 @@ physics::Collider Player::getCollider (ColliderType mode) const
     // const float coreHeight = 22;
     const float pointerLength       = 26;
     const float groundHoverDistance = 15;
-    const float shieldRadius        = 29;
+    const float shieldRadius        = 32;
 
     switch (mode) {
     case ColliderType::UNDEFINED:

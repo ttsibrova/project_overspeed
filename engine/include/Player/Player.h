@@ -63,7 +63,7 @@ private:
     // PlayerAnimation m_procAnim;
 
     // vis part
-    player::CoreState    m_currentCoreSprite    = { player::CoreState::EMPTY };
+    player::CoreState    m_currentCoreSprite    = { player::CoreState::FULL };
     player::PointerState m_currentPointerSprite = { player::PointerState::SHARP };
     uint8_t              m_currentFrame         = { 0 };
     float                m_lastThrusterAngle    = { 0. };

@@ -43,11 +43,15 @@ void GameWorld::update()
 
     float dt         = static_cast<float> (Timer::getInstance().GetDeltaTime());
     auto  groundData = m_currentLevel.getGroundData();
-    auto newPhysicsState = physics::movement::computeUpdatePlayerMovement (dt, m_player, m_currentLevel.getGroundData());
+    auto newPhysicsState = physics::movement::computeUpdatedMovementState (dt, m_player, m_currentLevel.getGroundData());
     m_player.update (newPhysicsState);
     auto newBodyState = interaction::updateBodyStateOnInteraction (m_player.getCollider (player::ColliderType::INTERACTION),
                                                                    m_player.getBodyState(), groundData);
     m_player.update (newBodyState);
+    auto newAction = interaction::detectActionByInteraction (m_player.getCollider(), groundData, m_currentLevel.getInteractableTiles());
+    if (newAction != player::Action::IDLE) {
+        m_player.addAction (newAction);
+    }
 }
 
 void GameWorld::draw()

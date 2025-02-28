@@ -5,8 +5,8 @@
 
 namespace geom::algo {
 
-[[nodiscard]] std::optional<Point2D> IntersectLines (const Point2D& start1, const Point2D& end1, const Point2D& start2,
-                                                     const Point2D& end2)
+[[nodiscard]] std::optional<Point2D> IntersectLines (const Point2D& start1, const Point2D& end1,
+                                                     const Point2D& start2, const Point2D& end2)
 {
 
     if (start1 == start2 || start1 == end2) {

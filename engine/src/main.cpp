@@ -3,7 +3,6 @@
 
 int main()
 {
-
     auto& eng = Engine::GetInstance();
     eng.Init();
 

@@ -121,7 +121,7 @@ UpdateState simulatePhys (const player::Player& player, const world::GroundData&
 
 } // namespace
 
-UpdateState computeUpdatePlayerMovement (float dt, const player::Player& player, const world::GroundData& ground)
+UpdateState computeUpdatedMovementState (float dt, const player::Player& player, const world::GroundData& ground)
 {
     auto                 playerState = player.getPhysicalState();
     player::MovementMode targetMode  = selectMovementModeOnAction (playerState.nextAction, playerState.currentMode);

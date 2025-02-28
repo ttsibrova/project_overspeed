@@ -37,7 +37,7 @@ SpriteInfo getSpriteInfo (PlayerSprite sprite)
     case PlayerSprite::BodyThruster:
         return SpriteInfo { .width = 12.f, .height = 17.f, .id = getTextureId (sprite) };
     case PlayerSprite::BodyPointerShield:
-        return SpriteInfo { .width = 47.f, .height = 45.f, .id = getTextureId (sprite) };
+        return SpriteInfo { .width = 19.f, .height = 45.f, .id = getTextureId (sprite) };
     default:
         break;
     }
@@ -52,7 +52,7 @@ void registerPlayerSprites()
     tManager.Load (getTextureId (PlayerSprite::BodyCoreEmpty), "assets/overspeeder/core_empty.png");
     tManager.Load (getTextureId (PlayerSprite::BodyCoreFull), "assets/overspeeder/core_full_glow.png");
     tManager.Load (getTextureId (PlayerSprite::BodyThruster), "assets/overspeeder/thruster_glow.png");
-    tManager.Load (getTextureId (PlayerSprite::BodyPointerShield), "assets/overspeeder/shield.png");
+    tManager.Load (getTextureId (PlayerSprite::BodyPointerShield), "assets/overspeeder/shield_v2.png");
 }
 
 } // namespace graphics
