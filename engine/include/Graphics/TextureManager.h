@@ -11,6 +11,16 @@ namespace map {
 struct TilePos;
 }
 
+namespace graphics {
+
+struct ImageInfo
+{
+    float width;
+    float height;
+};
+
+}
+
 class TextureManager
 {
 public:
@@ -30,6 +40,8 @@ public:
     void DrawTile (size_t id, const geom::Point2D& pos, float width, float height, map::TilePos tilePos);
     void DrawFrame (std::string id, const geom::Point2D& pos, float width, float height, int row, int frame,
                     graphics::RenderFlip flip = graphics::RenderFlip::FLIP_NONE);
+
+    graphics::ImageInfo getImageInfo(size_t id);
 
 public:
     TextureManager (const TextureManager&)           = delete;

@@ -46,7 +46,7 @@ bool isJumpTile (const InteractableTile& tile)
 
 InteractableTileType recognizeTileType (int tileId)
 {
-    switch (tileId - 1) {
+    switch (tileId) {
     case 4:
     case 5:
     case 6:
@@ -55,13 +55,13 @@ InteractableTileType recognizeTileType (int tileId)
     case 15:
     case 16:
         return InteractableTileType::SLIDER_INACTIVE;
-    case 7:
-    case 8:
-    case 9:
+    case 47:
+    case 48:
+    case 49:
         return InteractableTileType::JUMP_ACTIVE;
-    case 17:
-    case 18:
-    case 19:
+    case 57:
+    case 58:
+    case 59:
         return InteractableTileType::JUMP_INACTIVE;
     default:
         return InteractableTileType::INCOMPATIBLE;

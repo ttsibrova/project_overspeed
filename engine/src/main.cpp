@@ -10,6 +10,10 @@ int main()
         eng.HandleEvents();
         eng.update();
         eng.Render();
+
+        if (IsKeyPressed(KEY_F)) {
+            ToggleFullscreen();
+        }
     }
 
     eng.Clean();

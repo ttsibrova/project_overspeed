@@ -167,15 +167,16 @@ std::vector<map::InteractableTile> recognizeInteractableTiles (const map::Layer&
 
 Level::Level (const tinytmx::Map& tmxMap)
 {
-    assert (tmxMap.GetTilesets().size() < 3);
+    //assert (tmxMap.GetTilesets().size() < 3);
 
-    for (const auto& tileset : tmxMap.GetTilesets()) {
-        auto image = tileset->GetImage();
+    const auto& tilesets = tmxMap.GetTilesets();
+    for (size_t i = 0; i < 2; i++) {
+        auto image = tilesets[i]->GetImage();
         if (!image) {
-            m_cTileset = LoadCollectionTileset (*tileset);
+            m_cTileset = LoadCollectionTileset (*tilesets[i]);
         }
         else {
-            m_eTileset = LoadEmbeddedTileset (*tileset);
+            m_eTileset = LoadEmbeddedTileset (*tilesets[i]);
         }
     }
 
@@ -200,7 +201,7 @@ Level::Level (const tinytmx::Map& tmxMap)
         m_layers.emplace_back (std::move (layerIDs));
     }
 
-    m_interactableTiles = recognizeInteractableTiles (m_layers[0], m_levelHeightInTiles);
+    m_interactableTiles = recognizeInteractableTiles (m_layers[1], m_levelHeightInTiles);
 }
 
 std::optional<Level> Level::createLevel (map::RegisteredMap map)
@@ -229,7 +230,9 @@ void Level::draw()
                                                         m_eTileset.GetTilePosition (tileIDs[i])); // position on texture
             }
             else if (m_cTileset.IsTileBelongsToSet (tileIDs[i])) {
-                TextureManager::GetInstance().draw (m_cTileset.GetImageID (tileIDs[i]), { x * tileWidth, y * tileWidth });
+                auto imageId   = m_cTileset.GetImageID (tileIDs[i]);
+                auto imageInfo = TextureManager::GetInstance().getImageInfo (imageId);
+                TextureManager::GetInstance().draw (imageId, { x * tileWidth, (y + 1) * tileHeight - imageInfo.height });
             }
         }
     }
@@ -237,7 +240,7 @@ void Level::draw()
 
 GroundData Level::getGroundData()
 {
-    const auto& groundLayer = m_layers[0];
+    const auto& groundLayer = m_layers[1];
     auto md = std::mdspan (groundLayer.getTiles().data(), groundLayer.getTilesNum() / m_levelHeightInTiles, m_levelHeightInTiles);
     auto [heiht, width] = m_eTileset.GetHeightWidth();
     return { md, heiht, width };

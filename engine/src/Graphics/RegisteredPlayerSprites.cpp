@@ -30,7 +30,7 @@ SpriteInfo getSpriteInfo (PlayerSprite sprite)
 {
     switch (sprite) {
     case PlayerSprite::BodyPointer:
-        return SpriteInfo { .width = 45.f, .height = 43.f, .id = getTextureId (sprite) };
+        return SpriteInfo { .width = 25.f, .height = 23.f, .id = getTextureId (sprite) };
     case PlayerSprite::BodyCoreEmpty:
     case PlayerSprite::BodyCoreFull:
         return SpriteInfo { .width = 43.f, .height = 42.f, .id = getTextureId (sprite) };
@@ -48,9 +48,9 @@ SpriteInfo getSpriteInfo (PlayerSprite sprite)
 void registerPlayerSprites()
 {
     auto& tManager = TextureManager::GetInstance();
-    tManager.Load (getTextureId (PlayerSprite::BodyPointer), "assets/overspeeder/pointer_glow_left.png");
+    tManager.Load (getTextureId (PlayerSprite::BodyPointer), "assets/overspeeder/pointer_left.png");
     tManager.Load (getTextureId (PlayerSprite::BodyCoreEmpty), "assets/overspeeder/core_empty.png");
-    tManager.Load (getTextureId (PlayerSprite::BodyCoreFull), "assets/overspeeder/core_full_glow.png");
+    tManager.Load (getTextureId (PlayerSprite::BodyCoreFull), "assets/overspeeder/core_v2.png");
     tManager.Load (getTextureId (PlayerSprite::BodyThruster), "assets/overspeeder/thruster_glow.png");
     tManager.Load (getTextureId (PlayerSprite::BodyPointerShield), "assets/overspeeder/shield_v2.png");
 }

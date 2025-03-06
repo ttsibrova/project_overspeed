@@ -111,3 +111,13 @@ void TextureManager::DrawFrame (std::string id, const geom::Point2D& pos, float 
     Rectangle rec { x0, y0, width, height };
     DrawTextureRec (m_texturesMap[id], rec, pos, WHITE);
 }
+
+graphics::ImageInfo TextureManager::getImageInfo (size_t id)
+{
+    assert(m_hashedTexturesMap.contains(id));
+    const auto& texture = m_hashedTexturesMap[id];
+    return {
+        .width  = static_cast<float> (texture.width),
+        .height = static_cast<float> (texture.height),
+    };
+}
