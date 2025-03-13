@@ -1,7 +1,8 @@
 #pragma once
-#include <Map/Tileset.h>
-#include <cassert>
+#include <Map/TiledGridPosition.h>
 #include <cstdint>
+#include <string>
+#include <unordered_map>
 
 namespace map {
 
@@ -19,14 +20,13 @@ enum class InteractableTileType : uint16_t
 struct InteractableTile
 {
     InteractableTileType type;
-    TilePos              start;
-    TilePos              end;
+    TiledGridPositon     begin;
+    TiledGridPositon     end;
 };
 
 InteractableTileType getFlippedActiveState (InteractableTileType source);
 InteractableTileType recognizeTileType (int tileId);
+bool isInteractableTile (const std::string& type);
 
-bool isActiveTile (const InteractableTile& tile);
-bool isJumpTile (const InteractableTile& tile);
 
 } // namespace map

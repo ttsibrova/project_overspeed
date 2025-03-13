@@ -1,6 +1,35 @@
 #include <Map/Interactable.h>
 
+#include <tools/Assert.h>
+
+#include <tinytmx/tinytmxObject.hpp>
+#include <tinytmx/tinytmxPropertySet.hpp>
+
+#include <ranges>
+
 namespace map {
+
+namespace {
+enum class TmxInteractable
+{
+    NONE,
+    SLIDER_BEGIN,
+    SLIDER_END,
+    JUMP_BEGIN,
+    JUMP_END
+};
+
+const std::unordered_map<std::string, TmxInteractable>& getTypeMap()
+{
+    static std::unordered_map<std::string, TmxInteractable> map = {
+        { "sliderBegin", TmxInteractable::SLIDER_BEGIN },
+        { "sliderEnd", TmxInteractable::SLIDER_END },
+        { "jumpBegin", TmxInteractable::JUMP_BEGIN },
+        { "jumpEnd", TmxInteractable::JUMP_END } 
+    };
+    return map;
+}
+}
 
 InteractableTileType getFlippedActiveState (InteractableTileType source)
 {
@@ -19,29 +48,6 @@ InteractableTileType getFlippedActiveState (InteractableTileType source)
         break;
     }
     std::unreachable();
-}
-
-bool isActiveTile (const InteractableTile& tile)
-{
-    switch (tile.type) {
-    case InteractableTileType::SLIDER_ACTIVE:
-    case InteractableTileType::JUMP_ACTIVE:
-        return true;
-    case InteractableTileType::SLIDER_INACTIVE:
-    case InteractableTileType::JUMP_INACTIVE:
-        return false;
-    default:
-        assert ("false");
-        // add new cases
-        break;
-    }
-    std::unreachable();
-}
-
-bool isJumpTile (const InteractableTile& tile)
-{
-    return tile.type == InteractableTileType::JUMP_ACTIVE 
-        || tile.type == InteractableTileType::JUMP_INACTIVE;
 }
 
 InteractableTileType recognizeTileType (int tileId)
@@ -66,6 +72,11 @@ InteractableTileType recognizeTileType (int tileId)
     default:
         return InteractableTileType::INCOMPATIBLE;
     };
+}
+
+bool isInteractableTile (const std::string& type)
+{
+    return getTypeMap().contains (type);
 }
 
 } // namespace map

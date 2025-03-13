@@ -21,7 +21,8 @@ public:
     InputHandler operator= (const InputHandler& other) = delete;
 
     template <typename Obj>
-    void          handleInput (const input::Layer<Obj>& currentLayer, Obj& obj);
+    void handleInput (const input::Layer<Obj>& currentLayer, Obj& obj);
+
     input::Device getActiveDevice() const { return m_lastActiveDevice; }
 
 private:

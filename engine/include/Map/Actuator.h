@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <string>
 #include <vector>
 
 namespace map {
@@ -12,13 +13,15 @@ enum class ActuatorType : uint16_t
     PEDESTAL_INACTIVE,
 };
 
-// Implied that Actuators graphic-wise are 
-// belong to collection tileset, so size is known and 
+// Implied that Actuators graphic-wise are
+// belong to collection tileset, so size is known and
 // defined by Actuator's sprite
 struct Actuator
 {
-    ActuatorType     type;
+    ActuatorType     type = ActuatorType::INCOMPATIBLE;
     std::vector<int> childIDs;
 };
 
-}
+bool isActuator (const std::string& type);
+
+} // namespace map

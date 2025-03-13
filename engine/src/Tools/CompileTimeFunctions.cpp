@@ -1,13 +1,30 @@
 #include <Tools/CompileTimeFunctions.h>
+#include <string>
 
-consteval size_t tools::Hash (std::string str)
+namespace tools {
+namespace {
+
+constexpr size_t hashString (const char* str, size_t length)
 {
-    constexpr size_t prime  = { 0x100000001B3 };
-    std::size_t      result = { 0xcbf29ce484222325 };
-
-    for (std::size_t i = 0, ie = str.size(); i != ie; ++i) {
-        result = (result * prime) ^ str[i];
+    size_t hash = 14695981039346656037ULL;
+    for (size_t i = 0; i < length; ++i) {
+        hash ^= static_cast<size_t> (str[i]);
+        hash *= 1099511628211ULL;
     }
-
-    return result;
+    return hash;
 }
+
+} // namespace
+
+consteval size_t operator"" _hash (const char* str, size_t length)
+{
+    return hashString (str, length);
+}
+
+
+size_t HasherFNV1a::operator() (const std::string& str) const
+{
+    return hashString (str.c_str(), str.length());
+}
+
+} // namespace tools

@@ -48,7 +48,8 @@ void GameWorld::update()
     auto newBodyState = interaction::updateBodyStateOnInteraction (m_player.getCollider (player::ColliderType::INTERACTION),
                                                                    m_player.getBodyState(), groundData);
     m_player.update (newBodyState);
-    auto newAction = interaction::detectActionByInteraction (m_player.getCollider(), groundData, m_currentLevel.getInteractableTiles());
+    auto interactableTiles = m_currentLevel.getLevelInteractableTiles();
+    auto newAction = interaction::detectActionByInteraction (m_player.getCollider(), interactableTiles);
     if (newAction != player::Action::IDLE) {
         m_player.addAction (newAction);
     }

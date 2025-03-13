@@ -172,6 +172,7 @@ void Player::update (const physics::movement::UpdateState& newPhysState)
     Debug::Log (std::move (getCollider()));
     Debug::Log (std::move (getCollider (ColliderType::INTERACTION)), RED);
     // Debug::Log (updateState, m_pos);
+    //std::print ("Player pos: {}", m_pos);
 }
 
 void Player::update (const BodyState& newBodyState)

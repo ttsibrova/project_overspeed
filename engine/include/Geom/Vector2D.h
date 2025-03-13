@@ -166,11 +166,6 @@ inline bool isOpposite (const Vector2D& v1, const Vector2D& v2, float precision 
     return std::abs (kx - ky) < precision && kx < 0.f;
 }
 
-inline void Log (const Vector2D& vec, std::string prefix = "")
-{
-    std::cout << prefix << "(X Y) = (" << vec.X() << " " << vec.Y() << ")" << std::endl;
-}
-
 inline Quadrant getVectorQudrant (const Vector2D& vec)
 {
     if (std::abs (vec.Y()) < precision::float_tol) {
@@ -243,3 +238,14 @@ inline float computeAngleBetweenVectors (Vector2D v1, Vector2D v2) // in degree
 }
 
 } // namespace geom
+
+template <>
+struct std::formatter<geom::Vector2D>
+{
+    constexpr auto parse (std::format_parse_context& ctx) { return ctx.begin(); }
+
+    auto format (const geom::Vector2D& v, std::format_context& ctx) const
+    {
+        return std::format_to (ctx.out(), "<{}, {}>", v.X(), v.Y());
+    }
+};

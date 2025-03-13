@@ -16,7 +16,7 @@ public:
         m_numElems (numElems)
     {}
 
-    inline int GetStartID() { return m_startID; }
+    inline int GetStartID() const { return m_startID; }
 
     inline bool IsTileBelongsToSet (const int tileID) const
     {
@@ -38,7 +38,7 @@ public:
         m_imagePathIDs (std::move (imagePathIDs))
     {}
 
-    inline size_t GetImageID (int tileID) { return m_imagePathIDs[tileID - GetStartID()]; }
+    inline size_t GetImageID (int tileID) const { return m_imagePathIDs[tileID - GetStartID()]; }
 
 private:
     std::vector<size_t> m_imagePathIDs;
@@ -68,14 +68,14 @@ public:
         m_imagePathID (imagePathID)
     {}
 
-    inline TilePos GetTilePosition (const int TileID)
+    inline TilePos GetTilePosition (const int TileID) const
     {
         return { (TileID % m_numColumns), (TileID / m_numColumns) - 1 };
     }
 
-    inline std::pair<float, float> GetHeightWidth() { return { m_tileHeight, m_tileWidth }; }
+    inline std::pair<float, float> GetHeightWidth() const { return { m_tileHeight, m_tileWidth }; }
 
-    inline size_t GetImageID() { return m_imagePathID; }
+    inline size_t GetImageID() const { return m_imagePathID; }
 
 private:
     int    m_numColumns;

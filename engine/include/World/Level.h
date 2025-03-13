@@ -1,12 +1,16 @@
 #pragma once
+#include <geom/Point2D.h>
+#include <Map/Actuator.h>
 #include <Map/Interactable.h>
 #include <Map/Layer.h>
 #include <Map/RegisteredMaps.h>
 #include <Map/Tileset.h>
+#include <Map/TiledGridPosition.h>
+#include <World/LevelInteractableTiles.h>
 #include <limits>
 #include <mdspan>
 #include <optional>
-#include <vector>
+#include <unordered_map>
 
 namespace tinytmx {
 class Map;
@@ -33,18 +37,20 @@ public:
     void draw();
 
     GroundData getGroundData();
-    const std::vector<map::InteractableTile> getInteractableTiles();
+    LevelInteractableTiles getLevelInteractableTiles();
 
 private:
     Level() = default;
     Level (const tinytmx::Map& tmxMap);
 
-private:
-    std::vector<map::Layer>            m_layers;
-    std::vector<map::InteractableTile> m_interactableTiles;
-    map::CollectionTileset             m_cTileset;
-    map::EmbeddedTileset               m_eTileset;
-    unsigned int                       m_levelHeightInTiles { 1 };
-};
+    inline const map::EmbeddedTileset& getGroundTileset() const { return m_eTilesets[0]; }
 
+private:
+    std::vector<map::Layer>                        m_layers;
+    std::unordered_map<int, map::InteractableTile> m_interactableTiles;
+    std::unordered_map<int, map::Actuator>         m_actuators;
+    map::CollectionTileset                         m_cTileset;
+    std::vector<map::EmbeddedTileset>              m_eTilesets; // TODO: REPLACE LATER WITH ARRAY
+    unsigned int                                   m_levelHeightInTiles { 1 };
+};
 } // namespace world

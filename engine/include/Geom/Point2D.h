@@ -1,6 +1,9 @@
 #pragma once
 #include <Geom/Vector2D.h>
+
 #include <raylib/raylib.h>
+
+#include <format>
 
 namespace geom {
 
@@ -46,3 +49,15 @@ private:
 };
 
 } // namespace geom
+
+template <>
+struct std::formatter<geom::Point2D>
+{
+    constexpr auto parse (std::format_parse_context& ctx) { return ctx.begin(); }
+
+    auto format (const geom::Point2D& p, std::format_context& ctx) const
+    {
+        return std::format_to (ctx.out(), "({:.2f}, {:.2f})\n", p.X(), p.Y());
+    }
+};
+

@@ -45,6 +45,8 @@ public:
         return (pnt.X() < m_max.X() && pnt.X() > m_min.X()) && (pnt.Y() < m_max.Y() && pnt.Y() > m_min.Y());
     }
 
+    [[nodiscard]] bool collides (const Collider& other) const;
+
 private:
     geom::Point2D m_min;
     geom::Point2D m_max;
