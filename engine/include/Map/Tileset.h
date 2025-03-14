@@ -70,7 +70,7 @@ public:
 
     inline TilePos GetTilePosition (const int TileID) const
     {
-        return { (TileID % m_numColumns), (TileID / m_numColumns) - 1 };
+        return { (TileID - GetStartID()) % m_numColumns, (TileID - GetStartID()) / m_numColumns };
     }
 
     inline std::pair<float, float> GetHeightWidth() const { return { m_tileHeight, m_tileWidth }; }

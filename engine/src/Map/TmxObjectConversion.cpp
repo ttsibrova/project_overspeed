@@ -51,7 +51,7 @@ std::unordered_map<int, std::pair<T, const tinytmx::Object*>>
     for (const auto* object : tmxObjects) {
         auto findResult = typeMap.find (object->GetType());
         if (findResult != typeMap.end()) {
-            idToTypeMap.emplace (object->GetID(), std::make_pair (findResult->second, object)); // OR id?
+            idToTypeMap.emplace (object->GetID(), std::make_pair (findResult->second, object));
         }
     }
 

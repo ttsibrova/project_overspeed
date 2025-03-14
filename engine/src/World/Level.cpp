@@ -1,6 +1,7 @@
 #include <World/Level.h>
 
 #include <Graphics/TextureManager.h>
+#include <Graphics/SpecialTilesDrawing.h>
 #include <Map/TiledGridPosition.h>
 #include <Map/TmxObjectConversion.h>
 
@@ -138,6 +139,7 @@ void Level::draw()
             }
         }
     }
+    graphics::draw (getLevelInteractableTiles());
 }
 
 GroundData Level::getGroundData()

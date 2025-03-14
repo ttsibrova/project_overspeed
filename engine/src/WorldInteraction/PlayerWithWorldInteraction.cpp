@@ -21,7 +21,7 @@ player::BodyState interaction::updateBodyStateOnInteraction (const physics::Coll
 }
 
 player::Action interaction::detectActionByInteraction (const physics::Collider&      physicalPlayerCollider,
-                                                       const LevelInteractableTiles& tiles)
+                                                       const world::LevelInteractableTiles& tiles)
 {
     for (const auto& [tile, tileCollider]: tiles.getInteractableTilesWithColliders()) {
 

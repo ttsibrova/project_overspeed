@@ -7,6 +7,7 @@
 #include <ranges>
 #include <unordered_map>
 
+namespace world {
 
 class LevelInteractableTiles
 {
@@ -17,6 +18,8 @@ public:
         m_tileSize (std::move(tileSize))
     {}
 
+    const map::GridTileSize& getGridTileSize() const { return m_tileSize; }
+
     auto getInteractableTiles() const
     { 
         return m_tiles | std::ranges::views::values;
@@ -24,7 +27,7 @@ public:
 
     auto /*range<std::pair<InteractableTile, physics::Collider>>*/ getInteractableTilesWithColliders() const
     {
-        auto  tileCollider = [tileSize = m_tileSize] (const map::InteractableTile& tile) {
+        auto tileCollider = [tileSize = m_tileSize] (const map::InteractableTile& tile) {
             geom::Point2D min (tile.begin.x * tileSize.width - geom::precision::pixel,
                                (tile.begin.y - 1) * tileSize.height - geom::precision::pixel);
             geom::Point2D max ((tile.end.x + 1) * tileSize.width + 2 * geom::precision::pixel,
@@ -39,3 +42,5 @@ private:
     const std::unordered_map<int, map::InteractableTile>& m_tiles;
     map::GridTileSize                                     m_tileSize;
 };
+
+}
