@@ -12,7 +12,7 @@ namespace world {
 class LevelInteractableTiles
 {
 public:
-    LevelInteractableTiles (const std::unordered_map<int, map::InteractableTile>& interactaleTiles,
+    LevelInteractableTiles (const std::unordered_map<uint32_t, map::InteractableTile>& interactaleTiles,
                             map::GridTileSize tileSize):
         m_tiles (interactaleTiles),
         m_tileSize (std::move(tileSize))
@@ -39,8 +39,8 @@ public:
     }
 
 private:
-    const std::unordered_map<int, map::InteractableTile>& m_tiles;
-    map::GridTileSize                                     m_tileSize;
+    const std::unordered_map<uint32_t, map::InteractableTile>& m_tiles;
+    map::GridTileSize                                          m_tileSize;
 };
 
 }

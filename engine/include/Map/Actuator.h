@@ -1,4 +1,6 @@
 #pragma once
+#include <Geom/Point2D.h>
+
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -18,8 +20,10 @@ enum class ActuatorType : uint16_t
 // defined by Actuator's sprite
 struct Actuator
 {
-    ActuatorType     type = ActuatorType::INCOMPATIBLE;
-    std::vector<int> childIDs;
+    ActuatorType              type    = ActuatorType::INCOMPATIBLE;
+    unsigned int              tileGid = 0;
+    geom::Point2D             pos;
+    std::vector<unsigned int> childIDs;
 };
 
 bool isActuator (const std::string& type);

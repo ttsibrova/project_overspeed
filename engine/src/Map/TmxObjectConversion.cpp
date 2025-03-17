@@ -44,14 +44,14 @@ std::unordered_map<std::string, TmxInteractableTile> getInteractableTileTypeMap(
 }
 
 template <class T>
-std::unordered_map<int, std::pair<T, const tinytmx::Object*>>
+std::unordered_map<uint32_t, std::pair<T, const tinytmx::Object*>>
     getFirstPassMap (const std::vector<tinytmx::Object*>& tmxObjects, const std::unordered_map<std::string, T>& typeMap)
 {
-    std::unordered_map<int, std::pair<T, const tinytmx::Object*>> idToTypeMap;
+    std::unordered_map<uint32_t, std::pair<T, const tinytmx::Object*>> idToTypeMap;
     for (const auto* object : tmxObjects) {
         auto findResult = typeMap.find (object->GetType());
         if (findResult != typeMap.end()) {
-            idToTypeMap.emplace (object->GetID(), std::make_pair (findResult->second, object));
+            idToTypeMap.emplace (static_cast <uint32_t> (object->GetID()), std::make_pair (findResult->second, object));
         }
     }
 
@@ -59,7 +59,7 @@ std::unordered_map<int, std::pair<T, const tinytmx::Object*>>
 }
 
 std::optional<InteractableTile> fillInteractableTile (
-    const std::unordered_map<int, std::pair<TmxInteractableTile, const tinytmx::Object*>>& idToInteractableTileMap,
+    const std::unordered_map<uint32_t, std::pair<TmxInteractableTile, const tinytmx::Object*>>& idToInteractableTileMap,
     const tinytmx::Object* ptr, const GridTileSize& tileSize, InteractableTileType activeTile)
 {
     auto properties       = ptr->GetProperties();
@@ -92,7 +92,7 @@ std::optional<InteractableTile> fillInteractableTile (
     return filledTile;
 }
 
-void connectTileToActuator (const tinytmx::PropertySet* tileProperties, int tileId, std::unordered_map<int, Actuator>& actuators)
+void connectTileToActuator (const tinytmx::PropertySet* tileProperties, uint32_t tileId, std::unordered_map<uint32_t, Actuator>& actuators)
 {
     int  actuatorId = tileProperties->GetObjectProperty ("actuator");
     auto actuatorIt = actuators.find (actuatorId);
@@ -108,7 +108,7 @@ TmxObjectConversionResult convertTmxObjects (const std::vector<tinytmx::Object*>
     const auto idToActuatorMap         = getFirstPassMap (tmxObjects, getActuatorTypeMap());
     const auto idToInteractableTileMap = getFirstPassMap (tmxObjects, getInteractableTileTypeMap());
 
-    std::unordered_map<int, Actuator> actuators;
+    std::unordered_map<uint32_t, Actuator> actuators;
     for (const auto& [key, value] : idToActuatorMap) {
         const auto& [type, ptr] = value;
         switch (type) {
@@ -118,7 +118,8 @@ TmxObjectConversionResult convertTmxObjects (const std::vector<tinytmx::Object*>
             auto actuatorType = properties->GetBoolProperty ("active") ? ActuatorType::PEDESTAL_ACTIVE
                                                                        : ActuatorType::PEDESTAL_INACTIVE;
 
-            actuators[key] = Actuator { .type = actuatorType };
+            geom::Point2D pos (ptr->GetX(), ptr->GetY());
+            actuators[key] = Actuator { .type = actuatorType, .tileGid = ptr->GetGid(), .pos = pos,};
             break;
         }
         default:
@@ -126,7 +127,7 @@ TmxObjectConversionResult convertTmxObjects (const std::vector<tinytmx::Object*>
         }
     }
 
-    std::unordered_map<int, InteractableTile> interactableTiles;
+    std::unordered_map<uint32_t, InteractableTile> interactableTiles;
     for (const auto& [key, value] : idToInteractableTileMap) {
         const auto& [type, ptr] = value;
         switch (type) {

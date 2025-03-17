@@ -11,7 +11,7 @@ const map::EmbeddedTileset& getSpecialTilesTileset()
 {
     auto init = []() {
         size_t imageId = TextureManager::GetInstance().Load ("assets/special_objects_animated-Sheet.png");
-        map::EmbeddedTileset tileset(3, 32.f, 32.f, imageId, 0, 36);
+        map::EmbeddedTileset tileset (3, 32.f, 32.f, imageId, 0, 36, "special_objects");
         return tileset;
     };
 
@@ -61,6 +61,16 @@ void draw (const world::LevelInteractableTiles& tiles)
         }
         pos.X() += tileSize.width;
         manager.DrawTile (tileset.GetImageID(), pos, tileSize.width, tileSize.height, tileset.GetTilePosition (ids.end));
+    }
+}
+
+void draw (const world::LevelActuators& actuators, const map::CollectionTileset& tileset)
+{
+    auto& manager = TextureManager::GetInstance();
+    for (const auto& actuator: actuators.getActuators()) {
+        if (tileset.IsTileBelongsToSet(actuator.tileGid)) {
+            manager.draw (tileset.GetImageID(actuator.tileGid), actuator.pos);
+        }
     }
 }
 

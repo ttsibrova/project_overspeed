@@ -24,16 +24,16 @@ namespace {
 
 map::CollectionTileset LoadCollectionTileset (const tinytmx::Tileset& tileset)
 {
-    std::vector<size_t> imgHashes;
+    std::unordered_map<int, size_t> imgHashes;
     for (auto tile : tileset.GetTiles()) {
         auto img = tile->GetImage();
         assert (img->GetSource() != "");
         if (img->GetSource() != "") {
-            imgHashes.push_back (TextureManager::GetInstance().Load (img->GetSource()));
+            imgHashes.emplace (tile->GetId(), TextureManager::GetInstance().Load (img->GetSource()));
         }
     }
 
-    map::CollectionTileset res (std::move (imgHashes), tileset.GetFirstGid(), tileset.GetTileCount());
+    map::CollectionTileset res (std::move (imgHashes), tileset.GetFirstGid(), tileset.GetTileCount(), tileset.GetName());
     return res;
 }
 
@@ -49,7 +49,8 @@ map::EmbeddedTileset LoadEmbeddedTileset (const tinytmx::Tileset& tileset)
                               static_cast<float> (tileset.GetTileWidth()),
                               imgHash,
                               tileset.GetFirstGid(),
-                              tileset.GetTileCount());
+                              tileset.GetTileCount(),
+                              tileset.GetName());
     return res;
 }
 } // namespace
@@ -79,7 +80,7 @@ Level::Level (const tinytmx::Map& tmxMap)
         else { // delete later
             assert (m_levelHeightInTiles == finiteLayer->GetHeight());
         }
-        std::vector<int> layerIDs;
+        std::vector<unsigned int> layerIDs;
         auto             widthInTiles = finiteLayer->GetWidth();
         layerIDs.reserve (widthInTiles * m_levelHeightInTiles);
         for (unsigned int i = 0; i < widthInTiles; i++) {
@@ -87,7 +88,7 @@ Level::Level (const tinytmx::Map& tmxMap)
                 layerIDs.push_back (finiteLayer->GetTileGid (i, j));
             }
         }
-        m_layers.emplace_back (std::move (layerIDs));
+        m_layers.emplace_back (std::move (layerIDs), layer->GetName());
     }
 
     const auto& objectLayers = tmxMap.GetObjectGroups();
@@ -105,6 +106,13 @@ Level::Level (const tinytmx::Map& tmxMap)
     }
 }
 
+inline const map::EmbeddedTileset& Level::getGroundTileset() const
+{
+    auto groundIt = std::ranges::find (m_eTilesets, "ground", &map::EmbeddedTileset::getName);
+    m_assert (groundIt != m_eTilesets.end(), "Can't find ground tileset");
+    return *groundIt;
+}
+
 std::optional<Level> Level::createLevel (map::RegisteredMap map)
 {
     tinytmx::Map levelMap;
@@ -116,30 +124,56 @@ std::optional<Level> Level::createLevel (map::RegisteredMap map)
     return { Level (levelMap) };
 }
 
+namespace {
+
+void drawLayerWithTileset (const map::Layer& layer, const map::EmbeddedTileset& layerTileset, uint32_t levelHeightInTiles)
+{
+    auto [tileHeight, tileWidth] = layerTileset.GetHeightWidth();
+    const auto& tileIDs          = layer.getTiles();
+    for (int i = 0; i < static_cast<int> (tileIDs.size()); i++) {
+        const float x = static_cast<float> (i / levelHeightInTiles);
+        const float y = static_cast<float> (i % levelHeightInTiles);
+
+        TextureManager::GetInstance().DrawTile (layerTileset.GetImageID(), { x * tileWidth, y * tileWidth }, // pixel position
+                                                tileWidth, tileHeight,
+                                                layerTileset.GetTilePosition (tileIDs[i])); // position on texture
+    }
+}
+void drawLayerWithTileset (const map::Layer& layer, const map::CollectionTileset& layerTileset, uint32_t levelHeightInTiles)
+{
+    const float tileWidth  = 32.f;
+    const float tileHeight = 32.f;
+
+    const auto& tileIDs = layer.getTiles();
+    for (int i = 0; i < static_cast<int> (tileIDs.size()); i++) {
+        const float x = static_cast<float> (i / levelHeightInTiles);
+        const float y = static_cast<float> (i % levelHeightInTiles);
+        if (layerTileset.IsTileBelongsToSet (tileIDs[i])) {
+            auto imageId   = layerTileset.GetImageID (tileIDs[i]);
+            auto imageInfo = TextureManager::GetInstance().getImageInfo (imageId);
+            TextureManager::GetInstance().draw (imageId, { x * tileWidth, (y + 1) * tileHeight - imageInfo.height });
+        }
+    }
+}
+} // namespace
+
 void Level::draw()
 {
-    const auto& groundTileset    = getGroundTileset();
-    auto [tileHeight, tileWidth] = groundTileset.GetHeightWidth();
     for (const auto& layer : m_layers) {
-        const auto& tileIDs = layer.getTiles();
-        for (int i = 0; i < static_cast<int> (tileIDs.size()); i++) {
-            const float x = static_cast<float> (i / m_levelHeightInTiles);
-            const float y = static_cast<float> (i % m_levelHeightInTiles);
-
-            if (groundTileset.IsTileBelongsToSet (tileIDs[i])) {
-                TextureManager::GetInstance().DrawTile (groundTileset.GetImageID(),
-                                                        { x * tileWidth, y * tileWidth }, // pixel position
-                                                        tileWidth, tileHeight,
-                                                        groundTileset.GetTilePosition (tileIDs[i])); // position on texture
-            }
-            else if (m_cTileset.IsTileBelongsToSet (tileIDs[i])) {
-                auto imageId   = m_cTileset.GetImageID (tileIDs[i]);
-                auto imageInfo = TextureManager::GetInstance().getImageInfo (imageId);
-                TextureManager::GetInstance().draw (imageId, { x * tileWidth, (y + 1) * tileHeight - imageInfo.height });
-            }
+        if (layer.getName() == "ground") {
+            const auto& groundTileset = getGroundTileset();
+            drawLayerWithTileset(layer, groundTileset, m_levelHeightInTiles);
+        }
+        else if (layer.getName() == "background") {
+            const auto& groundTileset = *std::ranges::find (m_eTilesets, "background", &map::EmbeddedTileset::getName);
+            drawLayerWithTileset (layer, groundTileset, m_levelHeightInTiles);
+        }
+        else if (layer.getName() == "decorations") {
+            drawLayerWithTileset(layer, m_cTileset, m_levelHeightInTiles);
         }
     }
     graphics::draw (getLevelInteractableTiles());
+    graphics::draw (getLevelActuators(), m_cTileset);
 }
 
 GroundData Level::getGroundData()
@@ -158,6 +192,11 @@ LevelInteractableTiles Level::getLevelInteractableTiles()
         .height = height,
     };
     return LevelInteractableTiles (m_interactableTiles, std::move(tileSize));
+}
+
+LevelActuators Level::getLevelActuators()
+{
+    return LevelActuators(m_actuators);
 }
 
 size_t GroundData::flattenTilePos (map::TilePos& tilePos)
