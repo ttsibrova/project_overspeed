@@ -87,7 +87,7 @@ void PlayerAnimation::draw (const geom::Point2D& playerPos, const geom::Vector2D
 
     geom::Point2D pointerPos = playerPos.Translated (pointerOffset * pointerOffsetFromCore);
 
-    auto& textureManager = TextureManager::GetInstance();
+    auto& textureManager = TextureManager::getInstance();
     textureManager.draw (spriteInfo.id, corePos);
     // std::print ("Rotation for pointer is {}\n", rotationPointer);
     auto          pointerSpriteInfo = graphics::getSpriteInfo (graphics::PlayerSprite::BodyPointer);

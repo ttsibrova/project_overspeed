@@ -37,7 +37,7 @@ std::optional<GameWorld> GameWorld::createGameWorld (map::RegisteredMap map)
 void GameWorld::update()
 {
 #if _DEBUG
-    Debug::GlobalDebugger::GetInstance().update();
+    Debug::GlobalDebugger::getInstance().update();
 #endif
     InputHandler::getInstance().handleInput (m_playerInputLayer, m_player);
 
@@ -61,7 +61,7 @@ void GameWorld::draw()
     m_player.draw();
 
 #if _DEBUG
-    Debug::GlobalDebugger::GetInstance().draw();
+    Debug::GlobalDebugger::getInstance().draw();
 #endif
 }
 

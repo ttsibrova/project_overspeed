@@ -5,7 +5,7 @@
 
 namespace Debug {
 
-CollisionDebugger& CollisionDebugger::GetInstance()
+CollisionDebugger& CollisionDebugger::getInstance()
 {
     static CollisionDebugger instance;
     return instance;

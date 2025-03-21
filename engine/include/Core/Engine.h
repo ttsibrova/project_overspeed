@@ -4,7 +4,7 @@
 class Engine
 {
 public:
-    static Engine& GetInstance();
+    static Engine& getInstance();
 
     bool Init();
     void Clean();

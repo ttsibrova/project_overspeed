@@ -5,7 +5,7 @@ namespace Debug {
 class GlobalDebugger
 {
 public:
-    static GlobalDebugger& GetInstance();
+    static GlobalDebugger& getInstance();
 
     GlobalDebugger (const GlobalDebugger&)           = delete;
     GlobalDebugger operator= (const GlobalDebugger&) = delete;

@@ -7,7 +7,7 @@ namespace Debug {
 class PlayerMovementDebugger
 {
 public:
-    static PlayerMovementDebugger& GetInstance();
+    static PlayerMovementDebugger& getInstance();
 
     PlayerMovementDebugger (const PlayerMovementDebugger&)           = delete;
     PlayerMovementDebugger operator= (const PlayerMovementDebugger&) = delete;

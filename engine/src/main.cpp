@@ -3,7 +3,7 @@
 
 int main()
 {
-    auto& eng = Engine::GetInstance();
+    auto& eng = Engine::getInstance();
     eng.Init();
 
     while (eng.IsRunning() && !WindowShouldClose()) {

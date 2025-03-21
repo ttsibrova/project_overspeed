@@ -2,6 +2,7 @@
 
 #include <Geom/Precision.h>
 #include <GeomAlgo/LineIntersection.h>
+#include <World/Settings.h>
 
 #include <cassert>
 #include <print>
@@ -181,31 +182,32 @@ std::optional<geom::Vector2D> HitScanGround (const physics::Collider& playerColl
                                              const world::GroundData& groundData)
 {
     physics::Collider playerNewCollider = playerCollider.Translated (playerTrsl);
+    const map::GridTileSize& tileSize   = world::settings::tileSize;
 
     auto minPnt = playerNewCollider.Min();
     auto maxPnt = playerNewCollider.Max();
 
-    size_t left_tile = static_cast<size_t> (std::floorf ((minPnt.X() + precision::quarter_pixel) / groundData.tile_width));
+    size_t left_tile = static_cast<size_t> (std::floorf ((minPnt.X() + precision::quarter_pixel) / tileSize.width));
     if (left_tile > groundData.tiles.extent (0) - 1) {
         left_tile = 0U;
     }
-    size_t right_tile = static_cast<size_t> (std::floorf ((maxPnt.X() - precision::quarter_pixel) / groundData.tile_width));
+    size_t right_tile = static_cast<size_t> (std::floorf ((maxPnt.X() - precision::quarter_pixel) / tileSize.width));
     right_tile = std::min (right_tile, groundData.tiles.extent (0) - 1);
-    size_t top_tile = static_cast<size_t> (std::floorf ((minPnt.Y() + precision::quarter_pixel) / groundData.tile_height));
+    size_t top_tile   = static_cast<size_t> (std::floorf ((minPnt.Y() + precision::quarter_pixel) / tileSize.height));
     if (top_tile > groundData.tiles.extent (1) - 1) {
         top_tile = 0U;
     }
-    size_t bottom_tile = static_cast<size_t> (std::floorf ((maxPnt.Y() - precision::quarter_pixel) / groundData.tile_height));
+    size_t bottom_tile = static_cast<size_t> (std::floorf ((maxPnt.Y() - precision::quarter_pixel) / tileSize.height));
     bottom_tile = std::min (bottom_tile, groundData.tiles.extent (1) - 1);
 
     std::optional<geom::Vector2D> finalVector;
     for (size_t i = left_tile; i <= right_tile; i++) {
         for (size_t j = top_tile; j <= bottom_tile; j++) {
             if (groundData.tiles[std::array { i, j }] != 0) {
-                geom::Point2D tileMinCorner (static_cast<float> (i) * groundData.tile_width,
-                                             static_cast<float> (j) * groundData.tile_height);
-                geom::Point2D tileMaxCorner (tileMinCorner.X() + groundData.tile_width,
-                                             tileMinCorner.Y() + groundData.tile_height);
+                geom::Point2D tileMinCorner (static_cast<float> (i) * tileSize.width,
+                                             static_cast<float> (j) * tileSize.height);
+                geom::Point2D tileMaxCorner (tileMinCorner.X() + tileSize.width,
+                                             tileMinCorner.Y() + tileSize.height);
                 Debug::Log (std::make_pair (tileMinCorner, tileMaxCorner), Debug::Collision);
                 auto adjustedVec = SweepCollision (playerCollider, playerTrsl, tileMinCorner, tileMaxCorner);
                 if (!finalVector.has_value() ||
@@ -225,17 +227,19 @@ bool IsPlayerCollidesWithGround (const physics::Collider& playerCollider, const 
     auto minPnt = playerCollider.Min();
     auto maxPnt = playerCollider.Max();
 
-    size_t left_tile = static_cast<size_t> (std::floorf ((minPnt.X() + precision::quarter_pixel) / groundData.tile_width));
+    const map::GridTileSize& tileSize = world::settings::tileSize;
+
+    size_t left_tile = static_cast<size_t> (std::floorf ((minPnt.X() + precision::quarter_pixel) / tileSize.width));
     if (left_tile > groundData.tiles.extent (0) - 1) {
         left_tile = 0U;
     }
-    size_t right_tile = static_cast<size_t> (std::floorf ((maxPnt.X() - precision::quarter_pixel) / groundData.tile_width));
+    size_t right_tile = static_cast<size_t> (std::floorf ((maxPnt.X() - precision::quarter_pixel) / tileSize.width));
     right_tile = std::min (right_tile, groundData.tiles.extent (0) - 1);
-    size_t top_tile = static_cast<size_t> (std::floorf ((minPnt.Y() + precision::quarter_pixel) / groundData.tile_height));
+    size_t top_tile   = static_cast<size_t> (std::floorf ((minPnt.Y() + precision::quarter_pixel) / tileSize.height));
     if (top_tile > groundData.tiles.extent (1) - 1) {
         top_tile = 0U;
     }
-    size_t bottom_tile = static_cast<size_t> (std::floorf ((maxPnt.Y() - precision::quarter_pixel) / groundData.tile_height));
+    size_t bottom_tile = static_cast<size_t> (std::floorf ((maxPnt.Y() - precision::quarter_pixel) / tileSize.height));
     bottom_tile = std::min (bottom_tile, groundData.tiles.extent (1) - 1);
 
     for (size_t i = left_tile; i <= right_tile; i++) {
@@ -277,8 +281,8 @@ std::optional<geom::Vector2D> GetGroundNormalUnderPlayer (const physics::Collide
     }
     }
 
-    size_t tile_x = static_cast<size_t> (std::floorf (anchorPnt.X() / groundData.tile_width));
-    size_t tile_y = static_cast<size_t> (std::floorf (anchorPnt.Y() / groundData.tile_height));
+    size_t tile_x = static_cast<size_t> (std::floorf (anchorPnt.X() / world::settings::tileSize.width));
+    size_t tile_y = static_cast<size_t> (std::floorf (anchorPnt.Y() / world::settings::tileSize.height));
 
     tile_x = std::min (tile_x, groundData.tiles.extent (0) - 1);
     tile_y = std::min (tile_y, groundData.tiles.extent (1) - 1);
@@ -302,11 +306,13 @@ bool IsPlayerGrounded (const physics::Collider& playerCollider, const world::Gro
     auto minPnt = playerCollider.Min();
     auto maxPnt = playerCollider.Max();
 
+    const map::GridTileSize& tileSize = world::settings::tileSize;
+
     float  center      = minPnt.X() + playerCollider.Width() / 2;
-    size_t tile_center = static_cast<size_t> (std::floorf (center / groundData.tile_width));
-    size_t tile_right = static_cast<size_t> (std::floorf ((maxPnt.X() - precision::quarter_pixel) / groundData.tile_width));
-    size_t tile_left = static_cast<size_t> (std::floorf ((minPnt.X() + precision::quarter_pixel) / groundData.tile_width));
-    size_t tile_y = static_cast<size_t> (std::ceilf (maxPnt.Y() / groundData.tile_height));
+    size_t tile_center = static_cast<size_t> (std::floorf (center / tileSize.width));
+    size_t tile_right  = static_cast<size_t> (std::floorf ((maxPnt.X() - precision::quarter_pixel) / tileSize.width));
+    size_t tile_left = static_cast<size_t> (std::floorf ((minPnt.X() + precision::quarter_pixel) / tileSize.width));
+    size_t tile_y      = static_cast<size_t> (std::ceilf (maxPnt.Y() / tileSize.height));
     tile_y        = std::min (groundData.tiles.extent (1) - 1, tile_y);
     tile_center   = std::min (groundData.tiles.extent (0) - 1, tile_center);
     tile_right    = std::min (groundData.tiles.extent (0) - 1, tile_right);
@@ -317,9 +323,9 @@ bool IsPlayerGrounded (const physics::Collider& playerCollider, const world::Gro
         return false;
     }
 
-    std::print ("Distance to ground: {}\n", static_cast<float> (tile_y) * groundData.tile_height - maxPnt.Y());
+    std::print ("Distance to ground: {}\n", static_cast<float> (tile_y) * tileSize.height - maxPnt.Y());
 
-    return static_cast<float> (tile_y) * groundData.tile_height - maxPnt.Y() < precision::quarter_pixel;
+    return static_cast<float> (tile_y) * tileSize.height - maxPnt.Y() < precision::quarter_pixel;
 }
 
 } // namespace Collision

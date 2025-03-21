@@ -5,7 +5,6 @@
 #include <Map/Layer.h>
 #include <Map/RegisteredMaps.h>
 #include <Map/Tileset.h>
-#include <Map/TiledGridPosition.h>
 #include <World/LevelInteractableTiles.h>
 #include <World/LevelActuators.h>
 #include <limits>
@@ -22,10 +21,6 @@ namespace world {
 struct GroundData
 {
     std::mdspan<const uint32_t, std::extents<size_t, std::numeric_limits<size_t>::max(), std::numeric_limits<size_t>::max()>> tiles;
-    float tile_height;
-    float tile_width;
-
-    size_t flattenTilePos (map::TilePos& tilePos);
 };
 
 class Level
@@ -45,7 +40,8 @@ private:
     Level() = default;
     Level (const tinytmx::Map& tmxMap);
 
-    inline const map::EmbeddedTileset& getGroundTileset() const;
+    void drawTileLayer (const map::Layer& layer);
+    map::types::OptRefEmbeddedTileset findTileset (std::string name);
 
 private:
     std::vector<map::Layer>                             m_layers;

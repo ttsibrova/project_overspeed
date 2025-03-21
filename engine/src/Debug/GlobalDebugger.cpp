@@ -5,7 +5,7 @@
 
 namespace Debug {
 
-GlobalDebugger& GlobalDebugger::GetInstance()
+GlobalDebugger& GlobalDebugger::getInstance()
 {
     static GlobalDebugger instance;
     return instance;
@@ -13,13 +13,13 @@ GlobalDebugger& GlobalDebugger::GetInstance()
 
 void GlobalDebugger::update()
 {
-    CollisionDebugger::GetInstance().update();
+    CollisionDebugger::getInstance().update();
 }
 
 void GlobalDebugger::draw()
 {
-    CollisionDebugger::GetInstance().draw();
-    PlayerMovementDebugger::GetInstance().draw();
+    CollisionDebugger::getInstance().draw();
+    PlayerMovementDebugger::getInstance().draw();
 }
 
 } // namespace Debug

@@ -8,7 +8,7 @@ void Animation::update()
 
 void Animation::draw (const geom::Point2D& pos, graphics::RenderFlip flip)
 {
-    TextureManager::GetInstance().DrawFrame (m_textureID, pos, m_width, m_height, m_row, m_frame, flip);
+    TextureManager::getInstance().DrawFrame (m_textureID, pos, m_width, m_height, m_row, m_frame, flip);
 }
 
 void Animation::SetProps (std::string textureID, int row, int frame, float height, float width, float animSpeed)

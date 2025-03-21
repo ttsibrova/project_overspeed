@@ -20,13 +20,13 @@ player::BodyState interaction::updateBodyStateOnInteraction (const physics::Coll
     return newBodyState;
 }
 
-player::Action interaction::detectActionByInteraction (const physics::Collider&      physicalPlayerCollider,
+player::Action interaction::detectActionByInteraction (const physics::Collider&             physicalPlayerCollider,
                                                        const world::LevelInteractableTiles& tiles)
 {
-    for (const auto& [tile, tileCollider]: tiles.getInteractableTilesWithColliders()) {
+    for (const auto& [tileType, tileCollider]: tiles.getInteractableTilesTypeWithColliders()) {
 
         if (physicalPlayerCollider.collides (tileCollider)) {
-            switch (tile.type) {
+            switch (tileType) {
             case map::InteractableTileType::JUMP_ACTIVE:
                 return player::Action::JUMP;
             case map::InteractableTileType::SLIDER_ACTIVE:

@@ -4,11 +4,12 @@
 #include <Graphics/RenderFlip.h>
 
 #include <raylib/raylib.h>
+#include <optional>
 #include <string>
 #include <unordered_map>
 
 namespace map {
-struct TilePos;
+struct TiledGridPositon;
 }
 
 namespace graphics {
@@ -24,12 +25,13 @@ struct ImageInfo
 class TextureManager
 {
 public:
-    static TextureManager& GetInstance();
+    static TextureManager& getInstance();
+    static size_t          getMissingId();
 
     bool Load (std::string id, std::string filename);
     // returns hash\id
-    [[nodiscard]] size_t Load (std::string filename); // make it return optional?
-    bool                 Load (size_t id, std::string filename);
+    [[nodiscard]] std::optional<size_t> Load (std::string filename); // make it return optional?
+    bool                                Load (size_t id, std::string filename);
 
     void Drop (std::string id);
     void Clean();
@@ -37,7 +39,8 @@ public:
     void draw (std::string id, const geom::Point2D& pos);
     void draw (size_t id, const geom::Point2D& pos);
     void DrawRotated (size_t id, const geom::Point2D& pos, float width, float height, const geom::Point2D& origin, float rot);
-    void DrawTile (size_t id, const geom::Point2D& pos, float width, float height, map::TilePos tilePos);
+    void DrawTile (size_t id, const geom::Point2D& pos, float width, float height, map::TiledGridPositon tilePos);
+    void drawMissing (const geom::Point2D& pos, float width, float height, Color color);
     void DrawFrame (std::string id, const geom::Point2D& pos, float width, float height, int row, int frame,
                     graphics::RenderFlip flip = graphics::RenderFlip::FLIP_NONE);
 

@@ -1,5 +1,9 @@
 #pragma once
+#include <Map/TiledGridPosition.h>
 #include <string>
+
+#include <optional>
+#include <functional>
 
 namespace map {
 
@@ -16,6 +20,8 @@ public:
         m_numElems (numElems),
         m_name (std::move (name))
     {}
+
+    static inline uint32_t getEmptyTileId() { return 0u; }
 
     inline int getStartGid() const { return m_startGid; }
     inline int getNumElements() const { return m_numElems; }
@@ -49,39 +55,31 @@ private:
     std::unordered_map<int, size_t> m_imagePathIDs;
 };
 
-struct TilePos
-{
-    int col { 0 };
-    int row { 0 };
-};
-
 class EmbeddedTileset: public Tileset
 {
 public:
     EmbeddedTileset():
         m_numColumns (0),
-        m_tileHeight (0),
-        m_tileWidth (0),
         m_imagePathID (0)
     {}
 
-    EmbeddedTileset (int numColumns, float tileHeight, float tileWidth,
-                     size_t imagePathID,
+    EmbeddedTileset (int numColumns, size_t imagePathID,
                      int startGid, int numElems,
                      const std::string& name):
         Tileset (startGid, numElems, name),
         m_numColumns (numColumns),
-        m_tileHeight (tileHeight),
-        m_tileWidth (tileWidth),
         m_imagePathID (imagePathID)
     {}
 
-    inline TilePos GetTilePosition (const int tileGid) const
+    inline map::TiledGridPositon GetTilePosition (const int tileGid) const
     {
-        return { (getTileId (tileGid)) % m_numColumns, (getTileId (tileGid)) / m_numColumns };
+        return { .x = (getTileId (tileGid)) % m_numColumns, .y = (getTileId (tileGid)) / m_numColumns };
     }
 
-    inline std::pair<float, float> GetHeightWidth() const { return { m_tileHeight, m_tileWidth }; }
+    inline map::TiledGridPositon GetTilePositionById (const int tileId) const
+    {
+        return { .x = tileId % m_numColumns, .y = tileId / m_numColumns };
+    }
 
     inline bool IsTileBelongsToSet (const int tileGid) const
     {
@@ -92,9 +90,15 @@ public:
 
 private:
     int    m_numColumns;
-    float  m_tileHeight;
-    float  m_tileWidth;
     size_t m_imagePathID;
 };
+
+namespace types
+{
+
+using OptRefEmbeddedTileset = std::optional<std::reference_wrapper<const EmbeddedTileset>>;
+using OptRefCollectionTileset = std::optional<std::reference_wrapper<const CollectionTileset>>;
+
+}
 
 } // namespace map

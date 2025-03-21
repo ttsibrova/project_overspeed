@@ -1,9 +1,11 @@
 #pragma once
 
 #include <Input/InputHandler.h>
+#include <Map/TiledGridPosition.h>
 #include <Map/RegisteredMaps.h>
 #include <Player/Player.h>
 #include <World/Level.h>
+
 #include <optional>
 
 namespace world {

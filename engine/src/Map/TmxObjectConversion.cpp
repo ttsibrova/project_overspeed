@@ -1,5 +1,6 @@
 #include <map/TmxObjectConversion.h>
 
+#include <World/Settings.h>
 #include <Tools/Assert.h>
 
 #include <tinytmx/tinytmxObject.hpp>
@@ -60,14 +61,14 @@ std::unordered_map<uint32_t, std::pair<T, const tinytmx::Object*>>
 
 std::optional<InteractableTile> fillInteractableTile (
     const std::unordered_map<uint32_t, std::pair<TmxInteractableTile, const tinytmx::Object*>>& idToInteractableTileMap,
-    const tinytmx::Object* ptr, const GridTileSize& tileSize, InteractableTileType activeTile)
+    const tinytmx::Object* ptr, InteractableTileType activeTile)
 {
     auto properties       = ptr->GetProperties();
     auto interactableType = properties->GetBoolProperty ("active") ? activeTile : getFlippedActiveState (activeTile);
 
     TiledGridPositon begin {
-        .x = static_cast<int> (ptr->GetX() / tileSize.width),
-        .y = static_cast<int> (ptr->GetY() / tileSize.height),
+        .x = static_cast<int> (ptr->GetX() / world::settings::tileSize.width),
+        .y = static_cast<int> (ptr->GetY() / world::settings::tileSize.height),
     };
 
     auto endIt = idToInteractableTileMap.find (properties->GetObjectProperty ("end"));
@@ -76,8 +77,8 @@ std::optional<InteractableTile> fillInteractableTile (
     if (endIt != idToInteractableTileMap.end()) {
         auto& sliderEnd = endIt->second.second;
 
-        end.x = static_cast<int> (sliderEnd->GetX() / tileSize.width);
-        end.y = static_cast<int> (sliderEnd->GetY() / tileSize.height);
+        end.x = static_cast<int> (sliderEnd->GetX() / world::settings::tileSize.width);
+        end.y = static_cast<int> (sliderEnd->GetY() / world::settings::tileSize.height);
     }
     else {
         return std::nullopt;
@@ -103,7 +104,7 @@ void connectTileToActuator (const tinytmx::PropertySet* tileProperties, uint32_t
 
 } // namespace
 
-TmxObjectConversionResult convertTmxObjects (const std::vector<tinytmx::Object*>& tmxObjects, GridTileSize tileSize)
+TmxObjectConversionResult convertTmxObjects (const std::vector<tinytmx::Object*>& tmxObjects)
 {
     const auto idToActuatorMap         = getFirstPassMap (tmxObjects, getActuatorTypeMap());
     const auto idToInteractableTileMap = getFirstPassMap (tmxObjects, getInteractableTileTypeMap());
@@ -136,8 +137,7 @@ TmxObjectConversionResult convertTmxObjects (const std::vector<tinytmx::Object*>
             continue;
         case TmxInteractableTile::SLIDER_BEGIN:
         {
-            auto filledTile =
-                fillInteractableTile (idToInteractableTileMap, ptr, tileSize, InteractableTileType::SLIDER_ACTIVE);
+            auto filledTile = fillInteractableTile (idToInteractableTileMap, ptr, InteractableTileType::SLIDER_ACTIVE);
             if (filledTile.has_value()) {
                 interactableTiles[key] = std::move (filledTile.value());
             }
@@ -149,7 +149,7 @@ TmxObjectConversionResult convertTmxObjects (const std::vector<tinytmx::Object*>
         }
         case TmxInteractableTile::JUMP_BEGIN:
         {
-            auto filledTile = fillInteractableTile (idToInteractableTileMap, ptr, tileSize, InteractableTileType::JUMP_ACTIVE);
+            auto filledTile = fillInteractableTile (idToInteractableTileMap, ptr, InteractableTileType::JUMP_ACTIVE);
             if (filledTile.has_value()) {
                 interactableTiles[key] = std::move (filledTile.value());
             }

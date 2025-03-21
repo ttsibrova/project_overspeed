@@ -3,7 +3,7 @@
 #include <Timer/Timer.h>
 #include <raylib/raylib.h>
 
-Engine& Engine::GetInstance()
+Engine& Engine::getInstance()
 {
     static Engine m_Instance;
     return m_Instance;
@@ -17,8 +17,8 @@ bool Engine::Init()
     }
     SetTargetFPS (120);
 
-    TextureManager::GetInstance().Load ("mage_idle", "assets/idle.png");
-    TextureManager::GetInstance().Load ("mage_run", "assets/run.png");
+    TextureManager::getInstance().Load ("mage_idle", "assets/idle.png");
+    TextureManager::getInstance().Load ("mage_run", "assets/run.png");
     graphics::registerPlayerSprites();
 
     m_world = world::GameWorld::createGameWorld (map::RegisteredMap::level_1);
@@ -31,7 +31,7 @@ bool Engine::Init()
 
 void Engine::Clean()
 {
-    TextureManager::GetInstance().Clean();
+    TextureManager::getInstance().Clean();
     CloseWindow();
 }
 

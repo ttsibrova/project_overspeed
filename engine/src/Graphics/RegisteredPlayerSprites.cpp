@@ -47,7 +47,7 @@ SpriteInfo getSpriteInfo (PlayerSprite sprite)
 
 void registerPlayerSprites()
 {
-    auto& tManager = TextureManager::GetInstance();
+    auto& tManager = TextureManager::getInstance();
     tManager.Load (getTextureId (PlayerSprite::BodyPointer), "assets/overspeeder/pointer_left.png");
     tManager.Load (getTextureId (PlayerSprite::BodyCoreEmpty), "assets/overspeeder/core_empty.png");
     tManager.Load (getTextureId (PlayerSprite::BodyCoreFull), "assets/overspeeder/core_v2.png");

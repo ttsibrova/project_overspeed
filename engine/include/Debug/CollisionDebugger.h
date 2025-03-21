@@ -9,7 +9,7 @@ namespace Debug {
 class CollisionDebugger
 {
 public:
-    static CollisionDebugger& GetInstance();
+    static CollisionDebugger& getInstance();
 
     CollisionDebugger (const CollisionDebugger&)           = delete;
     CollisionDebugger operator= (const CollisionDebugger&) = delete;

@@ -133,7 +133,7 @@ void Player::draw()
         }
     }
 
-    auto& textureManager = TextureManager::GetInstance();
+    auto& textureManager = TextureManager::getInstance();
     textureManager.draw (spriteInfo.id, corePos);
     // std::print ("Rotation for pointer is {}\n", rotationPointer);
 

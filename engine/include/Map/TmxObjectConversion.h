@@ -12,10 +12,10 @@ namespace map {
 
 struct TmxObjectConversionResult
 {
-    std::unordered_map<uint32_t, Actuator>             idToActuatorsMap;
+    std::unordered_map<uint32_t, Actuator>         idToActuatorsMap;
     std::unordered_map<uint32_t, InteractableTile> idToInteractableTileMap;
 };
 
-TmxObjectConversionResult convertTmxObjects(const std::vector<tinytmx::Object*>& tmxObjects, GridTileSize tileSize);
+TmxObjectConversionResult convertTmxObjects(const std::vector<tinytmx::Object*>& tmxObjects);
 
 }

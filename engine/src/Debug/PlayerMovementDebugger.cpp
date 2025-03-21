@@ -3,7 +3,7 @@
 
 namespace Debug {
 
-PlayerMovementDebugger& PlayerMovementDebugger::GetInstance()
+PlayerMovementDebugger& PlayerMovementDebugger::getInstance()
 {
     static PlayerMovementDebugger instance;
     return instance;
