@@ -1,5 +1,6 @@
 #include <WorldInteraction/GroundCollision.h>
 
+#include <Core/Logger.h>
 #include <Geom/Precision.h>
 #include <GeomAlgo/LineIntersection.h>
 #include <World/Settings.h>
@@ -94,7 +95,7 @@ std::optional<geom::Vector2D> SweepCollision (const physics::Collider& playerCol
     for (const auto line : tileLines) {
         auto intersectPnt = geom::algo::IntersectLines (colliderKeyPnt, trajectoryEndPnt, line.first, line.second);
         if (!intersectPnt.has_value()) {
-            std::print ("Intersector failed to find value, manual branch DISABLED\n");
+            core::log::warning("Intersector failed to find value, manual branch DISABLED");
             ////Embracing a specific issue where our vector from chosen point strinctly aligned with
             ////tile side. Selecting the point that is basically closes to original character position
             // Quadrant vQ = physics::getVectorQudrant (playerTrsl);
@@ -323,7 +324,7 @@ bool IsPlayerGrounded (const physics::Collider& playerCollider, const world::Gro
         return false;
     }
 
-    std::print ("Distance to ground: {}\n", static_cast<float> (tile_y) * tileSize.height - maxPnt.Y());
+    Debug::Log (std::format ("Distance to ground: {}", static_cast<float> (tile_y) * tileSize.height - maxPnt.Y()));
 
     return static_cast<float> (tile_y) * tileSize.height - maxPnt.Y() < precision::quarter_pixel;
 }

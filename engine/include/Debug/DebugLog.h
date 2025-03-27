@@ -1,6 +1,8 @@
 #pragma once
 #include <raylib/raylib.h>
+#include <format>
 #include <utility>
+#include <string>
 
 namespace physics {
 class Collider;
@@ -26,6 +28,8 @@ void Log (const std::pair<geom::Point2D, geom::Point2D>& line, Designation des);
 void Log (const physics::Collider& collider, const Color& color = BLUE);
 void Log (const physics::movement::UpdateState& pus, const geom::Point2D& playerPos);
 void Log (const geom::Point2D& pnt, Designation des);
+
+void Log (const std::string& message);
 
 #elif
 

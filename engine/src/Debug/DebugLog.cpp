@@ -1,5 +1,8 @@
 #include <Debug/DebugLog.h>
 
+#include <Core/Engine.h>
+#include <Core/Logger.h>
+
 #include <Debug/CollisionDebugger.h>
 #include <Debug/PlayerMovementDebugger.h>
 
@@ -40,6 +43,11 @@ void Log (const geom::Point2D& pnt, Designation des)
         assert (false);
         break;
     }
+}
+
+void Log (const std::string& message)
+{
+    Engine::getInstance().getLogger().debug (message);
 }
 
 } // namespace Debug

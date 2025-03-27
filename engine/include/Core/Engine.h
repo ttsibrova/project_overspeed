@@ -1,5 +1,6 @@
 #pragma once
 #include <World/World.h>
+#include <Core/Logger.h>
 
 class Engine
 {
@@ -19,6 +20,8 @@ public:
     Engine (const Engine&)           = delete;
     Engine operator= (const Engine&) = delete;
 
+    core::Logger& getLogger() { return m_logger; }
+
 private:
     Engine():
         m_bIsRunning (false)
@@ -26,4 +29,5 @@ private:
 
     bool                            m_bIsRunning;
     std::optional<world::GameWorld> m_world;
+    core::Logger                    m_logger;
 };
