@@ -1,6 +1,6 @@
 #pragma once
 #include <Input/InputLayer.h>
-#include <raylib/raylib.h>
+#include <raylib.h>
 
 namespace input {
 

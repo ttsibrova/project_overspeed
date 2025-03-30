@@ -1,5 +1,5 @@
 #include <Core/Engine.h>
-#include <raylib/raylib.h>
+#include <raylib.h>
 
 int main()
 {

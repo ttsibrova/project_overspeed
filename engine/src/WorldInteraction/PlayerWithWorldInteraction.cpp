@@ -2,7 +2,7 @@
 
 #include <WorldInteraction/GroundCollision.h>
 
-#include <raylib/raylib.h>
+#include <raylib.h>
 
 #include <Debug/DebugLog.h>
 

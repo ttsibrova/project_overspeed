@@ -2,8 +2,8 @@
 
 #include <tools/Assert.h>
 
-#include <tinytmx/tinytmxObject.hpp>
-#include <tinytmx/tinytmxPropertySet.hpp>
+#include <tinytmxObject.hpp>
+#include <tinytmxPropertySet.hpp>
 
 #include <ranges>
 

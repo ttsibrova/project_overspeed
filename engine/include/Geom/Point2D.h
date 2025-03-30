@@ -1,7 +1,7 @@
 #pragma once
 #include <Geom/Vector2D.h>
 
-#include <raylib/raylib.h>
+#include <raylib.h>
 
 #include <format>
 

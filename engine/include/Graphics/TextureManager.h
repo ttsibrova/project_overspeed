@@ -3,7 +3,7 @@
 #include <Geom/Point2D.h>
 #include <Graphics/RenderFlip.h>
 
-#include <raylib/raylib.h>
+#include <raylib.h>
 #include <optional>
 #include <string>
 #include <unordered_map>

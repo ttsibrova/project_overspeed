@@ -1,6 +1,6 @@
 #include <Timer/Timer.h>
 
-#include <raylib/raylib.h>
+#include <raylib.h>
 
 Timer::Timer():
     m_deltaTime (0),

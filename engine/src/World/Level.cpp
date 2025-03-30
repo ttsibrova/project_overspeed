@@ -8,13 +8,13 @@
 
 #include <Tools/Assert.h>
 
-#include <tinytmx/tinytmxDataChunkTile.hpp>
-#include <tinytmx/tinytmxImage.hpp>
-#include <tinytmx/tinytmxMap.hpp>
-#include <tinytmx/tinytmxObject.hpp>
-#include <tinytmx/tinytmxTile.hpp>
-#include <tinytmx/tinytmxTileLayer.hpp>
-#include <tinytmx/tinytmxTileset.hpp>
+#include <tinytmxDataChunkTile.hpp>
+#include <tinytmxImage.hpp>
+#include <tinytmxMap.hpp>
+#include <tinytmxObject.hpp>
+#include <tinytmxTile.hpp>
+#include <tinytmxTileLayer.hpp>
+#include <tinytmxTileset.hpp>
 
 #include <functional>
 #include <print>

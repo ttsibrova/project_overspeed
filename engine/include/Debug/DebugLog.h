@@ -1,5 +1,5 @@
 #pragma once
-#include <raylib/raylib.h>
+#include <raylib.h>
 #include <format>
 #include <utility>
 #include <string>
@@ -31,7 +31,7 @@ void Log (const geom::Point2D& pnt, Designation des);
 
 void Log (const std::string& message);
 
-#elif
+#else
 
 // Release version of functions
 template <typename... Types>

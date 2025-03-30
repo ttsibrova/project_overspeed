@@ -19,7 +19,7 @@ bool TextureManager::Load (std::string id, std::string filename)
         return true;
     }
     auto texture = LoadTexture (filename.c_str());
-    if (!IsTextureReady (texture)) {
+    if (!IsTextureValid (texture)) {
         return false;
     }
 
@@ -34,7 +34,7 @@ std::optional<size_t> TextureManager::Load (std::string filename)
         return hash;
     }
     auto texture = LoadTexture (filename.c_str());
-    if (!IsTextureReady (texture)) {
+    if (!IsTextureValid (texture)) {
         return std::nullopt;
     }
 
@@ -48,7 +48,7 @@ bool TextureManager::Load (size_t id, std::string filename)
         return true;
     }
     auto texture = LoadTexture (filename.c_str());
-    if (!IsTextureReady (texture)) {
+    if (!IsTextureValid (texture)) {
         return false;
     }
 

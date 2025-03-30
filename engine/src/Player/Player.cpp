@@ -2,7 +2,7 @@
 
 #include <Graphics/TextureManager.h>
 #include <Input/InputGlobalGetters.h>
-#include <raylib/raylib.h>
+#include <raylib.h>
 
 #include <cassert>
 #include <print>

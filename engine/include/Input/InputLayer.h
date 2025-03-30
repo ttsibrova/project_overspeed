@@ -1,6 +1,6 @@
 #pragma once
 #include <functional>
-#include <raylib/raylib.h>
+#include <raylib.h>
 #include <vector>
 
 namespace input {

@@ -2,7 +2,7 @@
 #include <Geom/Precision.h>
 #include <cassert>
 #include <iostream>
-#include <raylib/raylib.h>
+#include <raylib.h>
 
 namespace geom {
 

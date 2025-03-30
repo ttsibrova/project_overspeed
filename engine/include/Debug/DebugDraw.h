@@ -1,7 +1,7 @@
 #pragma once
 #include <Geom/Point2D.h>
 #include <Geom/Vector2D.h>
-#include <raylib/raylib.h>
+#include <raylib.h>
 
 namespace physics {
 class Collider;

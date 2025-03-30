@@ -3,8 +3,8 @@
 #include <World/Settings.h>
 #include <Tools/Assert.h>
 
-#include <tinytmx/tinytmxObject.hpp>
-#include <tinytmx/tinytmxPropertySet.hpp>
+#include <tinytmxObject.hpp>
+#include <tinytmxPropertySet.hpp>
 
 #include <optional>
 

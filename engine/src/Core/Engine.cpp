@@ -1,7 +1,7 @@
 #include <Core/Engine.h>
 #include <Graphics/TextureManager.h>
 #include <Timer/Timer.h>
-#include <raylib/raylib.h>
+#include <raylib.h>
 
 Engine& Engine::getInstance()
 {
