@@ -324,7 +324,7 @@ bool IsPlayerGrounded (const physics::Collider& playerCollider, const world::Gro
         return false;
     }
 
-    Debug::Log (std::format ("Distance to ground: {}", static_cast<float> (tile_y) * tileSize.height - maxPnt.Y()));
+    Debug::Log ("Distance to ground: {}", static_cast<float> (tile_y) * tileSize.height - maxPnt.Y());
 
     return static_cast<float> (tile_y) * tileSize.height - maxPnt.Y() < precision::quarter_pixel;
 }

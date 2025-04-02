@@ -28,8 +28,14 @@ void Log (const std::pair<geom::Point2D, geom::Point2D>& line, Designation des);
 void Log (const physics::Collider& collider, const Color& color = BLUE);
 void Log (const physics::movement::UpdateState& pus, const geom::Point2D& playerPos);
 void Log (const geom::Point2D& pnt, Designation des);
-
 void Log (const std::string& message);
+
+template <typename... Ts>
+void Log (std::format_string<Ts...>&& fstr, Ts&&... args)
+{
+    Log(std::format(fstr, std::forward<Ts>(args)...));
+}
+
 
 #else
 

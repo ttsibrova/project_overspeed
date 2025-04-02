@@ -5,7 +5,9 @@
 #include <Timer/Timer.h>
 #include <WorldInteraction/PlayerWithWorldInteraction.h>
 
-#include <print>
+#include<Core/Logger.h>
+
+#include <exception>
 
 #if _DEBUG
 #include <Debug/GlobalDebugger.h>
@@ -17,18 +19,14 @@ GameWorld::GameWorld (Level&& lvl):
     m_player(),
     m_currentLevel (std::move (lvl))
 {
-    m_playerInputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_A, input::ActionType::HOLD, player::MovePlayer);
-    // m_playerInputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_W, input::ActionType::HOLD, PlayerMovement::MovePlayer);
-    // m_playerInputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_S, input::ActionType::HOLD, PlayerMovement::MovePlayer);
-    m_playerInputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_D, input::ActionType::HOLD, player::MovePlayer);
-    m_playerInputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_SPACE, input::ActionType::PRESS, player::JumpPlayer);
+    input::getInputHandler().registerInputLayer (m_player, m_player.getInputLayer());
 }
 
-std::optional<GameWorld> GameWorld::createGameWorld (map::RegisteredMap map)
+GameWorld GameWorld::createGameWorld (map::RegisteredMap map)
 {
     auto level = Level::createLevel (map);
     if (!level.has_value()) {
-        return {};
+        throw std::exception { "Failed to initialized world." };
     }
 
     return GameWorld (std::move (level.value()));
@@ -39,8 +37,6 @@ void GameWorld::update()
 #if _DEBUG
     Debug::GlobalDebugger::getInstance().update();
 #endif
-    InputHandler::getInstance().handleInput (m_playerInputLayer, m_player);
-
     float dt         = static_cast<float> (Timer::getInstance().GetDeltaTime());
     auto  groundData = m_currentLevel.getGroundData();
     auto newPhysicsState = physics::movement::computeUpdatedMovementState (dt, m_player, m_currentLevel.getGroundData());
@@ -63,6 +59,12 @@ void GameWorld::draw()
 #if _DEBUG
     Debug::GlobalDebugger::getInstance().draw();
 #endif
+}
+
+GameWorld::~GameWorld()
+{
+    input::getInputHandler().unregisterInputLayers (m_player);
+    core::log::warning ("Game World has been deleted");
 }
 
 } // namespace world

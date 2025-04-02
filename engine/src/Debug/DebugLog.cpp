@@ -47,7 +47,7 @@ void Log (const geom::Point2D& pnt, Designation des)
 
 void Log (const std::string& message)
 {
-    Engine::getInstance().getLogger().debug (message);
+    Engine::getInstance().logger.debug (message);
 }
 
 } // namespace Debug

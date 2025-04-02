@@ -1,7 +1,5 @@
 #pragma once
 
-#include <Input/InputHandler.h>
-#include <Map/TiledGridPosition.h>
 #include <Map/RegisteredMaps.h>
 #include <Player/Player.h>
 #include <World/Level.h>
@@ -14,23 +12,31 @@ class GameWorld
 {
 public:
     GameWorld()             = delete;
-    GameWorld (GameWorld&&) = default;
+    GameWorld (GameWorld&&) = delete;
 
-    GameWorld& operator= (GameWorld&&)      = default;
-    GameWorld& operator= (const GameWorld&) = default;
+    GameWorld& operator= (GameWorld&&)      = delete;
+    GameWorld& operator= (const GameWorld&) = delete;
 
-    static std::optional<GameWorld> createGameWorld (map::RegisteredMap map);
+    static GameWorld createGameWorld (map::RegisteredMap map);
 
     void update();
     void draw();
+
+    ~GameWorld();
 
 private:
     GameWorld (Level&& lvl);
 
 private:
     player::Player               m_player;
-    input::Layer<player::Player> m_playerInputLayer;
     Level                        m_currentLevel;
+};
+
+struct GameWorldBuilder
+{
+    map::RegisteredMap map;
+
+    operator GameWorld() const { return world::GameWorld::createGameWorld(map); }
 };
 
 } // namespace world

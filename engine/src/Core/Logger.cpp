@@ -121,17 +121,17 @@ void Logger::log (std::string messagePrefix, std::string_view consoleColor, cons
 
 void core::log::info (const std::string& message)
 {
-    Engine::getInstance().getLogger().info (message);
+    Engine::getInstance().logger.info (message);
 }
 
 void core::log::warning (const std::string& message)
 {
-    Engine::getInstance().getLogger().warning (message);
+    Engine::getInstance().logger.warning (message);
 }
 
 void core::log::error (const std::string& message)
 {
-    Engine::getInstance().getLogger().error (message);
+    Engine::getInstance().logger.error (message);
 }
 
 

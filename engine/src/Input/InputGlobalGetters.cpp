@@ -50,7 +50,7 @@ geom::Vector2D getAxisVec()
 
 Device getActiveDevice()
 {
-    return InputHandler::getInstance().getActiveDevice();
+    return input::getInputHandler().getActiveDevice();
 }
 
 } // namespace input

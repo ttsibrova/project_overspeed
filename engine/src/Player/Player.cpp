@@ -1,5 +1,6 @@
 #include <Player/Player.h>
 
+#include <Core/Logger.h>
 #include <Graphics/TextureManager.h>
 #include <Input/InputGlobalGetters.h>
 #include <raylib.h>
@@ -47,7 +48,14 @@ Player::Player():
     m_nextAction (Action::IDLE),
     m_currentMovementMode (MovementMode::NONE),
     m_currSimTime (0.f)
-{}
+{
+    m_pos.X() = 300.f;
+    m_inputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_A, input::ActionType::HOLD, [player = this](){player::MovePlayer(*player);});
+    // m_inputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_W, input::ActionType::HOLD, PlayerMovement::MovePlayer);
+    // m_inputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_S, input::ActionType::HOLD, PlayerMovement::MovePlayer);
+    m_inputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_D, input::ActionType::HOLD, [player = this](){player::MovePlayer(*player);});
+    m_inputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_SPACE, input::ActionType::PRESS, [player = this](){player::JumpPlayer(*player);});
+}
 
 void Player::draw()
 {
@@ -233,6 +241,11 @@ physics::Collider Player::getCollider (ColliderType mode) const
     }
     }
     std::unreachable();
+}
+
+Player::~Player()
+{
+    core::log::warning ("Player has been deleted");
 }
 
 void Player::changeMovementMode (MovementMode newMode)

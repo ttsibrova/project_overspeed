@@ -2,6 +2,7 @@
 
 #include <Animation/Animation.h>
 #include <Animation/PlayerAnimation.h>
+#include <Input/InputLayer.h>
 #include <Physics/Collider.h>
 #include <Physics/PhysicsUpdateState.h>
 #include <Player/PlayerBodyState.h>
@@ -48,6 +49,10 @@ public:
         return { .core = m_currentCoreSprite, .pointer = m_currentPointerSprite };
     }
 
+    const input::Layer& getInputLayer() { return m_inputLayer; }
+
+    ~Player();
+
 private:
     void changeMovementMode (player::MovementMode newMode);
 
@@ -68,6 +73,8 @@ private:
     uint8_t              m_currentFrame         = { 0 };
     float                m_lastThrusterAngle    = { 0. };
     geom::Vector2D       m_lastPointerDir       = geom::Vector2D (-1, 0);
+
+    input::Layer m_inputLayer;
 };
 
 void MovePlayer (Player& player);

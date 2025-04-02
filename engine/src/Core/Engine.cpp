@@ -1,6 +1,9 @@
 #include <Core/Engine.h>
+
 #include <Graphics/TextureManager.h>
+#include <Input/InputHandler.h>
 #include <Timer/Timer.h>
+
 #include <raylib.h>
 
 Engine& Engine::getInstance()
@@ -11,34 +14,36 @@ Engine& Engine::getInstance()
 
 bool Engine::Init()
 {
-    m_logger.info ("Launching window...");
+    logger.info ("Launching window...");
     InitWindow (1280, 720, "Sample");
     if (!IsWindowReady()) {
         return false;
     }
     SetTargetFPS (120);
-    m_logger.info ("Window initalized.");
-    m_logger.info ("Regestering player related sprites...");
+    logger.info ("Window initalized.");
+    logger.info ("Regestering player related sprites...");
     graphics::registerPlayerSprites();
-    m_logger.info ("Sprites loaded");
+    logger.info ("Sprites loaded");
 
-    m_logger.info ("Loading game world...");
-    m_world = world::GameWorld::createGameWorld (map::RegisteredMap::level_1);
-    if (!m_world.has_value()) {
-        m_logger.error ("Failed to load game world. Exiting..");
+    logger.info ("Loading game world...");
+    try {
+        m_world.emplace (world::GameWorldBuilder { map::RegisteredMap::level_1 });
+    }
+    catch (const std::exception& e) {
+        logger.error (e.what());
         return false;
     }
-    m_logger.info ("World loaded successfully. Engine is running.");
+    logger.info ("World loaded successfully. Engine is running.");
 
     return m_bIsRunning = true;
 }
 
 void Engine::Clean()
 {
-    m_logger.info ("Closing window...");
+    logger.info ("Closing window...");
     TextureManager::getInstance().Clean();
     CloseWindow();
-    m_logger.info ("Window closed sucessfuly.");
+    logger.info ("Window closed sucessfuly.");
 }
 
 void Engine::Quit()
@@ -49,6 +54,7 @@ void Engine::Quit()
 void Engine::update()
 {
     Timer::getInstance().update();
+    inputHandler.handleInput();
     if (m_world.has_value()) {
         m_world.value().update();
     }

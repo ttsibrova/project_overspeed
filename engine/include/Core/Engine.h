@@ -1,6 +1,9 @@
 #pragma once
 #include <World/World.h>
 #include <Core/Logger.h>
+#include <Input/InputHandler.h>
+
+#include <optional>
 
 class Engine
 {
@@ -20,7 +23,8 @@ public:
     Engine (const Engine&)           = delete;
     Engine operator= (const Engine&) = delete;
 
-    core::Logger& getLogger() { return m_logger; }
+    core::Logger        logger;
+    input::InputHandler inputHandler;
 
 private:
     Engine():
@@ -29,5 +33,4 @@ private:
 
     bool                            m_bIsRunning;
     std::optional<world::GameWorld> m_world;
-    core::Logger                    m_logger;
 };

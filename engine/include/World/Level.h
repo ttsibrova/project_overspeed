@@ -28,8 +28,11 @@ class Level
 public:
     static std::optional<Level> createLevel (map::RegisteredMap map);
 
-    // Level (const Level&) = delete;
-    // Level (Level&&) = default;
+    Level (Level&&)                 = default;
+    Level& operator= (Level&&)      = default;
+    Level (const Level&)            = delete;
+    Level& operator= (const Level&) = delete;
+
     void draw();
 
     GroundData getGroundData();
