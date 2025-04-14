@@ -15,7 +15,7 @@ Engine& Engine::getInstance()
 bool Engine::Init()
 {
     logger.info ("Launching window...");
-    InitWindow (1280, 720, "Sample");
+    InitWindow (1920, 1080, "Sample");
     if (!IsWindowReady()) {
         return false;
     }

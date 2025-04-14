@@ -1,12 +1,12 @@
 #include <Physics/MovementSimulation.h>
 
+#include <Debug/DebugLog.h>
 #include <Input/InputGlobalGetters.h>
 #include <Player/Player.h>
 #include <Player/PlayerPhysicalState.h>
 #include <WorldInteraction/GroundCollision.h>
+#include <Tools/Assert.h>
 
-#include <cassert>
-#include <print>
 
 #define MIN_TICK_TIME 1.e-4f
 #define MAX_SIM_TICK_TIME 0.02f
@@ -169,7 +169,7 @@ UpdateState computeUpdatedMovementState (float dt, const player::Player& player,
 
 UpdateState simulatePhysRunning (const float dt, float simulationTime, const geom::Vector2D& playerVelocity)
 {
-    const float playerMaxSpeed = 400.f;
+    const float playerMaxSpeed = 600.f;
     const float maxSpeedDelay  = .2f;
     const float startSpeed     = 100.f;
     const float dSpeed         = (playerMaxSpeed - startSpeed) / maxSpeedDelay;
@@ -177,7 +177,7 @@ UpdateState simulatePhysRunning (const float dt, float simulationTime, const geo
     __assume (simulationTime >= 0.f);
     __assume (dt >= 0.f);
 
-    auto inputVec = geom::stripByAxis (input::getAxisVec(), geom::Axis::X);
+    const auto inputVec = geom::stripByAxis (input::getAxisVec(), geom::Axis::X);
     if (inputVec.SquareMagnitude() < 1e-5 || std::abs (inputVec.X()) < 1e-5) {
         return { player::MovementMode::NONE, playerVelocity, geom::Vector2D(), 0. }; // no direction
     }
@@ -188,34 +188,16 @@ UpdateState simulatePhysRunning (const float dt, float simulationTime, const geo
         newVelocity.FlipX();
     }
 
-    float          tickTime      = std::max (dt, MIN_TICK_TIME);
-    float          remainingTime = 0.f;
-    geom::Vector2D trsl;
+    const float tickTime = std::max (dt, MIN_TICK_TIME);
+    float speed = startSpeed + dSpeed * (simulationTime + tickTime);
+    speed       = std::min (playerMaxSpeed, speed);
 
-    while (tickTime > 0.f) {
-        if (tickTime > MAX_SIM_TICK_TIME) {
-            remainingTime = tickTime - MAX_SIM_TICK_TIME;
-            tickTime      = MAX_SIM_TICK_TIME;
-        }
+    currHorizontalSpeed = std::min (playerMaxSpeed, currHorizontalSpeed);
+    currHorizontalSpeed = std::max (currHorizontalSpeed, speed);
 
-        float speed = startSpeed + dSpeed * (simulationTime + tickTime);
-        speed       = std::min (playerMaxSpeed, speed);
-
-        currHorizontalSpeed = std::min (playerMaxSpeed, currHorizontalSpeed);
-        currHorizontalSpeed = std::max (currHorizontalSpeed, speed);
-
-        newVelocity = inputVec * currHorizontalSpeed;
-        trsl        = newVelocity * tickTime;
-        simulationTime += tickTime;
-
-        if (remainingTime > MAX_SIM_TICK_TIME) {
-            remainingTime -= MAX_SIM_TICK_TIME;
-        }
-        else {
-            tickTime      = remainingTime;
-            remainingTime = 0.f;
-        }
-    }
+    newVelocity = inputVec * currHorizontalSpeed;
+    const geom::Vector2D trsl = newVelocity * tickTime;
+    simulationTime += tickTime;
 
     return { player::MovementMode::RUNNING, newVelocity, trsl, simulationTime };
 }
@@ -223,17 +205,29 @@ UpdateState simulatePhysRunning (const float dt, float simulationTime, const geo
 UpdateState simulatePhysAirMovement (const float dt, const float simulationTime, const geom::Vector2D& playerVelocity)
 {
     const float gravityAcceleration = 1200.f;
-    // const float maxFallSpeed = 500.f;
+    const float airAcceleration     = 1000.f;
+    const float maxFallSpeed        = 600.f;
+    const float maxAirMovementSpeed = 600.f;
 
-    float          tickTime         = std::max (dt, MIN_TICK_TIME);
-    geom::Vector2D verticalVelocity = geom::stripByAxis (playerVelocity, geom::Axis::Y);
-    geom::Vector2D addedVelocity    = geom::getDownVector() * gravityAcceleration * (tickTime);
+    const float tickTime = std::max (dt, MIN_TICK_TIME);
 
-    verticalVelocity = verticalVelocity + addedVelocity;
-    // if (verticalVelocity.SquareMagnitude() > maxFallSpeed * maxFallSpeed) {
-    //     verticalVelocity = physics::DownVector() * maxFallSpeed;
-    // }
-    geom::Vector2D newVelocity (playerVelocity.X(), verticalVelocity.Y());
+    const geom::Vector2D inputVec  = input::getAxisVec();
+
+    const float addedFallVelocity = gravityAcceleration * tickTime;
+    const float addedAirMovement  = inputVec.X() * airAcceleration * tickTime;
+
+    float resultAirVelocityX = playerVelocity.X() + addedAirMovement;
+    if (playerVelocity.X() * addedAirMovement > 0 && std::abs(resultAirVelocityX) > maxAirMovementSpeed) {
+        resultAirVelocityX = playerVelocity.X();
+    }
+    float resultAirVelocityY = playerVelocity.Y() + addedFallVelocity;
+    if (resultAirVelocityY > 0 && std::abs(resultAirVelocityY) > maxFallSpeed) {
+        resultAirVelocityY = maxFallSpeed;
+    }
+
+    const geom::Vector2D newVelocity (resultAirVelocityX, playerVelocity.Y() + addedFallVelocity);
+    Debug::Log ("Fall velocity: {}", newVelocity);
+
     geom::Vector2D trsl = newVelocity * tickTime;
 
     if (newVelocity.Y() > 0.f) {
@@ -247,7 +241,7 @@ UpdateState simulatePhysAirMovement (const float dt, const float simulationTime,
 UpdateState simulatePhysJumping (const float dt, float simulationTime, const geom::Vector2D& playerVelocity)
 {
     if (simulationTime == 0.f) {
-        return simulatePhysAirMovement (dt, simulationTime, geom::Vector2D (playerVelocity.X(), playerVelocity.Y() - 700.f));
+        return simulatePhysAirMovement (dt, simulationTime, geom::Vector2D (playerVelocity.X(), playerVelocity.Y() - 850.f));
     }
     else {
         return simulatePhysAirMovement (dt, simulationTime, playerVelocity);
