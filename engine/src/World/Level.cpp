@@ -220,7 +220,17 @@ LevelInteractableTiles Level::getLevelInteractableTiles()
 
 LevelActuators Level::getLevelActuators()
 {
-    return LevelActuators(m_actuators);
+    return LevelActuators(m_actuators, m_cTileset);
+}
+
+void Level::toggleActuator (uint32_t actuatorId)
+{
+    auto actuator = m_actuators.at (actuatorId);
+    actuator.type = map::getToggledActuatorType (actuator.type);
+    for (const auto& childID : actuator.childIDs) {
+        auto& interactableTile = m_interactableTiles.at (childID);
+        interactableTile.type  = map::getToggledInteractableTileType (interactableTile.type);
+    }
 }
 
 } // namespace world

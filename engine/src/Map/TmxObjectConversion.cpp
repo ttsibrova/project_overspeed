@@ -64,7 +64,7 @@ std::optional<InteractableTile> fillInteractableTile (
     const tinytmx::Object* ptr, InteractableTileType activeTile)
 {
     auto properties       = ptr->GetProperties();
-    auto interactableType = properties->GetBoolProperty ("active") ? activeTile : getFlippedActiveState (activeTile);
+    auto interactableType = properties->GetBoolProperty ("active") ? activeTile : getToggledInteractableTileType (activeTile);
 
     TiledGridPositon begin {
         .x = static_cast<int> (ptr->GetX() / world::settings::tileSize.width),

@@ -31,7 +31,7 @@ const std::unordered_map<std::string, TmxInteractable>& getTypeMap()
 }
 }
 
-InteractableTileType getFlippedActiveState (InteractableTileType source)
+InteractableTileType getToggledInteractableTileType (InteractableTileType source)
 {
     switch (source) {
     case InteractableTileType::SLIDER_ACTIVE:

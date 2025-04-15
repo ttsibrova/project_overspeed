@@ -24,7 +24,7 @@ struct InteractableTile
     TiledGridPositon     end;
 };
 
-InteractableTileType getFlippedActiveState (InteractableTileType source);
+InteractableTileType getToggledInteractableTileType (InteractableTileType source);
 InteractableTileType recognizeTileType (int tileId);
 bool isInteractableTile (const std::string& type);
 

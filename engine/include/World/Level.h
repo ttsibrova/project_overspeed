@@ -39,6 +39,9 @@ public:
     LevelInteractableTiles getLevelInteractableTiles();
     LevelActuators getLevelActuators();
 
+    void toggleActuator (uint32_t actuatorId);
+    void toggleInteractableTile (uint32_t tileId);
+
 private:
     Level() = default;
     Level (const tinytmx::Map& tmxMap);

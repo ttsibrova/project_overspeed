@@ -52,19 +52,28 @@ void GameWorld::update()
 #endif
     input::getInputHandler().handleTargetedInput (m_inputLayer);
 
-    float dt         = static_cast<float> (Timer::getInstance().GetDeltaTime());
-    auto  groundData = m_currentLevel.getGroundData();
-    auto newPhysicsState = physics::movement::computeUpdatedMovementState (dt, m_player, m_currentLevel.getGroundData());
-    m_player.update (newPhysicsState);
-    auto newBodyState = interaction::updateBodyStateOnInteraction (m_player.getCollider (player::ColliderType::INTERACTION),
-                                                                   m_player.getBodyState(), groundData);
-    m_player.update (newBodyState);
-    auto interactableTiles = m_currentLevel.getLevelInteractableTiles();
-    auto newAction = interaction::detectActionByInteraction (m_player.getCollider(), interactableTiles);
+    if (m_action == WorldAction::PlayerInteraction) {
+        auto actuatorId = interaction::detectToggledActuator(m_player, m_currentLevel.getLevelActuators());
+        if (actuatorId.has_value()) {
+            m_currentLevel.toggleActuator (actuatorId.value());
+        }
+    }
+
+    const auto interactableTiles = m_currentLevel.getLevelInteractableTiles();
+    const auto newAction         = interaction::detectActionByInteraction (m_player.getCollider(), interactableTiles);
     if (newAction != player::Action::IDLE) {
         m_player.addAction (newAction);
     }
+    const float dt         = static_cast<float> (Timer::getInstance().GetDeltaTime());
+    const auto  groundData = m_currentLevel.getGroundData();
+    const auto newPhysicsState = physics::movement::computeUpdatedMovementState (dt, m_player, m_currentLevel.getGroundData());
+    m_player.update (newPhysicsState);
+    const auto newBodyState = interaction::updateBodyStateOnInteraction (m_player.getCollider (player::ColliderType::INTERACTION),
+                                                                         m_player.getBodyState(), groundData);
+    m_player.update (newBodyState);
     m_camera.target = m_player.getPosition();
+
+    m_action = WorldAction::None;
 }
 
 void GameWorld::draw()

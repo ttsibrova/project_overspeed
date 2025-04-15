@@ -91,7 +91,7 @@ void draw (const world::LevelInteractableTiles& tiles, const map::types::OptRefE
 void draw (const world::LevelActuators& actuators, const map::CollectionTileset& tileset)
 {
     auto& manager = TextureManager::getInstance();
-    for (const auto& actuator: actuators.getActuators()) {
+    for (const auto& actuator: actuators.getActuatorValues()) {
         if (tileset.IsTileBelongsToSet(actuator.tileGid)) {
             manager.draw (tileset.GetImageID(actuator.tileGid), actuator.pos);
         }
