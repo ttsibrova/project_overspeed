@@ -24,9 +24,6 @@ struct InteractableTile
     TiledGridPositon     end;
 };
 
-InteractableTileType getToggledInteractableTileType (InteractableTileType source);
-InteractableTileType recognizeTileType (int tileId);
-bool isInteractableTile (const std::string& type);
-
+InteractableTileType getToggledInteractableTileType (const InteractableTileType source);
 
 } // namespace map

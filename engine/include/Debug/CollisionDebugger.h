@@ -5,7 +5,7 @@
 
 #include <vector>
 
-namespace Debug {
+namespace debug {
 class CollisionDebugger
 {
 public:
@@ -16,11 +16,11 @@ public:
 
 public:
     void update();
-    void draw();
+    void draw() const;
 
-    void AddCollisionLine (std::pair<geom::Point2D, geom::Point2D> line);
-    void AddCollider (physics::Collider collider, Color colliderColor);
-    void AddPoint (geom::Point2D pnt);
+    void addCollisionLine (std::pair<geom::Point2D, geom::Point2D> line);
+    void addCollider (physics::Collider collider, Color colliderColor);
+    void addPoint (geom::Point2D pnt);
 
 private:
     CollisionDebugger() {}
@@ -31,4 +31,4 @@ private:
     std::vector<Color>                                   m_colliderColors;
     std::vector<geom::Point2D>                           m_points;
 };
-} // namespace Debug
+} // namespace debug

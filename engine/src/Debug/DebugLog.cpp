@@ -9,13 +9,13 @@
 #include <Physics/Collider.h>
 #include <cassert>
 
-namespace Debug {
+namespace debug {
 
-void Log (const std::pair<geom::Point2D, geom::Point2D>& line, Designation des)
+void log (const std::pair<geom::Point2D, geom::Point2D>& line, Designation des)
 {
     switch (des) {
-    case Debug::Collision:
-        Debug::CollisionDebugger::getInstance().AddCollisionLine (line);
+    case debug::Collision:
+        debug::CollisionDebugger::getInstance().addCollisionLine (line);
         break;
     default:
         assert (false);
@@ -23,21 +23,21 @@ void Log (const std::pair<geom::Point2D, geom::Point2D>& line, Designation des)
     }
 }
 
-void Log (const physics::Collider& collider, const Color& color)
+void log (const physics::Collider& collider, const Color& color)
 {
-    CollisionDebugger::getInstance().AddCollider (collider, color);
+    CollisionDebugger::getInstance().addCollider (collider, color);
 }
 
-void Log (const physics::movement::UpdateState& pus, const geom::Point2D& playerPos)
+void log (const physics::movement::UpdateState& pus, const geom::Point2D& playerPos)
 {
     PlayerMovementDebugger::getInstance().update (pus, playerPos);
 }
 
-void Log (const geom::Point2D& pnt, Designation des)
+void log (const geom::Point2D& pnt, Designation des)
 {
     switch (des) {
-    case Debug::Collision:
-        Debug::CollisionDebugger::getInstance().AddPoint (pnt);
+    case debug::Collision:
+        debug::CollisionDebugger::getInstance().addPoint (pnt);
         break;
     default:
         assert (false);
@@ -45,9 +45,9 @@ void Log (const geom::Point2D& pnt, Designation des)
     }
 }
 
-void Log (const std::string& message)
+void log (const std::string& message)
 {
     Engine::getInstance().logger.debug (message);
 }
 
-} // namespace Debug
+} // namespace debug

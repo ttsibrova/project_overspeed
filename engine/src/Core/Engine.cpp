@@ -38,10 +38,10 @@ bool Engine::Init()
     return m_bIsRunning = true;
 }
 
-void Engine::Clean()
+void Engine::clean()
 {
     logger.info ("Closing window...");
-    TextureManager::getInstance().Clean();
+    TextureManager::getInstance().clean();
     CloseWindow();
     logger.info ("Window closed sucessfuly.");
 }

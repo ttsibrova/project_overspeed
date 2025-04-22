@@ -17,6 +17,6 @@ int main()
         }
     }
 
-    eng.Clean();
+    eng.clean();
     return 0;
 }

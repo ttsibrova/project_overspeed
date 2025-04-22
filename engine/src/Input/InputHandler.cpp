@@ -49,9 +49,9 @@ void InputHandler::handleTargetedInput (const input::Layer& inputLayer)
     }
 }
 
-bool InputHandler::checkKeyboardInputs (const input::Layer& inputLayer)
+bool InputHandler::checkKeyboardInputs (const input::Layer& inputLayer) const
 {
-    for (auto& action : inputLayer.actions) {
+    for (const auto& action : inputLayer.getActions()) {
         switch (action.type) {
         case input::ActionType::PRESS:
             if (IsKeyPressed (action.mappedKButton)) {
@@ -68,21 +68,21 @@ bool InputHandler::checkKeyboardInputs (const input::Layer& inputLayer)
     return true;
 }
 
-bool InputHandler::checkGamepadInputs (const input::Layer& inputLayer)
+bool InputHandler::checkGamepadInputs (const input::Layer& inputLayer) const
 {
-    if (!IsGamepadAvailable (0)) {
+    if (!IsGamepadAvailable (gamepadID)) {
         return false;
     }
-    for (auto& action : inputLayer.actions) {
+    for (const auto& action : inputLayer.getActions()) {
         switch (action.type) {
         case input::ActionType::HOLD:
-            if (IsGamepadButtonDown (0, action.mappedGButton)) {
+            if (IsGamepadButtonDown (gamepadID, action.mappedGButton)) {
                 action.command();
                 return true;
             }
             break;
         case input::ActionType::PRESS:
-            if (IsGamepadButtonPressed (0, action.mappedGButton)) {
+            if (IsGamepadButtonPressed (gamepadID, action.mappedGButton)) {
                 action.command();
                 return true;
             }

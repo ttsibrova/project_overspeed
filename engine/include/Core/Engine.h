@@ -11,7 +11,7 @@ public:
     static Engine& getInstance();
 
     bool Init();
-    void Clean();
+    void clean();
     void Quit();
 
     void update();

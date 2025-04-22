@@ -1,3 +1,4 @@
+#include <Core/Logger.h>
 #include <Graphics/TextureManager.h>
 #include <Map/TiledGridPosition.h>
 #include <World/Settings.h>
@@ -11,20 +12,6 @@ TextureManager& TextureManager::getInstance()
 size_t TextureManager::getMissingId()
 {
     return 0u;
-}
-
-bool TextureManager::Load (std::string id, std::string filename)
-{
-    if (m_texturesMap.contains (id)) {
-        return true;
-    }
-    auto texture = LoadTexture (filename.c_str());
-    if (!IsTextureValid (texture)) {
-        return false;
-    }
-
-    m_texturesMap[id] = texture;
-    return true;
 }
 
 std::optional<size_t> TextureManager::Load (std::string filename)
@@ -56,61 +43,49 @@ bool TextureManager::Load (size_t id, std::string filename)
     return true;
 }
 
-void TextureManager::Drop (std::string id)
+void TextureManager::clean()
 {
-    UnloadTexture (m_texturesMap[id]);
-    m_texturesMap.erase (id);
-}
-
-void TextureManager::Clean()
-{
-    for (auto [key, val] : m_texturesMap) {
-        UnloadTexture (val);
-    }
     for (auto [key, val] : m_hashedTexturesMap) {
         UnloadTexture (val);
     }
-    m_texturesMap.clear();
     m_hashedTexturesMap.clear();
 }
 
-void TextureManager::draw (std::string id, const geom::Point2D& pos)
+void TextureManager::draw (size_t id, const geom::Point2D& pos) const
 {
-    DrawTextureV (m_texturesMap[id], pos, WHITE);
-}
-
-void TextureManager::draw (size_t id, const geom::Point2D& pos)
-{
-    if (id == getMissingId()) {
+    auto texture = getTexture(id);
+    if (!texture.has_value()) {
         return drawMissing(pos, world::settings::tileSize.width, world::settings::tileSize.height, RED);
     }
-    DrawTextureV (m_hashedTexturesMap[id], pos, WHITE);
+    DrawTextureV (*texture, pos, WHITE);
 }
 
-void TextureManager::DrawRotated (size_t id, const geom::Point2D& pos, float width, float height,
-                                  const geom::Point2D& origin, float rot)
+void TextureManager::drawRotated (size_t id, const geom::Point2D& pos, float width, float height,
+                                  const geom::Point2D& origin, float rot) const
 {
-    if (id == getMissingId()) {
+    auto texture = getTexture (id);
+    if (!texture.has_value()) {
         return drawMissing (pos, width, height, RED);
     }
     Rectangle source { .x = 0.f, .y = 0.f, .width = width, .height = height };
     Rectangle dest { .x = pos.X(), .y = pos.Y(), .width = width, .height = height };
-    DrawTexturePro (m_hashedTexturesMap[id], source, dest, origin, rot, WHITE);
+    DrawTexturePro (*texture, source, dest, origin, rot, WHITE);
 }
 
-void TextureManager::DrawTile (size_t id, const geom::Point2D& pos, float width, float height, map::TiledGridPositon tilePos)
+void TextureManager::drawTile (size_t id, const geom::Point2D& pos, float width, float height, map::TiledGridPositon tilePos) const
 {
-    if (id == getMissingId()) {
+    auto texture = getTexture (id);
+    if (!texture.has_value()) {
         return drawMissing (pos, width, height, RED);
     }
     float x0 = tilePos.x * width;
     float y0 = tilePos.y * height;
 
     Rectangle rec { x0, y0, width, height };
-    DrawTextureRec (m_hashedTexturesMap[id], rec, pos, WHITE);
+    DrawTextureRec (*texture, rec, pos, WHITE);
 }
 
-void TextureManager::drawMissing (const geom::Point2D& pos, float width, float height, Color color)
+void TextureManager::drawMissing (const geom::Point2D& pos, float width, float height, Color color) const
 {
     Rectangle rectangle { pos.X(), pos.Y(), width, height };
     DrawRectangleRec (rectangle, color);
@@ -119,29 +94,48 @@ void TextureManager::drawMissing (const geom::Point2D& pos, float width, float h
     DrawLineEx (pos, Vector2 { .x = pos.X() + width, .y = pos.Y() + height }, 5.f, BLACK);
 }
 
-void TextureManager::DrawFrame (std::string id, const geom::Point2D& pos, float width, float height, int row, int frame,
-                                graphics::RenderFlip flip)
+//void TextureManager::drawFrame (std::string id, const geom::Point2D& pos, float width, float height, int row, int frame,
+//                                graphics::RenderFlip flip)
+//{
+//    float x0 = frame * width;
+//    float y0 = row * height;
+//
+//    if (flip & graphics::RenderFlip::FLIP_VERTICAL) {
+//        height = -height;
+//    }
+//    if (flip & graphics::RenderFlip::FLIP_HORIZONTAL) {
+//        width = -width;
+//    }
+//
+//    Rectangle rec { x0, y0, width, height };
+//    DrawTextureRec (m_texturesMap[id], rec, pos, WHITE);
+//}
+
+graphics::ImageInfo TextureManager::getImageInfo (size_t id) const
 {
-    float x0 = frame * width;
-    float y0 = row * height;
-
-    if (flip & graphics::RenderFlip::FLIP_VERTICAL) {
-        height = -height;
+    auto texture = getTexture (id);
+    if (texture.has_value()) {
+        return {
+            .width  = static_cast<float> (texture->width),
+            .height = static_cast<float> (texture->height),
+        };
     }
-    if (flip & graphics::RenderFlip::FLIP_HORIZONTAL) {
-        width = -width;
-    }
-
-    Rectangle rec { x0, y0, width, height };
-    DrawTextureRec (m_texturesMap[id], rec, pos, WHITE);
+    core::log::warning (std::format ("Fallback sizes for texture ID: {} was generated", id));
+    return {
+        .width  = world::settings::tileSize.width,
+        .height = world::settings::tileSize.height,
+    };
 }
 
-graphics::ImageInfo TextureManager::getImageInfo (size_t id)
+std::optional<Texture2D> TextureManager::getTexture (size_t id) const
 {
-    assert(m_hashedTexturesMap.contains(id));
-    const auto& texture = m_hashedTexturesMap[id];
-    return {
-        .width  = static_cast<float> (texture.width),
-        .height = static_cast<float> (texture.height),
-    };
+    if (id == getMissingId()) {
+        return std::nullopt;
+    }
+    const auto it = m_hashedTexturesMap.find(id);
+    if (it != m_hashedTexturesMap.end()) {
+        return it->second;
+    }
+    core::log::warning (std::format ("Missing expected texture ID: {}", id));
+    return std::nullopt;
 }

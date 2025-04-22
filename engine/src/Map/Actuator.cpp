@@ -3,24 +3,8 @@
 #include <unordered_map>
 
 namespace map {
-namespace {
-enum class TmxActuator
-{
-    NONE,
-    PEDESTAL,
-};
 
-const std::unordered_map<std::string, TmxActuator>& getTypeMap()
-{
-    static std::unordered_map<std::string, TmxActuator> map = {
-        { "pedestal", TmxActuator::PEDESTAL }
-    };
-    return map;
-}
-}
-
-
-ActuatorType getToggledActuatorType (ActuatorType type)
+ActuatorType getToggledActuatorType (const ActuatorType type)
 {
     switch (type) {
     case ActuatorType::INCOMPATIBLE:
@@ -33,8 +17,4 @@ ActuatorType getToggledActuatorType (ActuatorType type)
     std::unreachable();
 }
 
-bool isActuator (const std::string& type)
-{
-    return getTypeMap().contains(type);
-}
 } // namespace map

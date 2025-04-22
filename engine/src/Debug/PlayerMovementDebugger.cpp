@@ -1,7 +1,7 @@
 #include <Debug/DebugDraw.h>
 #include <Debug/PlayerMovementDebugger.h>
 
-namespace Debug {
+namespace debug {
 
 PlayerMovementDebugger& PlayerMovementDebugger::getInstance()
 {
@@ -17,10 +17,10 @@ void PlayerMovementDebugger::update (const physics::movement::UpdateState& pmUpd
     m_trslVec        = pmUpdateState.trsl;
 }
 
-void PlayerMovementDebugger::draw()
+void PlayerMovementDebugger::draw() const
 {
-    Debug::draw (m_playerPos, m_playerVelocity);
-    Debug::draw (geom::Point2D (m_playerPos.X(), m_playerPos.Y() - 30), m_trslVec, RED);
+    debug::draw (m_playerPos, m_playerVelocity);
+    debug::draw (geom::Point2D (m_playerPos.X(), m_playerPos.Y() - 30), m_trslVec, RED);
 }
 
-} // namespace Debug
+} // namespace debug

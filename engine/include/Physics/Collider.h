@@ -31,9 +31,9 @@ public:
     [[nodiscard]] inline geom::Point2D RightCorner() const { return geom::Point2D (m_max.X(), m_min.Y()); }
     [[nodiscard]] inline geom::Point2D LeftCorner() const { return geom::Point2D (m_min.X(), m_max.Y()); }
 
-    [[nodiscard]] inline Collider Translated (const geom::Vector2D& trsl) const
+    [[nodiscard]] inline Collider translated (const geom::Vector2D& trsl) const
     {
-        return Collider (m_min.Translated (trsl), m_max.Translated (trsl));
+        return Collider (m_min.translated (trsl), m_max.translated (trsl));
     }
 
     [[nodiscard]] inline bool IsOutside (const geom::Point2D& pnt)

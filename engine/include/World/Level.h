@@ -35,19 +35,19 @@ public:
 
     void draw();
 
-    GroundData getGroundData();
-    LevelInteractableTiles getLevelInteractableTiles();
-    LevelActuators getLevelActuators();
+    GroundData getGroundData() const;
+    LevelInteractableTiles getLevelInteractableTiles() const;
+    LevelActuators getLevelActuators() const;
 
     void toggleActuator (uint32_t actuatorId);
-    void toggleInteractableTile (uint32_t tileId);
+    //void toggleInteractableTile (uint32_t tileId);
 
 private:
     Level() = default;
     Level (const tinytmx::Map& tmxMap);
 
-    void drawTileLayer (const map::Layer& layer);
-    map::types::OptRefEmbeddedTileset findTileset (std::string name);
+    void drawTileLayer (const map::Layer& layer) const;
+    map::types::OptRefEmbeddedTileset findTileset (std::string name) const;
 
 private:
     std::vector<map::Layer>                             m_layers;

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Debug {
+namespace debug {
 
 class GlobalDebugger
 {
@@ -12,10 +12,10 @@ public:
 
 public:
     void update();
-    void draw();
+    void draw() const;
 
 private:
     GlobalDebugger() {}
 };
 
-} // namespace Debug
+} // namespace debug

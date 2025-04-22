@@ -26,9 +26,9 @@ void PlayerAnimation::draw (const geom::Point2D& playerPos, const geom::Vector2D
     geom::Vector2D pointerOffset    = m_lastPointerDir;
     geom::Point2D  thrusterPos;
 
-    if (playerVelocity.SquareMagnitude() > geom::precision::quarter_pixel) {
-        pointerOffset   = playerVelocity.Normalized();
-        float dot       = pointerOffset.Dot (geom::getLeftVector());
+    if (playerVelocity.getSquareMagnitude() > geom::precision::quarterPixel) {
+        pointerOffset   = playerVelocity.normalized();
+        float dot       = pointerOffset.dot (geom::getLeftVector());
         rotationPointer = std::acos (dot) * 180 / PI;
         // special case for these calculations: Z component of cross product computation when second vector is -1,0
         if (-pointerOffset.Y() < 0) {
@@ -36,7 +36,7 @@ void PlayerAnimation::draw (const geom::Point2D& playerPos, const geom::Vector2D
         }
         m_lastPointerAngle = rotationPointer;
         m_lastPointerDir   = pointerOffset;
-        thrusterPos        = playerPos.Translated (pointerOffset.Fipped() * thrusterOffsetFromCore);
+        thrusterPos        = playerPos.translated (pointerOffset.fipped() * thrusterOffsetFromCore);
         rotationThruster   = rotationPointer;
     }
     else {
@@ -51,11 +51,11 @@ void PlayerAnimation::draw (const geom::Point2D& playerPos, const geom::Vector2D
                 m_lastPointerDir   = geom::getLeftVector();
             }
         }
-        thrusterPos = playerPos.Translated (geom::getDownVector() * thrusterOffsetFromCore);
+        thrusterPos = playerPos.translated (geom::getDownVector() * thrusterOffsetFromCore);
     }
 
     geom::Vector2D playerInputVec = input::getAxisVec();
-    if (playerInputVec.SquareMagnitude() > geom::precision::quarter_pixel) {
+    if (playerInputVec.getSquareMagnitude() > geom::precision::quarterPixel) {
         auto vectorQuadrant = geom::getInversedQuadrant (geom::getVectorQudrant (playerInputVec));
         switch (vectorQuadrant) {
         case geom::Quadrant::I:
@@ -66,38 +66,38 @@ void PlayerAnimation::draw (const geom::Point2D& playerPos, const geom::Vector2D
             break;
         case geom::Quadrant::X_ALIGNED:
             rotationThruster = 0;
-            thrusterPos      = playerPos.Translated (geom::getRightVector() * thrusterOffsetFromCore);
+            thrusterPos      = playerPos.translated (geom::getRightVector() * thrusterOffsetFromCore);
             break;
         case geom::Quadrant::Y_ALIGNED:
             rotationThruster = 90.f;
-            thrusterPos      = playerPos.Translated (geom::getDownVector() * thrusterOffsetFromCore);
+            thrusterPos      = playerPos.translated (geom::getDownVector() * thrusterOffsetFromCore);
             break;
         case geom::Quadrant::X_OPPOSITE:
             rotationThruster = 180.f;
-            thrusterPos      = playerPos.Translated (geom::getLeftVector() * thrusterOffsetFromCore);
+            thrusterPos      = playerPos.translated (geom::getLeftVector() * thrusterOffsetFromCore);
             break;
         case geom::Quadrant::Y_OPPOSITE:
             rotationThruster = -90.f;
-            thrusterPos      = playerPos.Translated (geom::getUpVector() * thrusterOffsetFromCore);
+            thrusterPos      = playerPos.translated (geom::getUpVector() * thrusterOffsetFromCore);
             break;
         default:
             break;
         }
     }
 
-    geom::Point2D pointerPos = playerPos.Translated (pointerOffset * pointerOffsetFromCore);
+    geom::Point2D pointerPos = playerPos.translated (pointerOffset * pointerOffsetFromCore);
 
     auto& textureManager = TextureManager::getInstance();
     textureManager.draw (spriteInfo.id, corePos);
     // std::print ("Rotation for pointer is {}\n", rotationPointer);
     auto          pointerSpriteInfo = graphics::getSpriteInfo (graphics::PlayerSprite::BodyPointer);
     geom::Point2D pointerOrigin (pointerSpriteInfo.width / 2.f, pointerSpriteInfo.height / 2.f);
-    textureManager.DrawRotated (graphics::getTextureId (graphics::PlayerSprite::BodyPointer), pointerPos,
+    textureManager.drawRotated (graphics::getTextureId (graphics::PlayerSprite::BodyPointer), pointerPos,
                                 pointerSpriteInfo.width, pointerSpriteInfo.height, pointerOrigin, rotationPointer);
 
     auto          thrusterSpriteInfo = graphics::getSpriteInfo (graphics::PlayerSprite::BodyThruster);
     geom::Point2D thrusterOrigin (thrusterSpriteInfo.width / 2.f, thrusterSpriteInfo.height / 2.f);
-    textureManager.DrawRotated (graphics::getTextureId (graphics::PlayerSprite::BodyThruster), thrusterPos,
+    textureManager.drawRotated (graphics::getTextureId (graphics::PlayerSprite::BodyThruster), thrusterPos,
                                 thrusterSpriteInfo.width, thrusterSpriteInfo.height, thrusterOrigin, rotationThruster);
 }
 
@@ -114,7 +114,7 @@ physics::Collider PlayerAnimation::ComputeCurrentCollider (const geom::Point2D& 
     float maxX = minX + coreWidth;
     float maxY = minY + coreHeight + 2 * groundHoverDistance;
 
-    geom::Point2D pointerEndPos = playerPos.Translated (m_lastPointerDir * (30 + pointerLength));
+    geom::Point2D pointerEndPos = playerPos.translated (m_lastPointerDir * (30 + pointerLength));
 
     minX = std::min (minX, pointerEndPos.X());
     minY = std::min (minY, pointerEndPos.Y());

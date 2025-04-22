@@ -65,8 +65,6 @@ private:
     geom::Vector2D velocity;
     geom::Point2D  m_pos;
 
-    // PlayerAnimation m_procAnim;
-
     // vis part
     player::CoreState    m_currentCoreSprite    = { player::CoreState::FULL };
     player::PointerState m_currentPointerSprite = { player::PointerState::SHARP };

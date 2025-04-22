@@ -15,7 +15,7 @@ namespace physics::movement {
 struct UpdateState;
 }
 
-namespace Debug {
+namespace debug {
 
 enum Designation : uint8_t
 {
@@ -24,16 +24,16 @@ enum Designation : uint8_t
 
 #if _DEBUG
 
-void Log (const std::pair<geom::Point2D, geom::Point2D>& line, Designation des);
-void Log (const physics::Collider& collider, const Color& color = BLUE);
-void Log (const physics::movement::UpdateState& pus, const geom::Point2D& playerPos);
-void Log (const geom::Point2D& pnt, Designation des);
-void Log (const std::string& message);
+void log (const std::pair<geom::Point2D, geom::Point2D>& line, Designation des);
+void log (const physics::Collider& collider, const Color& color = BLUE);
+void log (const physics::movement::UpdateState& pus, const geom::Point2D& playerPos);
+void log (const geom::Point2D& pnt, Designation des);
+void log (const std::string& message);
 
 template <typename... Ts>
-void Log (std::format_string<Ts...>&& fstr, Ts&&... args)
+void log (std::format_string<Ts...>&& fstr, Ts&&... args)
 {
-    Log(std::format(fstr, std::forward<Ts>(args)...));
+    log(std::format(fstr, std::forward<Ts>(args)...));
 }
 
 
@@ -41,8 +41,8 @@ void Log (std::format_string<Ts...>&& fstr, Ts&&... args)
 
 // Release version of functions
 template <typename... Types>
-inline void Log (Types...)
+inline void log (Types...)
 {}
 #endif
 
-} // namespace Debug
+} // namespace debug

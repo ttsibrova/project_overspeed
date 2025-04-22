@@ -6,7 +6,7 @@
 
 namespace map {
 
-std::string GetPath (RegisteredMap map)
+std::string GetPath (const RegisteredMap map)
 {
     std::string path ("assets/lvl_");
     switch (map) {

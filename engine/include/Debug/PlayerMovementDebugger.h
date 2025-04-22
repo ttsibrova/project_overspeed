@@ -2,7 +2,7 @@
 #include <Geom/Point2D.h>
 #include <Physics/PhysicsUpdateState.h>
 
-namespace Debug {
+namespace debug {
 
 class PlayerMovementDebugger
 {
@@ -14,7 +14,7 @@ public:
 
 public:
     void update (const physics::movement::UpdateState& pmUpdateState, const geom::Point2D& playerPos);
-    void draw();
+    void draw() const;
 
 private:
     PlayerMovementDebugger() {}
@@ -27,4 +27,4 @@ private:
     geom::Vector2D       m_trslVec;
 };
 
-} // namespace Debug
+} // namespace debug

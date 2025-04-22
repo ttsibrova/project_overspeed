@@ -49,7 +49,7 @@ public:
         return m_imagePathIDs.contains (tileGid - getStartGid());
     }
 
-    inline size_t GetImageID (int tileGid) const { return m_imagePathIDs.at (getTileId(tileGid)); }
+    inline size_t GetImageID (int tileGid) const { return m_imagePathIDs.at (getTileId (tileGid)); }
 
 private:
     std::unordered_map<int, size_t> m_imagePathIDs;

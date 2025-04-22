@@ -3,7 +3,7 @@
 #include <Debug/CollisionDebugger.h>
 #include <Debug/PlayerMovementDebugger.h>
 
-namespace Debug {
+namespace debug {
 
 GlobalDebugger& GlobalDebugger::getInstance()
 {
@@ -16,10 +16,10 @@ void GlobalDebugger::update()
     CollisionDebugger::getInstance().update();
 }
 
-void GlobalDebugger::draw()
+void GlobalDebugger::draw() const
 {
     CollisionDebugger::getInstance().draw();
     PlayerMovementDebugger::getInstance().draw();
 }
 
-} // namespace Debug
+} // namespace debug

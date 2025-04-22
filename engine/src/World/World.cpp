@@ -48,7 +48,7 @@ GameWorld GameWorld::createGameWorld (map::RegisteredMap map)
 void GameWorld::update()
 {
 #if _DEBUG
-    Debug::GlobalDebugger::getInstance().update();
+    debug::GlobalDebugger::getInstance().update();
 #endif
     input::getInputHandler().handleTargetedInput (m_inputLayer);
 
@@ -83,7 +83,7 @@ void GameWorld::draw()
     m_player.draw();
 
 #if _DEBUG
-    Debug::GlobalDebugger::getInstance().draw();
+    debug::GlobalDebugger::getInstance().draw();
 #endif
     EndMode2D();
 }

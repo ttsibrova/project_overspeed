@@ -10,7 +10,6 @@ enum class Device : uint8_t;
 
 namespace input {
 
-
 geom::Vector2D getAxisVec();
 Device         getActiveDevice();
 

@@ -56,10 +56,10 @@ std::vector<std::pair<geom::Point2D, geom::Point2D>> GetTileLines (geom::Quadran
 
 bool IsBelongToSegment (const geom::Point2D& p, const geom::Point2D& p1, const geom::Point2D& p2)
 {
-    return p.X() >= std::min (p1.X(), p2.X()) - precision::half_pixel &&
-           p.X() <= std::max (p1.X(), p2.X()) + precision::half_pixel &&
-           p.Y() >= std::min (p1.Y(), p2.Y()) - precision::half_pixel &&
-           p.Y() <= std::max (p1.Y(), p2.Y()) + precision::half_pixel;
+    return p.X() >= std::min (p1.X(), p2.X()) - precision::halfPixel &&
+           p.X() <= std::max (p1.X(), p2.X()) + precision::halfPixel &&
+           p.Y() >= std::min (p1.Y(), p2.Y()) - precision::halfPixel &&
+           p.Y() <= std::max (p1.Y(), p2.Y()) + precision::halfPixel;
 }
 
 std::optional<geom::Vector2D> SweepCollision (const physics::Collider& playerCollider, const geom::Vector2D& playerTrsl,
@@ -68,7 +68,7 @@ std::optional<geom::Vector2D> SweepCollision (const physics::Collider& playerCol
     float colliderHalfHeight = playerCollider.Height() / 2.f;
     float colliderHalfWidth  = playerCollider.Width() / 2.f;
     geom::Point2D colliderKeyPnt (playerCollider.Min().X() + colliderHalfWidth, playerCollider.Min().Y() + colliderHalfHeight);
-    geom::Point2D trajectoryEndPnt = colliderKeyPnt.Translated (playerTrsl);
+    geom::Point2D trajectoryEndPnt = colliderKeyPnt.translated (playerTrsl);
 
     // std::print ("Collider min pnt - X: {}, Y: {}\n", playerCollider.Min().X(), playerCollider.Min().Y());
     // std::print ("Collider max pnt - X: {}, Y: {}\n", playerCollider.Max().X(), playerCollider.Max().Y());
@@ -93,7 +93,7 @@ std::optional<geom::Vector2D> SweepCollision (const physics::Collider& playerCol
 
     std::optional<geom::Vector2D> newTrsl;
     for (const auto line : tileLines) {
-        auto intersectPnt = geom::algo::IntersectLines (colliderKeyPnt, trajectoryEndPnt, line.first, line.second);
+        auto intersectPnt = geom::algo::intersectLines (colliderKeyPnt, trajectoryEndPnt, line.first, line.second);
         if (!intersectPnt.has_value()) {
             core::log::warning("Intersector failed to find value, manual branch DISABLED");
             ////Embracing a specific issue where our vector from chosen point strinctly aligned with
@@ -144,7 +144,7 @@ std::optional<geom::Vector2D> SweepCollision (const physics::Collider& playerCol
             // std::print ("Intersector found the value X:{}, Y:{}, but it was rejected\n", intersectPnt.value().X(), intersectPnt.value().Y());
             continue;
         }
-        Debug::Log (line, Debug::Collision);
+        debug::log (line, debug::Collision);
         if (intersectPnt.has_value()) {
             // std::print ("Current line - X: {}, Y: {} -- X: {}, Y: {}\n", line.first.X(), line.first.Y(), line.second.X(), line.second.Y());
             // std::print ("Intersect pnt - X: {}, Y: {}\n", intersectPnt.value().X(), intersectPnt.value().Y());
@@ -156,17 +156,17 @@ std::optional<geom::Vector2D> SweepCollision (const physics::Collider& playerCol
         if (newTrsl.has_value() && intersectPnt.has_value()) {
             auto candidate = geom::Vector2D (intersectPnt.value().X() - colliderKeyPnt.X(),
                                              intersectPnt.value().Y() - colliderKeyPnt.Y());
-            if (candidate.SquareMagnitude() < newTrsl.value().SquareMagnitude()) {
+            if (candidate.getSquareMagnitude() < newTrsl.value().getSquareMagnitude()) {
                 newTrsl = candidate;
             }
         }
     }
 
     if (newTrsl.has_value()) {
-        auto  dir       = playerTrsl.Normalized();
-        float newLength = newTrsl.value().Magnitude();
+        auto  dir       = playerTrsl.normalized();
+        float newLength = newTrsl.value().getMagnitude();
         // std::print ("Computed adj vector - X: {}, Y: {}\n", newTrsl.value().X(), newTrsl.value().Y());
-        if (newLength < precision::float_tol) {
+        if (newLength < precision::floatTol) {
             newTrsl = geom::Vector2D();
         }
         else {
@@ -182,23 +182,23 @@ std::optional<geom::Vector2D> SweepCollision (const physics::Collider& playerCol
 std::optional<geom::Vector2D> HitScanGround (const physics::Collider& playerCollider, const geom::Vector2D& playerTrsl,
                                              const world::GroundData& groundData)
 {
-    physics::Collider playerNewCollider = playerCollider.Translated (playerTrsl);
+    physics::Collider playerNewCollider = playerCollider.translated (playerTrsl);
     const map::GridTileSize& tileSize   = world::settings::tileSize;
 
     auto minPnt = playerNewCollider.Min();
     auto maxPnt = playerNewCollider.Max();
 
-    size_t left_tile = static_cast<size_t> (std::floorf ((minPnt.X() + precision::quarter_pixel) / tileSize.width));
+    size_t left_tile = static_cast<size_t> (std::floorf ((minPnt.X() + precision::quarterPixel) / tileSize.width));
     if (left_tile > groundData.tiles.extent (0) - 1) {
         left_tile = 0U;
     }
-    size_t right_tile = static_cast<size_t> (std::floorf ((maxPnt.X() - precision::quarter_pixel) / tileSize.width));
+    size_t right_tile = static_cast<size_t> (std::floorf ((maxPnt.X() - precision::quarterPixel) / tileSize.width));
     right_tile = std::min (right_tile, groundData.tiles.extent (0) - 1);
-    size_t top_tile   = static_cast<size_t> (std::floorf ((minPnt.Y() + precision::quarter_pixel) / tileSize.height));
+    size_t top_tile   = static_cast<size_t> (std::floorf ((minPnt.Y() + precision::quarterPixel) / tileSize.height));
     if (top_tile > groundData.tiles.extent (1) - 1) {
         top_tile = 0U;
     }
-    size_t bottom_tile = static_cast<size_t> (std::floorf ((maxPnt.Y() - precision::quarter_pixel) / tileSize.height));
+    size_t bottom_tile = static_cast<size_t> (std::floorf ((maxPnt.Y() - precision::quarterPixel) / tileSize.height));
     bottom_tile = std::min (bottom_tile, groundData.tiles.extent (1) - 1);
 
     std::optional<geom::Vector2D> finalVector;
@@ -209,11 +209,11 @@ std::optional<geom::Vector2D> HitScanGround (const physics::Collider& playerColl
                                              static_cast<float> (j) * tileSize.height);
                 geom::Point2D tileMaxCorner (tileMinCorner.X() + tileSize.width,
                                              tileMinCorner.Y() + tileSize.height);
-                Debug::Log (std::make_pair (tileMinCorner, tileMaxCorner), Debug::Collision);
+                debug::log (std::make_pair (tileMinCorner, tileMaxCorner), debug::Collision);
                 auto adjustedVec = SweepCollision (playerCollider, playerTrsl, tileMinCorner, tileMaxCorner);
                 if (!finalVector.has_value() ||
                     finalVector.has_value() && adjustedVec.has_value() &&
-                        finalVector.value().SquareMagnitude() > adjustedVec.value().SquareMagnitude()) {
+                        finalVector.value().getSquareMagnitude() > adjustedVec.value().getSquareMagnitude()) {
                     finalVector = adjustedVec;
                 }
             }
@@ -230,17 +230,17 @@ bool IsPlayerCollidesWithGround (const physics::Collider& playerCollider, const 
 
     const map::GridTileSize& tileSize = world::settings::tileSize;
 
-    size_t left_tile = static_cast<size_t> (std::floorf ((minPnt.X() + precision::quarter_pixel) / tileSize.width));
+    size_t left_tile = static_cast<size_t> (std::floorf ((minPnt.X() + precision::quarterPixel) / tileSize.width));
     if (left_tile > groundData.tiles.extent (0) - 1) {
         left_tile = 0U;
     }
-    size_t right_tile = static_cast<size_t> (std::floorf ((maxPnt.X() - precision::quarter_pixel) / tileSize.width));
+    size_t right_tile = static_cast<size_t> (std::floorf ((maxPnt.X() - precision::quarterPixel) / tileSize.width));
     right_tile = std::min (right_tile, groundData.tiles.extent (0) - 1);
-    size_t top_tile   = static_cast<size_t> (std::floorf ((minPnt.Y() + precision::quarter_pixel) / tileSize.height));
+    size_t top_tile   = static_cast<size_t> (std::floorf ((minPnt.Y() + precision::quarterPixel) / tileSize.height));
     if (top_tile > groundData.tiles.extent (1) - 1) {
         top_tile = 0U;
     }
-    size_t bottom_tile = static_cast<size_t> (std::floorf ((maxPnt.Y() - precision::quarter_pixel) / tileSize.height));
+    size_t bottom_tile = static_cast<size_t> (std::floorf ((maxPnt.Y() - precision::quarterPixel) / tileSize.height));
     bottom_tile = std::min (bottom_tile, groundData.tiles.extent (1) - 1);
 
     for (size_t i = left_tile; i <= right_tile; i++) {
@@ -262,7 +262,7 @@ std::optional<geom::Vector2D> GetGroundNormalUnderPlayer (const physics::Collide
     case Quadrant::IV:
     case Quadrant::X_ALIGNED:
     {
-        anchorPnt.X() = playerCollider.Max().X() + precision::pixel + precision::quarter_pixel;
+        anchorPnt.X() = playerCollider.Max().X() + precision::pixel + precision::quarterPixel;
         anchorPnt.Y() = playerCollider.Max().Y() + precision::pixel;
         break;
     }
@@ -270,7 +270,7 @@ std::optional<geom::Vector2D> GetGroundNormalUnderPlayer (const physics::Collide
     case Quadrant::III:
     case Quadrant::X_OPPOSITE:
     {
-        anchorPnt.X() = playerCollider.Min().X() - precision::pixel + precision::quarter_pixel;
+        anchorPnt.X() = playerCollider.Min().X() - precision::pixel + precision::quarterPixel;
         anchorPnt.Y() = playerCollider.Max().Y() + precision::pixel;
         break;
     }
@@ -311,8 +311,8 @@ bool IsPlayerGrounded (const physics::Collider& playerCollider, const world::Gro
 
     float  center      = minPnt.X() + playerCollider.Width() / 2;
     size_t tile_center = static_cast<size_t> (std::floorf (center / tileSize.width));
-    size_t tile_right  = static_cast<size_t> (std::floorf ((maxPnt.X() - precision::quarter_pixel) / tileSize.width));
-    size_t tile_left = static_cast<size_t> (std::floorf ((minPnt.X() + precision::quarter_pixel) / tileSize.width));
+    size_t tile_right  = static_cast<size_t> (std::floorf ((maxPnt.X() - precision::quarterPixel) / tileSize.width));
+    size_t tile_left = static_cast<size_t> (std::floorf ((minPnt.X() + precision::quarterPixel) / tileSize.width));
     size_t tile_y      = static_cast<size_t> (std::ceilf (maxPnt.Y() / tileSize.height));
     tile_y        = std::min (groundData.tiles.extent (1) - 1, tile_y);
     tile_center   = std::min (groundData.tiles.extent (0) - 1, tile_center);
@@ -324,9 +324,9 @@ bool IsPlayerGrounded (const physics::Collider& playerCollider, const world::Gro
         return false;
     }
 
-    //Debug::Log ("Distance to ground: {}", static_cast<float> (tile_y) * tileSize.height - maxPnt.Y());
+    //debug::log ("Distance to ground: {}", static_cast<float> (tile_y) * tileSize.height - maxPnt.Y());
 
-    return static_cast<float> (tile_y) * tileSize.height - maxPnt.Y() < precision::quarter_pixel;
+    return static_cast<float> (tile_y) * tileSize.height - maxPnt.Y() < precision::quarterPixel;
 }
 
 } // namespace Collision

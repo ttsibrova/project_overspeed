@@ -26,8 +26,6 @@ struct Actuator
     std::vector<unsigned int> childIDs;
 };
 
-ActuatorType getToggledActuatorType (ActuatorType type);
-
-bool isActuator (const std::string& type);
+ActuatorType getToggledActuatorType (const ActuatorType type);
 
 } // namespace map

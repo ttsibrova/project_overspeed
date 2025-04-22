@@ -5,7 +5,7 @@
 #include <cmath>
 #include <format>
 
-namespace Debug {
+namespace debug {
 #pragma region HELPERS
 void DrawTriangle (const geom::Point2D& pos, float height, float rotation, const Color& color)
 {
@@ -16,10 +16,10 @@ void DrawTriangle (const geom::Point2D& pos, float height, float rotation, const
 
 void draw (const physics::Collider& collider, const Color& color)
 {
-    Vector2 min = collider.Min();
-    Vector2 max = collider.Max();
-    Vector2 downLeft { min.x, max.y };
-    Vector2 topRight { max.x, min.y };
+    const Vector2 min = collider.Min();
+    const Vector2 max = collider.Max();
+    const Vector2 downLeft { min.x, max.y };
+    const Vector2 topRight { max.x, min.y };
 
     DrawLineV (min, topRight, color);
     DrawLineV (topRight, max, color);
@@ -34,19 +34,19 @@ void draw (const geom::Point2D& pnt1, const geom::Point2D& pnt2, const Color& co
 
 void draw (const geom::Point2D& pos, const geom::Vector2D& vec, const Color& color)
 {
-    if (vec.SquareMagnitude() < 1.e-6) {
+    if (vec.getSquareMagnitude() < 1.e-6) {
         return;
     }
-    auto  oX    = geom::getRightVector();
-    auto  dir   = vec.Normalized();
-    float angle = std::acos (dir.Dot (oX)) * 180 / PI;
+    const auto  oX    = geom::getRightVector();
+    const auto  dir   = vec.normalized();
+    const float angle = std::acos (dir.dot (oX)) * 180 / PI;
 
-    auto endPnt = pos.Translated (dir * 40);
+    const auto endPnt = pos.translated (dir * 40);
     DrawCircleV (pos, 4.f, color);
     DrawLineEx (pos, endPnt, 2.f, color);
     DrawTriangle (endPnt, 8.f, angle, color);
 
-    std::string vectorText = std::format ("({:.2f}, {:.2f})", vec.X(), vec.Y());
+    const std::string vectorText = std::format ("({:.2f}, {:.2f})", vec.X(), vec.Y());
     switch (geom::getVectorQudrant (dir)) {
     case geom::Quadrant::I:
     case geom::Quadrant::II:
@@ -68,4 +68,4 @@ void draw (const geom::Point2D& pnt, const Color& color)
     DrawCircleV (pnt, 1.f, color);
 }
 
-} // namespace Debug
+} // namespace debug

@@ -153,11 +153,11 @@ std::optional<Level> Level::createLevel (map::RegisteredMap map)
     return { Level (levelMap) };
 }
 
-void Level::drawTileLayer (const map::Layer& layer)
+void Level::drawTileLayer (const map::Layer& layer) const
 {
-    std::string layerName = layer.getName();
+    const std::string layerName = layer.getName();
 
-    auto tileSetIt  = std::ranges::find (m_eTilesets, layerName, &map::EmbeddedTileset::getName);
+    const auto tileSetIt  = std::ranges::find (m_eTilesets, layerName, &map::EmbeddedTileset::getName);
     if (tileSetIt == m_eTilesets.end()) {
         return drawMissing(layer, m_levelHeightInTiles);
     }
@@ -170,16 +170,16 @@ void Level::drawTileLayer (const map::Layer& layer)
         const float x = static_cast<float> (i / m_levelHeightInTiles);
         const float y = static_cast<float> (i % m_levelHeightInTiles);
         if (tileSetIt->IsTileBelongsToSet (tileIDs[i])) {
-            TextureManager::getInstance().DrawTile (tileSetIt->GetImageID(), { x * tileWidth, y * tileWidth }, // pixel position
+            TextureManager::getInstance().drawTile (tileSetIt->GetImageID(), { x * tileWidth, y * tileWidth }, // pixel position
                                                     tileWidth, tileHeight,
                                                     tileSetIt->GetTilePosition (tileIDs[i])); // position on texture
         }
     }
 }
 
-map::types::OptRefEmbeddedTileset Level::findTileset (std::string name)
+map::types::OptRefEmbeddedTileset Level::findTileset (std::string name) const
 {
-    auto tileSetIt = std::ranges::find (m_eTilesets, name, &map::EmbeddedTileset::getName);
+    const auto tileSetIt = std::ranges::find (m_eTilesets, name, &map::EmbeddedTileset::getName);
     if (tileSetIt != m_eTilesets.end()) {
         return *tileSetIt;
     }
@@ -206,19 +206,19 @@ void Level::draw()
     graphics::draw (getLevelActuators(), m_cTileset);
 }
 
-GroundData Level::getGroundData()
+GroundData Level::getGroundData() const
 {
     const auto& groundLayer = m_layers[1];
     auto md = std::mdspan (groundLayer.getTiles().data(), groundLayer.getTilesNum() / m_levelHeightInTiles, m_levelHeightInTiles);
     return { md };
 }
 
-LevelInteractableTiles Level::getLevelInteractableTiles()
+LevelInteractableTiles Level::getLevelInteractableTiles() const
 {
     return LevelInteractableTiles (m_interactableTiles);
 }
 
-LevelActuators Level::getLevelActuators()
+LevelActuators Level::getLevelActuators() const
 {
     return LevelActuators(m_actuators, m_cTileset);
 }

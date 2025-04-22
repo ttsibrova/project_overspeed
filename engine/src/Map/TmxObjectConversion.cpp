@@ -61,36 +61,36 @@ std::unordered_map<uint32_t, std::pair<T, const tinytmx::Object*>>
 
 std::optional<InteractableTile> fillInteractableTile (
     const std::unordered_map<uint32_t, std::pair<TmxInteractableTile, const tinytmx::Object*>>& idToInteractableTileMap,
-    const tinytmx::Object* ptr, InteractableTileType activeTile)
+    const tinytmx::Object*                                                                      ptr,
+    InteractableTileType                                                                        activeTile)
 {
-    auto properties       = ptr->GetProperties();
-    auto interactableType = properties->GetBoolProperty ("active") ? activeTile : getToggledInteractableTileType (activeTile);
+    const auto properties = ptr->GetProperties();
+    const auto interactableType = properties->GetBoolProperty ("active") ? activeTile //
+                                                                         : getToggledInteractableTileType (activeTile);
 
-    TiledGridPositon begin {
+    const TiledGridPositon begin {
         .x = static_cast<int> (ptr->GetX() / world::settings::tileSize.width),
         .y = static_cast<int> (ptr->GetY() / world::settings::tileSize.height),
     };
 
-    auto endIt = idToInteractableTileMap.find (properties->GetObjectProperty ("end"));
-    m_assert (endIt != idToInteractableTileMap.end(), "Missing end object");
-    TiledGridPositon end {};
-    if (endIt != idToInteractableTileMap.end()) {
-        auto& sliderEnd = endIt->second.second;
+    const auto endIt = idToInteractableTileMap.find (properties->GetObjectProperty ("end"));
 
-        end.x = static_cast<int> (sliderEnd->GetX() / world::settings::tileSize.width);
-        end.y = static_cast<int> (sliderEnd->GetY() / world::settings::tileSize.height);
-    }
-    else {
+    m_assert (endIt != idToInteractableTileMap.end(), "Missing end object");
+    if (endIt == idToInteractableTileMap.end()) {
         return std::nullopt;
     }
 
-    InteractableTile filledTile {
+    const auto& sliderEnd = endIt->second.second;
+    const TiledGridPositon end {
+        .x = static_cast<int> (sliderEnd->GetX() / world::settings::tileSize.width),
+        .y = static_cast<int> (sliderEnd->GetY() / world::settings::tileSize.height),
+    };
+
+    return InteractableTile {
         .type  = interactableType,
         .begin = begin,
         .end   = end,
     };
-
-    return filledTile;
 }
 
 void connectTileToActuator (const tinytmx::PropertySet* tileProperties, uint32_t tileId, std::unordered_map<uint32_t, Actuator>& actuators)

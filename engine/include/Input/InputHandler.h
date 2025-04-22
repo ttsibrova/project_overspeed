@@ -42,8 +42,8 @@ public:
     input::Device getActiveDevice() const { return m_lastActiveDevice; }
 
 private:
-    bool checkKeyboardInputs (const input::Layer& inputLayer);
-    bool checkGamepadInputs (const input::Layer& inputLayer);
+    bool checkKeyboardInputs (const input::Layer& inputLayer) const;
+    bool checkGamepadInputs (const input::Layer& inputLayer) const;
 
 private:
     struct RegisteredLayer

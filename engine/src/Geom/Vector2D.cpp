@@ -4,12 +4,12 @@
 
 namespace geom {
 
-Vector2D Vector2D::Transformed (const Trsf2D& trsf) const
+Vector2D Vector2D::transformed (const Trsf2D& trsf) const
 {
     return trsf * *(this);
 }
 
-void Vector2D::Transform (const Trsf2D& trsf)
+void Vector2D::transform (const Trsf2D& trsf)
 {
     auto res = trsf * *(this);
     m_XY.x   = res.X();

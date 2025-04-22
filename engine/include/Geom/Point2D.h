@@ -25,13 +25,13 @@ public:
     inline float  Y() const { return m_y; }
     inline float& Y() { return m_y; }
 
-    inline void Translate (const geom::Vector2D& trsl)
+    inline void translate (const geom::Vector2D& trsl)
     {
         m_x += trsl.X();
         m_y += trsl.Y();
     }
 
-    [[nodiscard]] inline Point2D Translated (const geom::Vector2D& trsl) const
+    [[nodiscard]] inline Point2D translated (const geom::Vector2D& trsl) const
     {
         return Point2D (m_x + trsl.X(), m_y + trsl.Y());
     }

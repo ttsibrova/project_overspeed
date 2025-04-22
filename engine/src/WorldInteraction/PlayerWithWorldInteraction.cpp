@@ -26,7 +26,6 @@ std::optional<uint32_t> detectToggledActuator (const physics::Collider&     play
 
 }
 
-
 player::BodyState updateBodyStateOnInteraction (const physics::Collider& interactionPlayerCollider,
                                                 player::BodyState playerBodyState, const world::GroundData& ground)
 {
@@ -56,7 +55,7 @@ player::Action detectActionByInteraction (const physics::Collider&             p
                 continue;
             }
         }
-        Debug::Log (tileCollider, DARKBLUE);
+        debug::log (tileCollider, DARKBLUE);
     }
     return player::Action::IDLE;
 }

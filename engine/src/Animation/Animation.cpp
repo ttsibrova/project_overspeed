@@ -1,14 +1,16 @@
 #include <Animation/Animation.h>
 #include <Graphics/TextureManager.h>
+#include <Tools/Assert.h>
 
 void Animation::update()
 {
     m_frame = static_cast<int> (GetTime() / m_animSpeed) % m_frameCount;
 }
 
-void Animation::draw (const geom::Point2D& pos, graphics::RenderFlip flip)
+void Animation::draw (const geom::Point2D&, graphics::RenderFlip)
 {
-    TextureManager::getInstance().DrawFrame (m_textureID, pos, m_width, m_height, m_row, m_frame, flip);
+    m_assert (false, "Function is not implemented");
+    //TextureManager::getInstance().drawFrame (m_textureID, pos, m_width, m_height, m_row, m_frame, flip);
 }
 
 void Animation::SetProps (std::string textureID, int row, int frame, float height, float width, float animSpeed)

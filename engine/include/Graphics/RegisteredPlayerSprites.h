@@ -6,10 +6,10 @@ namespace graphics {
 enum class PlayerSprite : uint8_t
 {
     BodyPointer,
+    BodyPointerShield,
     BodyCoreEmpty,
     BodyCoreFull,
     BodyThruster,
-    BodyPointerShield,
 };
 
 struct SpriteInfo
@@ -19,8 +19,8 @@ struct SpriteInfo
     size_t id;
 };
 
-size_t     getTextureId (PlayerSprite sprite);
-SpriteInfo getSpriteInfo (PlayerSprite sprite);
+size_t     getTextureId (const PlayerSprite sprite);
+SpriteInfo getSpriteInfo (const PlayerSprite sprite);
 
 void registerPlayerSprites();
 
