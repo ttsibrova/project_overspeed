@@ -45,7 +45,7 @@ public:
     void drawTile (size_t id, const geom::Point2D& pos, float width, float height, map::TiledGridPositon tilePos) const;
     void drawMissing (const geom::Point2D& pos, float width, float height, Color color) const;
     // void drawFrame (std::string id, const geom::Point2D& pos, float width, float height, int row, int frame,
-    //                 graphics::RenderFlip flip = graphics::RenderFlip::FLIP_NONE);
+    //                 graphics::RenderFlip flip = graphics::RenderFlip::FlipNone);
 
     graphics::ImageInfo getImageInfo (size_t id) const;
 

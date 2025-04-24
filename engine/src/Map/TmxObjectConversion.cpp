@@ -12,34 +12,34 @@ namespace map {
 namespace {
 enum class TmxActuator : uint8_t
 {
-    NONE,
-    PEDESTAL,
+    None,
+    Pedestal,
 };
 
 std::unordered_map<std::string, TmxActuator> getActuatorTypeMap()
 {
     std::unordered_map<std::string, TmxActuator> map = {
-        { "pedestal", TmxActuator::PEDESTAL },
+        { "pedestal", TmxActuator::Pedestal },
     };
     return map;
 }
 
 enum class TmxInteractableTile : uint8_t
 {
-    NONE,
-    SLIDER_BEGIN,
-    SLIDER_END,
-    JUMP_BEGIN,
-    JUMP_END
+    None,
+    SliderBegin,
+    SliderEnd,
+    JumpBegin,
+    JumpEnd
 };
 
 std::unordered_map<std::string, TmxInteractableTile> getInteractableTileTypeMap()
 {
     std::unordered_map<std::string, TmxInteractableTile> map = {
-        { "sliderBegin", TmxInteractableTile::SLIDER_BEGIN },
-        { "sliderEnd", TmxInteractableTile::SLIDER_END },
-        { "jumpBegin", TmxInteractableTile::JUMP_BEGIN },
-        { "jumpEnd", TmxInteractableTile::JUMP_END },
+        { "sliderBegin", TmxInteractableTile::SliderBegin },
+        { "sliderEnd", TmxInteractableTile::SliderEnd },
+        { "jumpBegin", TmxInteractableTile::JumpBegin },
+        { "jumpEnd", TmxInteractableTile::JumpEnd },
     };
     return map;
 }
@@ -113,11 +113,11 @@ TmxObjectConversionResult convertTmxObjects (const std::vector<tinytmx::Object*>
     for (const auto& [key, value] : idToActuatorMap) {
         const auto& [type, ptr] = value;
         switch (type) {
-        case TmxActuator::PEDESTAL:
+        case TmxActuator::Pedestal:
         {
             auto properties   = ptr->GetProperties();
-            auto actuatorType = properties->GetBoolProperty ("active") ? ActuatorType::PEDESTAL_ACTIVE
-                                                                       : ActuatorType::PEDESTAL_INACTIVE;
+            auto actuatorType = properties->GetBoolProperty ("active") ? ActuatorType::PedestalActive //
+                                                                       : ActuatorType::PedestalInactive;
 
             geom::Point2D pos (ptr->GetX(), ptr->GetY());
             actuators[key] = Actuator { .type = actuatorType, .tileGid = ptr->GetGid(), .pos = pos,};
@@ -132,12 +132,12 @@ TmxObjectConversionResult convertTmxObjects (const std::vector<tinytmx::Object*>
     for (const auto& [key, value] : idToInteractableTileMap) {
         const auto& [type, ptr] = value;
         switch (type) {
-        case TmxInteractableTile::SLIDER_END:
-        case TmxInteractableTile::JUMP_END:
+        case TmxInteractableTile::SliderEnd:
+        case TmxInteractableTile::JumpEnd:
             continue;
-        case TmxInteractableTile::SLIDER_BEGIN:
+        case TmxInteractableTile::SliderBegin:
         {
-            auto filledTile = fillInteractableTile (idToInteractableTileMap, ptr, InteractableTileType::SLIDER_ACTIVE);
+            auto filledTile = fillInteractableTile (idToInteractableTileMap, ptr, InteractableTileType::SliderActive);
             if (filledTile.has_value()) {
                 interactableTiles[key] = std::move (filledTile.value());
             }
@@ -147,9 +147,9 @@ TmxObjectConversionResult convertTmxObjects (const std::vector<tinytmx::Object*>
             connectTileToActuator (ptr->GetProperties(), key, actuators);
             break;
         }
-        case TmxInteractableTile::JUMP_BEGIN:
+        case TmxInteractableTile::JumpBegin:
         {
-            auto filledTile = fillInteractableTile (idToInteractableTileMap, ptr, InteractableTileType::JUMP_ACTIVE);
+            auto filledTile = fillInteractableTile (idToInteractableTileMap, ptr, InteractableTileType::JumpActive);
             if (filledTile.has_value()) {
                 interactableTiles[key] = std::move (filledTile.value());
             }
@@ -164,11 +164,10 @@ TmxObjectConversionResult convertTmxObjects (const std::vector<tinytmx::Object*>
         }
     }
 
-    TmxObjectConversionResult result {
+    return TmxObjectConversionResult {
         .idToActuatorsMap        = std::move (actuators),
         .idToInteractableTileMap = std::move (interactableTiles),
     };
-    return result;
 }
 
 } // namespace map

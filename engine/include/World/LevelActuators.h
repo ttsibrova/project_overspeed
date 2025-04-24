@@ -26,8 +26,8 @@ public:
             // fallback sizes in case if image is missing
             float height = settings::tileSize.height;
             float width  = settings::tileSize.width;
-            if (m_cTileset.IsTileBelongsToSet(actuator.tileGid)) {
-                auto imageInfo = TextureManager::getInstance().getImageInfo(m_cTileset.GetImageID(actuator.tileGid));
+            if (m_cTileset.isTileBelongsToSet(actuator.tileGid)) {
+                auto imageInfo = TextureManager::getInstance().getImageInfo(m_cTileset.getImageID(actuator.tileGid));
                 height         = imageInfo.height;
                 width          = imageInfo.width;
             }

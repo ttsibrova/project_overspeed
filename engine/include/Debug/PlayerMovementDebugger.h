@@ -20,9 +20,9 @@ private:
     PlayerMovementDebugger() {}
 
 private:
-    player::MovementMode m_movementMode { player::MovementMode::NONE };
-    float                m_simulationTime { 0.f };
-    geom::Point2D        m_playerPos;
+    player::MovementMode m_movementMode   = { player::MovementMode::None };
+    float                m_simulationTime = { 0.f };
+    geom::Point2D        m_playerPos      = {};
     geom::Vector2D       m_playerVelocity;
     geom::Vector2D       m_trslVec;
 };

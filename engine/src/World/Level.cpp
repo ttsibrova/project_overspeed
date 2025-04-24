@@ -73,8 +73,8 @@ void drawLayerWithTileset (const map::Layer& layer, const map::CollectionTileset
     for (int i = 0; i < static_cast<int> (tileIDs.size()); i++) {
         const float x = static_cast<float> (i / levelHeightInTiles);
         const float y = static_cast<float> (i % levelHeightInTiles);
-        if (layerTileset.IsTileBelongsToSet (tileIDs[i])) {
-            auto imageId   = layerTileset.GetImageID (tileIDs[i]);
+        if (layerTileset.isTileBelongsToSet (tileIDs[i])) {
+            auto imageId   = layerTileset.getImageID (tileIDs[i]);
             auto imageInfo = TextureManager::getInstance().getImageInfo (imageId);
             TextureManager::getInstance().draw (imageId, { x * tileWidth, (y + 1) * tileHeight - imageInfo.height });
         }
@@ -169,8 +169,8 @@ void Level::drawTileLayer (const map::Layer& layer) const
     for (int i = 0; i < static_cast<int> (tileIDs.size()); i++) {
         const float x = static_cast<float> (i / m_levelHeightInTiles);
         const float y = static_cast<float> (i % m_levelHeightInTiles);
-        if (tileSetIt->IsTileBelongsToSet (tileIDs[i])) {
-            TextureManager::getInstance().drawTile (tileSetIt->GetImageID(), { x * tileWidth, y * tileWidth }, // pixel position
+        if (tileSetIt->isTileBelongsToSet (tileIDs[i])) {
+            TextureManager::getInstance().drawTile (tileSetIt->getImageID(), { x * tileWidth, y * tileWidth }, // pixel position
                                                     tileWidth, tileHeight,
                                                     tileSetIt->GetTilePosition (tileIDs[i])); // position on texture
         }

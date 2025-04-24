@@ -6,9 +6,9 @@ namespace input {
 
 enum class Device : uint8_t
 {
-    NONE,
-    KEYBOARD,
-    GAMEPAD
+    None,
+    Keyboard,
+    Gamepad
 };
 
 
@@ -16,7 +16,7 @@ class InputHandler
 {
 public:
     InputHandler():
-        m_lastActiveDevice (input::Device::KEYBOARD)
+        m_lastActiveDevice (input::Device::Keyboard)
     {}
 
     InputHandler (const InputHandler&)            = delete;

@@ -20,7 +20,7 @@ void PlayerMovementDebugger::update (const physics::movement::UpdateState& pmUpd
 void PlayerMovementDebugger::draw() const
 {
     debug::draw (m_playerPos, m_playerVelocity);
-    debug::draw (geom::Point2D (m_playerPos.X(), m_playerPos.Y() - 30), m_trslVec, RED);
+    debug::draw (geom::Point2D (m_playerPos.x, m_playerPos.y - 30), m_trslVec, RED);
 }
 
 } // namespace debug

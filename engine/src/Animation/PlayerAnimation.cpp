@@ -19,7 +19,7 @@ void PlayerAnimation::draw (const geom::Point2D& playerPos, const geom::Vector2D
     float halfWidth  = spriteInfo.width / 2.f;
     float halfHeight = spriteInfo.height / 2.f;
 
-    geom::Point2D corePos { playerPos.X() - halfWidth, playerPos.Y() - halfHeight };
+    geom::Point2D corePos { playerPos.x - halfWidth, playerPos.y - halfHeight };
 
     float          rotationPointer  = m_lastPointerAngle;
     float          rotationThruster = 90.f;
@@ -31,7 +31,7 @@ void PlayerAnimation::draw (const geom::Point2D& playerPos, const geom::Vector2D
         float dot       = pointerOffset.dot (geom::getLeftVector());
         rotationPointer = std::acos (dot) * 180 / PI;
         // special case for these calculations: Z component of cross product computation when second vector is -1,0
-        if (-pointerOffset.Y() < 0) {
+        if (-pointerOffset.y < 0) {
             rotationPointer = -rotationPointer;
         }
         m_lastPointerAngle = rotationPointer;
@@ -42,7 +42,7 @@ void PlayerAnimation::draw (const geom::Point2D& playerPos, const geom::Vector2D
     else {
         float positiveAngle = std::abs (m_lastPointerAngle);
         if (positiveAngle > 0.5f && positiveAngle < 179.5f) {
-            if (m_lastPointerDir.X() > 0) {
+            if (m_lastPointerDir.x > 0) {
                 m_lastPointerAngle = 180.f;
                 m_lastPointerDir   = geom::getRightVector();
             }
@@ -108,19 +108,19 @@ physics::Collider PlayerAnimation::ComputeCurrentCollider (const geom::Point2D& 
     const float pointerLength       = 26;
     const float groundHoverDistance = 45;
 
-    float minX = playerPos.X() - coreWidth / 2.f;
-    float minY = playerPos.Y() - coreHeight / 2.f - groundHoverDistance; // adding hover distance above as well
+    float minX = playerPos.x - coreWidth / 2.f;
+    float minY = playerPos.y - coreHeight / 2.f - groundHoverDistance; // adding hover distance above as well
 
     float maxX = minX + coreWidth;
     float maxY = minY + coreHeight + 2 * groundHoverDistance;
 
     geom::Point2D pointerEndPos = playerPos.translated (m_lastPointerDir * (30 + pointerLength));
 
-    minX = std::min (minX, pointerEndPos.X());
-    minY = std::min (minY, pointerEndPos.Y());
+    minX = std::min (minX, pointerEndPos.x);
+    minY = std::min (minY, pointerEndPos.y);
 
-    maxX = std::max (maxX, pointerEndPos.X());
-    maxY = std::max (maxY, pointerEndPos.Y());
+    maxX = std::max (maxX, pointerEndPos.x);
+    maxY = std::max (maxY, pointerEndPos.y);
 
     return physics::Collider (geom::Point2D (minX, minY), geom::Point2D (maxX, maxY));
 }

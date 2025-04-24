@@ -47,9 +47,9 @@ player::Action detectActionByInteraction (const physics::Collider&             p
 
         if (physicalPlayerCollider.collides (tileCollider)) {
             switch (tileType) {
-            case map::InteractableTileType::JUMP_ACTIVE:
-                return player::Action::JUMP;
-            case map::InteractableTileType::SLIDER_ACTIVE:
+            case map::InteractableTileType::JumpActive:
+                return player::Action::Jump;
+            case map::InteractableTileType::SliderActive:
                 // return player::Action::SLIDE; // while slide action is not ready
             default:
                 continue;
@@ -57,7 +57,7 @@ player::Action detectActionByInteraction (const physics::Collider&             p
         }
         debug::log (tileCollider, DARKBLUE);
     }
-    return player::Action::IDLE;
+    return player::Action::Idle;
 }
 
 std::optional<uint32_t> detectToggledActuator (const player::Player& player, const world::LevelActuators& actuators)

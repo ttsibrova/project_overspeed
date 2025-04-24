@@ -8,7 +8,7 @@ namespace physics::movement {
 
 struct UpdateState
 {
-    player::MovementMode nextMode = player::MovementMode::NONE;
+    player::MovementMode nextMode = player::MovementMode::None;
     geom::Vector2D       velocity;
     geom::Vector2D       trsl;
     float                simTime = 0.f;

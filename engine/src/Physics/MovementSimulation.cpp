@@ -21,29 +21,29 @@ using Mode = player::MovementMode;
 player::MovementMode selectMovementModeOnAction (player::Action action, player::MovementMode currentMode)
 {
     switch (currentMode) {
-    case Mode::NONE:
+    case Mode::None:
         switch (action) {
-        case player::Action::IDLE : return Mode::NONE;
-        case player::Action::MOVE : return Mode::RUNNING;
-        case player::Action::SLIDE: return Mode::NONE;    // temporary
-        case player::Action::JUMP : return Mode::JUMPING;
-        default   : assert (false); return Mode::NONE;
+        case player::Action::Idle : return Mode::None;
+        case player::Action::Move : return Mode::Moving;
+        case player::Action::Slide: return Mode::None;    // temporary
+        case player::Action::Jump : return Mode::Jumping;
+        default   : assert (false); return Mode::None;
         };
-    case Mode::RUNNING:
+    case Mode::Moving:
         switch (action) {
-        case player::Action::IDLE : return Mode::NONE;
-        case player::Action::MOVE : return Mode::RUNNING;
-        case player::Action::SLIDE: return Mode::NONE;  // temporary
-        case player::Action::JUMP : return Mode::JUMPING;
-        default   : assert (false); return Mode::NONE;
+        case player::Action::Idle : return Mode::None;
+        case player::Action::Move : return Mode::Moving;
+        case player::Action::Slide: return Mode::None;  // temporary
+        case player::Action::Jump : return Mode::Jumping;
+        default   : assert (false); return Mode::None;
         }
-    case Mode::JUMPING: //
-        return Mode::JUMPING; // disallows switching to other modes util simulation is done
-    case Mode::AIR_MOVEMENT: //
-        return Mode::AIR_MOVEMENT; // disallows switching to other modes util simulation is done
+    case Mode::Jumping: //
+        return Mode::Jumping; // disallows switching to other modes util simulation is done
+    case Mode::AirMoving: //
+        return Mode::AirMoving; // disallows switching to other modes util simulation is done
     default:
         assert (false); // should not be there
-        return Mode::NONE;
+        return Mode::None;
     }
 }
 
@@ -53,16 +53,16 @@ player::MovementMode updateModeOnConditions (player::MovementMode     targetMode
 {
     bool isGrounded = Collision::IsPlayerGrounded (playerCollider, ground);
     switch (targetMode) {
-    case Mode::NONE:
-    case Mode::RUNNING:
+    case Mode::None:
+    case Mode::Moving:
         if (!isGrounded) {
-            return Mode::AIR_MOVEMENT;
+            return Mode::AirMoving;
         }
         break;
-    case Mode::JUMPING: break;
-    case Mode::AIR_MOVEMENT:
+    case Mode::Jumping: break;
+    case Mode::AirMoving:
         if (isGrounded) {
-            return Mode::NONE;
+            return Mode::None;
         }
         break;
     }
@@ -83,12 +83,12 @@ UpdateState simulatePhysRunning (const float dt, float simulationTime, const geo
     __assume (simulationTime >= 0.f);
     __assume (dt >= 0.f);
 
-    const auto inputVec = geom::stripByAxis (input::getAxisVec(), geom::Axis::X);
-    if (inputVec.getSquareMagnitude() < 1e-5 || std::abs (inputVec.X()) < 1e-5) {
-        return { Mode::NONE, playerVelocity, geom::Vector2D(), 0. }; // no direction
+    const auto inputVec = geom::stripByAxis (input::getAxisVec(), geom::Axis::x);
+    if (inputVec.getSquareMagnitude() < 1e-5 || std::abs (inputVec.x) < 1e-5) {
+        return { Mode::None, playerVelocity, geom::Vector2D(), 0. }; // no direction
     }
 
-    geom::Vector2D newVelocity         = geom::stripByAxis (playerVelocity, geom::Axis::X);
+    geom::Vector2D newVelocity         = geom::stripByAxis (playerVelocity, geom::Axis::x);
     auto           currHorizontalSpeed = newVelocity.getMagnitude();
     if (currHorizontalSpeed > FUZZY_COMPARE_VALUE && geom::isOpposite (playerVelocity, inputVec)) {
         newVelocity.flipX();
@@ -105,7 +105,7 @@ UpdateState simulatePhysRunning (const float dt, float simulationTime, const geo
     const geom::Vector2D trsl = newVelocity * tickTime;
     simulationTime += tickTime;
 
-    return { Mode::RUNNING, newVelocity, trsl, simulationTime };
+    return { Mode::Moving, newVelocity, trsl, simulationTime };
 }
 
 UpdateState simulatePhysAirMovement (const float dt, const float simulationTime, const geom::Vector2D& playerVelocity)
@@ -120,34 +120,34 @@ UpdateState simulatePhysAirMovement (const float dt, const float simulationTime,
     const geom::Vector2D inputVec  = input::getAxisVec();
 
     const float addedFallVelocity = gravityAcceleration * tickTime;
-    const float addedAirMovement  = inputVec.X() * airAcceleration * tickTime;
+    const float addedAirMovement  = inputVec.x * airAcceleration * tickTime;
 
-    float resultAirVelocityX = playerVelocity.X() + addedAirMovement;
-    if (playerVelocity.X() * addedAirMovement > 0 && std::abs(resultAirVelocityX) > maxAirMovementSpeed) {
-        resultAirVelocityX = playerVelocity.X();
+    float resultAirVelocityX = playerVelocity.x + addedAirMovement;
+    if (playerVelocity.x * addedAirMovement > 0 && std::abs(resultAirVelocityX) > maxAirMovementSpeed) {
+        resultAirVelocityX = playerVelocity.x;
     }
-    float resultAirVelocityY = playerVelocity.Y() + addedFallVelocity;
+    float resultAirVelocityY = playerVelocity.y + addedFallVelocity;
     if (resultAirVelocityY > 0 && std::abs(resultAirVelocityY) > maxFallSpeed) {
         resultAirVelocityY = maxFallSpeed;
     }
 
-    const geom::Vector2D newVelocity (resultAirVelocityX, playerVelocity.Y() + addedFallVelocity);
+    const geom::Vector2D newVelocity (resultAirVelocityX, playerVelocity.y + addedFallVelocity);
     debug::log ("Fall velocity: {}", newVelocity);
 
     const geom::Vector2D trsl = newVelocity * tickTime;
 
-    if (newVelocity.Y() > 0.f) {
-        return { Mode::AIR_MOVEMENT, newVelocity, trsl, simulationTime + tickTime };
+    if (newVelocity.y > 0.f) {
+        return { Mode::AirMoving, newVelocity, trsl, simulationTime + tickTime };
     }
     else {
-        return { Mode::JUMPING, newVelocity, trsl, simulationTime + tickTime };
+        return { Mode::Jumping, newVelocity, trsl, simulationTime + tickTime };
     }
 }
 
 UpdateState simulatePhysJumping (const float dt, float simulationTime, const geom::Vector2D& playerVelocity)
 {
     if (simulationTime == 0.f) {
-        return simulatePhysAirMovement (dt, simulationTime, geom::Vector2D (playerVelocity.X(), playerVelocity.Y() - 850.f));
+        return simulatePhysAirMovement (dt, simulationTime, geom::Vector2D (playerVelocity.x, playerVelocity.y - 850.f));
     }
     else {
         return simulatePhysAirMovement (dt, simulationTime, playerVelocity);
@@ -190,7 +190,7 @@ UpdateState computeUpdatedMovementState (float dt, const player::Player& player,
     debug::log ("Targeting movement mode: {}", targetMode);
 
     switch (targetMode) {
-    case Mode::NONE:
+    case Mode::None:
     {
         UpdateState physicsState {
             .nextMode = targetMode,
@@ -200,15 +200,15 @@ UpdateState computeUpdatedMovementState (float dt, const player::Player& player,
         };
         return physicsState;
     }
-    case Mode::RUNNING:
+    case Mode::Moving:
     {
         return simulatePhys (player, ground, simulatePhysRunning, dt, simulationTime, playerState.velocity);
     }
-    case Mode::AIR_MOVEMENT:
+    case Mode::AirMoving:
     {
         return simulatePhys (player, ground, simulatePhysAirMovement, dt, simulationTime, playerState.velocity);
     }
-    case Mode::JUMPING:
+    case Mode::Jumping:
     {
         return simulatePhys (player, ground, simulatePhysJumping, dt, simulationTime, playerState.velocity);
     }

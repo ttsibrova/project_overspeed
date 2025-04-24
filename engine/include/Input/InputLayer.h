@@ -7,8 +7,8 @@ namespace input {
 
 enum class ActionType
 {
-    HOLD,
-    PRESS
+    Hold,
+    Press
 };
 
 struct Action

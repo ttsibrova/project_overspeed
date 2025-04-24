@@ -17,14 +17,14 @@ namespace geom::algo {
         return end1;
     }
 
-    const float x1 = start1.X();
-    const float x2 = end1.X();
-    const float x3 = start2.X();
-    const float x4 = end2.X();
-    const float y1 = start1.Y();
-    const float y2 = end1.Y();
-    const float y3 = start2.Y();
-    const float y4 = end2.Y();
+    const float x1 = start1.x;
+    const float x2 = end1.x;
+    const float x3 = start2.x;
+    const float x4 = end2.x;
+    const float y1 = start1.y;
+    const float y2 = end1.y;
+    const float y3 = start2.y;
+    const float y4 = end2.y;
 
     const float A1 = y1 - y2;
     const float B1 = x2 - x1;

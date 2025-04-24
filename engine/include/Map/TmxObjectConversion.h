@@ -16,6 +16,6 @@ struct TmxObjectConversionResult
     std::unordered_map<uint32_t, InteractableTile> idToInteractableTileMap;
 };
 
-TmxObjectConversionResult convertTmxObjects(const std::vector<tinytmx::Object*>& tmxObjects);
+TmxObjectConversionResult convertTmxObjects (const std::vector<tinytmx::Object*>& tmxObjects);
 
 }

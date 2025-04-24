@@ -25,7 +25,7 @@ public:
 
     inline int getStartGid() const { return m_startGid; }
     inline int getNumElements() const { return m_numElems; }
-    inline int getTileId (int tileGid) const { return tileGid - m_startGid; }
+    inline int getTileId (const int tileGid) const { return tileGid - m_startGid; }
     inline std::string getName() const { return m_name; }
 
 private:
@@ -44,12 +44,12 @@ public:
         m_imagePathIDs (std::move (imagePathIDs))
     {}
 
-    inline bool IsTileBelongsToSet (const int tileGid) const
+    inline bool isTileBelongsToSet (const int tileGid) const
     {
         return m_imagePathIDs.contains (tileGid - getStartGid());
     }
 
-    inline size_t GetImageID (int tileGid) const { return m_imagePathIDs.at (getTileId (tileGid)); }
+    inline size_t getImageID (const int tileGid) const { return m_imagePathIDs.at (getTileId (tileGid)); }
 
 private:
     std::unordered_map<int, size_t> m_imagePathIDs;
@@ -81,12 +81,12 @@ public:
         return { .x = tileId % m_numColumns, .y = tileId / m_numColumns };
     }
 
-    inline bool IsTileBelongsToSet (const int tileGid) const
+    inline bool isTileBelongsToSet (const int tileGid) const
     {
         return tileGid >= getStartGid() && tileGid < (getStartGid() + getNumElements());
     }
 
-    inline size_t GetImageID() const { return m_imagePathID; }
+    inline size_t getImageID() const { return m_imagePathID; }
 
 private:
     int    m_numColumns;

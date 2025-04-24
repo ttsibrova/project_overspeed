@@ -2,7 +2,7 @@
 #include <cstdint>
 
 namespace geom {
-class Vector2D;
+struct Vector2D;
 }
 namespace input {
 enum class Device : uint8_t;

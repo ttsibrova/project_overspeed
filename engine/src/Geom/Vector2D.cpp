@@ -12,8 +12,8 @@ Vector2D Vector2D::transformed (const Trsf2D& trsf) const
 void Vector2D::transform (const Trsf2D& trsf)
 {
     auto res = trsf * *(this);
-    m_XY.x   = res.X();
-    m_XY.y   = res.Y();
+    x   = res.x;
+    y   = res.y;
 }
 
 } // namespace geom

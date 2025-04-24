@@ -7,12 +7,12 @@ namespace map {
 ActuatorType getToggledActuatorType (const ActuatorType type)
 {
     switch (type) {
-    case ActuatorType::INCOMPATIBLE:
-        return ActuatorType::INCOMPATIBLE;
-    case ActuatorType::PEDESTAL_ACTIVE:
-        return ActuatorType::PEDESTAL_INACTIVE;
-    case ActuatorType::PEDESTAL_INACTIVE:
-        return ActuatorType::PEDESTAL_ACTIVE;
+    case ActuatorType::Invalid:
+        return ActuatorType::Invalid;
+    case ActuatorType::PedestalActive:
+        return ActuatorType::PedestalInactive;
+    case ActuatorType::PedestalInactive:
+        return ActuatorType::PedestalActive;
     }
     std::unreachable();
 }

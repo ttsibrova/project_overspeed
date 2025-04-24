@@ -16,8 +16,8 @@ void DrawTriangle (const geom::Point2D& pos, float height, float rotation, const
 
 void draw (const physics::Collider& collider, const Color& color)
 {
-    const Vector2 min = collider.Min();
-    const Vector2 max = collider.Max();
+    const Vector2 min = collider.getMin();
+    const Vector2 max = collider.getMax();
     const Vector2 downLeft { min.x, max.y };
     const Vector2 topRight { max.x, min.y };
 
@@ -46,19 +46,19 @@ void draw (const geom::Point2D& pos, const geom::Vector2D& vec, const Color& col
     DrawLineEx (pos, endPnt, 2.f, color);
     DrawTriangle (endPnt, 8.f, angle, color);
 
-    const std::string vectorText = std::format ("({:.2f}, {:.2f})", vec.X(), vec.Y());
+    const std::string vectorText = std::format ("({:.2f}, {:.2f})", vec.x, vec.y);
     switch (geom::getVectorQudrant (dir)) {
     case geom::Quadrant::I:
     case geom::Quadrant::II:
     case geom::Quadrant::Y_ALIGNED:
-        DrawText (vectorText.c_str(), static_cast<int> (endPnt.X()) + 8, static_cast<int> (endPnt.Y()) + 20, 15, color);
+        DrawText (vectorText.c_str(), static_cast<int> (endPnt.x) + 8, static_cast<int> (endPnt.y) + 20, 15, color);
         break;
     case geom::Quadrant::III:
     case geom::Quadrant::IV:
     case geom::Quadrant::X_ALIGNED:
     case geom::Quadrant::X_OPPOSITE:
     case geom::Quadrant::Y_OPPOSITE:
-        DrawText (vectorText.c_str(), static_cast<int> (endPnt.X()) + 8, static_cast<int> (endPnt.Y()) - 20, 15, color);
+        DrawText (vectorText.c_str(), static_cast<int> (endPnt.x) + 8, static_cast<int> (endPnt.y) - 20, 15, color);
         break;
     }
 }

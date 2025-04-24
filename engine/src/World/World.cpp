@@ -25,7 +25,7 @@ GameWorld::GameWorld (Level&& lvl):
     m_camera.offset = Vector2 { 1920 / 2.f, 1080 / 2.f };
     m_camera.rotation = 0.f;
     m_camera.zoom     = 2.f;
-    m_inputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_E, input::ActionType::PRESS, [this]() { setAction (WorldAction::PlayerInteraction);});
+    m_inputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_E, input::ActionType::Press, [this]() { setAction (WorldAction::PlayerInteraction);});
     input::getInputHandler().registerInputLayer (m_player, m_player.getInputLayer());
 }
 
@@ -61,7 +61,7 @@ void GameWorld::update()
 
     const auto interactableTiles = m_currentLevel.getLevelInteractableTiles();
     const auto newAction         = interaction::detectActionByInteraction (m_player.getCollider(), interactableTiles);
-    if (newAction != player::Action::IDLE) {
+    if (newAction != player::Action::Idle) {
         m_player.addAction (newAction);
     }
     const float dt         = static_cast<float> (Timer::getInstance().GetDeltaTime());

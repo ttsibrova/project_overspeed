@@ -6,18 +6,18 @@ namespace player {
 
 enum class Action : uint8_t
 {
-    IDLE,
-    MOVE,
-    SLIDE,
-    JUMP,
+    Idle,
+    Move,
+    Slide,
+    Jump,
 };
 
 enum class MovementMode : uint8_t
 {
-    NONE,
-    RUNNING,
-    JUMPING,
-    AIR_MOVEMENT
+    None,
+    Moving,
+    Jumping,
+    AirMoving
 };
 
 struct PhysicalState
@@ -39,10 +39,10 @@ struct std::formatter<player::Action>
     {
         std::string actionName = "<None>";
         switch (a) {
-        case player::Action::IDLE : actionName = "IDLE"; break;
-        case player::Action::MOVE : actionName = "MOVE"; break;
-        case player::Action::SLIDE: actionName = "SLIDE"; break;
-        case player::Action::JUMP : actionName = "JUMP"; break;
+        case player::Action::Idle : actionName = "Idle"; break;
+        case player::Action::Move : actionName = "Move"; break;
+        case player::Action::Slide: actionName = "Slide"; break;
+        case player::Action::Jump : actionName = "Jump"; break;
         }
         return std::format_to (ctx.out(), "{}", actionName);
     }
@@ -57,10 +57,10 @@ struct std::formatter<player::MovementMode>
     {
         std::string modeName = "<None>";
         switch (m) {
-        case player::MovementMode::NONE: modeName = "NONE"; break;
-        case player::MovementMode::RUNNING: modeName = "RUNNING"; break;
-        case player::MovementMode::JUMPING: modeName = "JUMPING"; break;
-        case player::MovementMode::AIR_MOVEMENT: modeName = "AIR_MOVEMENT"; break;
+        case player::MovementMode::None: modeName = "None"; break;
+        case player::MovementMode::Moving: modeName = "Moving"; break;
+        case player::MovementMode::Jumping: modeName = "Jumping"; break;
+        case player::MovementMode::AirMoving: modeName = "AirMoving"; break;
         }
         return std::format_to (ctx.out(), "{}", modeName);
     }

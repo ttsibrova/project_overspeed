@@ -13,25 +13,25 @@ geom::Vector2D getAxisVec()
     geom::Vector2D res;
     const Device   device = getActiveDevice();
     switch (device) {
-    case Device::NONE:
+    case Device::None:
         break;
-    case Device::KEYBOARD:
+    case Device::Keyboard:
     {
         if (IsKeyDown (KEY_A) || IsKeyDown (KEY_LEFT)) {
-            res.X() += -1;
+            res.x += -1;
         }
         if (IsKeyDown (KEY_D) || IsKeyDown (KEY_RIGHT)) {
-            res.X() += 1;
+            res.x += 1;
         }
         break;
     }
-    case Device::GAMEPAD:
+    case Device::Gamepad:
     {
         if (IsGamepadButtonDown (0, GAMEPAD_BUTTON_LEFT_FACE_RIGHT)) {
-            res.X() += 1;
+            res.x += 1;
         }
         if (IsGamepadButtonDown (0, GAMEPAD_BUTTON_LEFT_FACE_LEFT)) {
-            res.X() += -1;
+            res.x += -1;
         }
         break;
     }

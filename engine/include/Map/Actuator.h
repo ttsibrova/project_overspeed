@@ -9,10 +9,10 @@ namespace map {
 
 enum class ActuatorType : uint16_t
 {
-    INCOMPATIBLE = 0,
+    Invalid = 0,
 
-    PEDESTAL_ACTIVE,
-    PEDESTAL_INACTIVE,
+    PedestalActive,
+    PedestalInactive,
 };
 
 // Implied that Actuators graphic-wise are
@@ -20,7 +20,7 @@ enum class ActuatorType : uint16_t
 // defined by Actuator's sprite
 struct Actuator
 {
-    ActuatorType              type    = ActuatorType::INCOMPATIBLE;
+    ActuatorType              type    = ActuatorType::Invalid;
     unsigned int              tileGid = 0;
     geom::Point2D             pos;
     std::vector<unsigned int> childIDs;

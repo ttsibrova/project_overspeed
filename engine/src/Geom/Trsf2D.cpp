@@ -14,14 +14,14 @@ void Trsf2D::setRotation (float rad)
 
 void Trsf2D::addTranslation (Vector2D trsl)
 {
-    m_e += trsl.X();
-    m_f += trsl.Y();
+    m_e += trsl.x;
+    m_f += trsl.y;
 }
 
 void Trsf2D::setTranslation (Vector2D trsl)
 {
-    m_e = trsl.X();
-    m_f = trsl.Y();
+    m_e = trsl.x;
+    m_f = trsl.y;
 }
 
 Vector2D Trsf2D::getTranslationPart() const
@@ -31,8 +31,8 @@ Vector2D Trsf2D::getTranslationPart() const
 
 Vector2D Trsf2D::operator* (const Vector2D& rhs) const
 {
-    float x = rhs.X() * m_a + rhs.Y() * m_c + m_e;
-    float y = rhs.X() * m_b + rhs.Y() * m_d + m_f;
+    float x = rhs.x * m_a + rhs.y * m_c + m_e;
+    float y = rhs.x * m_b + rhs.y * m_d + m_f;
     return Vector2D (x, y);
 }
 

@@ -3,7 +3,7 @@
 
 namespace geom {
 
-class Vector2D;
+struct Vector2D;
 
 class Trsf2D
 {

@@ -45,16 +45,16 @@ graphics::PlayerSprite convertToSprite (BodyState state)
 } // anonymous namespace
 
 Player::Player():
-    m_nextAction (Action::IDLE),
-    m_currentMovementMode (MovementMode::NONE),
+    m_nextAction (Action::Idle),
+    m_currentMovementMode (MovementMode::None),
     m_currSimTime (0.f)
 {
-    m_pos.X() = 300.f;
-    m_inputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_A, input::ActionType::HOLD, [player = this](){player::MovePlayer(*player);});
-    // m_inputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_W, input::ActionType::HOLD, PlayerMovement::MovePlayer);
-    // m_inputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_S, input::ActionType::HOLD, PlayerMovement::MovePlayer);
-    m_inputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_D, input::ActionType::HOLD, [player = this](){player::MovePlayer(*player);});
-    m_inputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_SPACE, input::ActionType::PRESS, [player = this](){player::JumpPlayer(*player);});
+    m_pos.x = 300.f;
+    m_inputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_A, input::ActionType::Hold, [player = this](){player::MovePlayer(*player);});
+    // m_inputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_W, input::ActionType::Hold, PlayerMovement::MovePlayer);
+    // m_inputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_S, input::ActionType::Hold, PlayerMovement::MovePlayer);
+    m_inputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_D, input::ActionType::Hold, [player = this](){player::MovePlayer(*player);});
+    m_inputLayer.addAction (GAMEPAD_BUTTON_UNKNOWN, KEY_SPACE, input::ActionType::Press, [player = this](){player::JumpPlayer(*player);});
 }
 
 void Player::draw()
@@ -70,7 +70,7 @@ void Player::draw()
     float halfWidth  = spriteInfo.width / 2.f;
     float halfHeight = spriteInfo.height / 2.f;
 
-    geom::Point2D corePos { m_pos.X() - halfWidth, m_pos.Y() - halfHeight };
+    geom::Point2D corePos { m_pos.x - halfWidth, m_pos.y - halfHeight };
 
     float          rotationPointer  = 0.f;
     float          rotationThruster = 90.f;
@@ -81,7 +81,7 @@ void Player::draw()
         pointerOffset   = velocity.normalized();
         float dot       = pointerOffset.dot (geom::getLeftVector());
         rotationPointer = std::acos (dot) * 180 / PI;
-        if (-pointerOffset.Y() < 0) { // special case for these calculations: Z component of cross product computation
+        if (-pointerOffset.y < 0) { // special case for these calculations: Z component of cross product computation
                                       // when second vector is -1,0
             rotationPointer = -rotationPointer;
         }
@@ -98,7 +98,7 @@ void Player::draw()
         rotationPointer     = geom::computeAngleBetweenVectors (geom::getLeftVector(), m_lastPointerDir);
         float positiveAngle = std::abs (rotationPointer);
         if (positiveAngle > 0.5f && positiveAngle < 179.5f) {
-            if (m_lastPointerDir.X() > 0) {
+            if (m_lastPointerDir.x > 0) {
                 rotationPointer  = 180.f;
                 m_lastPointerDir = geom::getRightVector();
             }
@@ -172,10 +172,10 @@ void Player::update (const physics::movement::UpdateState& newPhysState)
     velocity              = newPhysState.velocity;
     m_pos.translate (newPhysState.trsl);
 
-    m_pos.X() = std::round (m_pos.X()); // snapping character to the pixel grid
-    m_pos.Y() = std::round (m_pos.Y()); // snapping character to the pixel grid
+    m_pos.x = std::round (m_pos.x); // snapping character to the pixel grid
+    m_pos.y = std::round (m_pos.y); // snapping character to the pixel grid
 
-    m_nextAction = Action::IDLE;
+    m_nextAction = Action::Idle;
 
     debug::log (std::move (getCollider()));
     debug::log (std::move (getCollider (ColliderType::INTERACTION)), RED);
@@ -217,26 +217,26 @@ physics::Collider Player::getCollider (ColliderType mode) const
     }
     case ColliderType::INTERACTION:
     {
-        float minX = m_pos.X() - shieldRadius;
-        float minY = m_pos.Y() - shieldRadius; // adding hover distance above as well
+        float minX = m_pos.x - shieldRadius;
+        float minY = m_pos.y - shieldRadius; // adding hover distance above as well
 
         float maxX = minX + 2 * shieldRadius;
         float maxY = minY + 2 * shieldRadius + groundHoverDistance;
 
         geom::Point2D pointerEndPos = m_pos.translated (m_lastPointerDir * (30 + pointerLength));
 
-        minX = std::min (minX, pointerEndPos.X());
-        minY = std::min (minY, pointerEndPos.Y());
+        minX = std::min (minX, pointerEndPos.x);
+        minY = std::min (minY, pointerEndPos.y);
 
-        maxX = std::max (maxX, pointerEndPos.X());
-        maxY = std::max (maxY, pointerEndPos.Y());
+        maxX = std::max (maxX, pointerEndPos.x);
+        maxY = std::max (maxY, pointerEndPos.y);
 
         return physics::Collider (geom::Point2D (minX, minY), geom::Point2D (maxX, maxY));
     }
     case ColliderType::PHYSICAL:
     {
-        float minX = m_pos.X() - shieldRadius;
-        float minY = m_pos.Y() - shieldRadius; // adding hover distance above as well
+        float minX = m_pos.x - shieldRadius;
+        float minY = m_pos.y - shieldRadius; // adding hover distance above as well
         return physics::Collider (geom::Point2D (minX, minY), 2 * shieldRadius + groundHoverDistance, 2 * shieldRadius);
     }
     }
@@ -251,17 +251,17 @@ Player::~Player()
 void Player::changeMovementMode (MovementMode newMode)
 {
     switch (newMode) {
-    case MovementMode::NONE:
+    case MovementMode::None:
     {
         // m_anim.SetProps ("mage_idle", 0, 8, m_height, m_width, 0.08f);
         break;
     }
-    case MovementMode::RUNNING:
+    case MovementMode::Moving:
     {
         // m_anim.SetProps ("mage_run", 0, 8, m_height, m_width, 0.08f);
         break;
     }
-    case MovementMode::AIR_MOVEMENT:
+    case MovementMode::AirMoving:
         // m_anim.SetProps ("mage_idle", 0, 8, m_height, m_width, 0.08f);
         break;
     default:
@@ -272,12 +272,12 @@ void Player::changeMovementMode (MovementMode newMode)
 
 void MovePlayer (Player& player)
 {
-    player.addAction (Action::MOVE);
+    player.addAction (Action::Move);
 }
 
 void JumpPlayer (Player& player)
 {
-    player.addAction (Action::JUMP);
+    player.addAction (Action::Jump);
 }
 
 } // namespace player

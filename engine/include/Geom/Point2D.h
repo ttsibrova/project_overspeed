@@ -7,45 +7,29 @@
 
 namespace geom {
 
-class Point2D
+struct Point2D
 {
-public:
-    Point2D():
-        m_x (0),
-        m_y (0)
-    {}
-
-    Point2D (float x, float y):
-        m_x (x),
-        m_y (y)
-    {}
-
-    inline float  X() const { return m_x; }
-    inline float& X() { return m_x; }
-    inline float  Y() const { return m_y; }
-    inline float& Y() { return m_y; }
+    float x = 0.f;
+    float y = 0.f;
 
     inline void translate (const geom::Vector2D& trsl)
     {
-        m_x += trsl.X();
-        m_y += trsl.Y();
+        x += trsl.x;
+        y += trsl.y;
     }
 
     [[nodiscard]] inline Point2D translated (const geom::Vector2D& trsl) const
     {
-        return Point2D (m_x + trsl.X(), m_y + trsl.Y());
+        return Point2D { .x = x + trsl.x, .y = y + trsl.y };
     }
 
     bool operator== (const Point2D& other) const
     {
-        return std::abs (m_x - other.m_x) < 1.e-7f && std::abs (m_y - other.m_y) < 1.e-7f;
+        return std::abs (x - other.x) < 1.e-7f && std::abs (y - other.y) < 1.e-7f;
     }
 
-    operator Vector2() const { return { m_x, m_y }; }
+    operator Vector2() const { return { x, y }; }
 
-private:
-    float m_x;
-    float m_y;
 };
 
 } // namespace geom
@@ -57,7 +41,7 @@ struct std::formatter<geom::Point2D>
 
     auto format (const geom::Point2D& p, std::format_context& ctx) const
     {
-        return std::format_to (ctx.out(), "({:.2f}, {:.2f})\n", p.X(), p.Y());
+        return std::format_to (ctx.out(), "({:.2f}, {:.2f})\n", p.x, p.y);
     }
 };
 

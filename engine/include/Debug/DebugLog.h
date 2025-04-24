@@ -8,8 +8,8 @@ namespace physics {
 class Collider;
 }
 namespace geom {
-class Point2D;
-class Vector2D;
+struct Point2D;
+struct Vector2D;
 } // namespace geom
 namespace physics::movement {
 struct UpdateState;

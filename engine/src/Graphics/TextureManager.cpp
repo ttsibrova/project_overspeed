@@ -68,7 +68,7 @@ void TextureManager::drawRotated (size_t id, const geom::Point2D& pos, float wid
         return drawMissing (pos, width, height, RED);
     }
     Rectangle source { .x = 0.f, .y = 0.f, .width = width, .height = height };
-    Rectangle dest { .x = pos.X(), .y = pos.Y(), .width = width, .height = height };
+    Rectangle dest { .x = pos.x, .y = pos.y, .width = width, .height = height };
     DrawTexturePro (*texture, source, dest, origin, rot, WHITE);
 }
 
@@ -87,11 +87,11 @@ void TextureManager::drawTile (size_t id, const geom::Point2D& pos, float width,
 
 void TextureManager::drawMissing (const geom::Point2D& pos, float width, float height, Color color) const
 {
-    Rectangle rectangle { pos.X(), pos.Y(), width, height };
+    Rectangle rectangle { pos.x, pos.y, width, height };
     DrawRectangleRec (rectangle, color);
     DrawRectangleLinesEx (rectangle, 5.f, BLACK);
     DrawRectangleLinesEx (rectangle, 1.f, color);
-    DrawLineEx (pos, Vector2 { .x = pos.X() + width, .y = pos.Y() + height }, 5.f, BLACK);
+    DrawLineEx (pos, Vector2 { .x = pos.x + width, .y = pos.y + height }, 5.f, BLACK);
 }
 
 //void TextureManager::drawFrame (std::string id, const geom::Point2D& pos, float width, float height, int row, int frame,
@@ -100,10 +100,10 @@ void TextureManager::drawMissing (const geom::Point2D& pos, float width, float h
 //    float x0 = frame * width;
 //    float y0 = row * height;
 //
-//    if (flip & graphics::RenderFlip::FLIP_VERTICAL) {
+//    if (flip & graphics::RenderFlip::FlipVertical) {
 //        height = -height;
 //    }
-//    if (flip & graphics::RenderFlip::FLIP_HORIZONTAL) {
+//    if (flip & graphics::RenderFlip::FlipHorizontal) {
 //        width = -width;
 //    }
 //

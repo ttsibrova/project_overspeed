@@ -7,42 +7,39 @@ class Collider
 {
 public:
     Collider() = delete;
+
     Collider (geom::Point2D min, geom::Point2D max):
-        m_min (min),
-        m_max (max)
+        m_min { std::move (min) },
+        m_max { std::move (max) }
     {}
 
     Collider (const Collider& other):
-        m_min (other.m_min),
-        m_max (other.m_max)
+        m_min { other.m_min },
+        m_max { other.m_max }
     {}
 
     Collider (geom::Point2D min, float height, float width):
-        m_min (min),
-        m_max (min.X() + width, min.Y() + height)
+        m_min { min },
+        m_max { .x = min.x + width, .y = min.y + height }
     {}
 
-    [[nodiscard]] inline float Width() const { return m_max.X() - m_min.X(); }
-    [[nodiscard]] inline float Height() const { return m_max.Y() - m_min.Y(); }
+    [[nodiscard]] inline float getWidth() const { return m_max.x - m_min.x; }
+    [[nodiscard]] inline float getHeight() const { return m_max.y - m_min.y; }
 
-    [[nodiscard]] inline const geom::Point2D& Min() const { return m_min; }
-    [[nodiscard]] inline const geom::Point2D& Max() const { return m_max; }
+    [[nodiscard]] inline const geom::Point2D& getMin() const { return m_min; }
+    [[nodiscard]] inline const geom::Point2D& getMax() const { return m_max; }
 
-    [[nodiscard]] inline geom::Point2D RightCorner() const { return geom::Point2D (m_max.X(), m_min.Y()); }
-    [[nodiscard]] inline geom::Point2D LeftCorner() const { return geom::Point2D (m_min.X(), m_max.Y()); }
+    [[nodiscard]] inline geom::Point2D getRightCorner() const { return geom::Point2D (m_max.x, m_min.y); }
+    [[nodiscard]] inline geom::Point2D getLeftCorner() const { return geom::Point2D (m_min.x, m_max.y); }
 
     [[nodiscard]] inline Collider translated (const geom::Vector2D& trsl) const
     {
         return Collider (m_min.translated (trsl), m_max.translated (trsl));
     }
 
-    [[nodiscard]] inline bool IsOutside (const geom::Point2D& pnt)
+    [[nodiscard]] inline bool contains (const geom::Point2D& pnt)
     {
-        return (pnt.X() > m_max.X() || pnt.X() < m_min.X()) && (pnt.Y() > m_max.Y() || pnt.Y() < m_min.Y());
-    }
-    [[nodiscard]] inline bool IsInside (const geom::Point2D& pnt)
-    {
-        return (pnt.X() < m_max.X() && pnt.X() > m_min.X()) && (pnt.Y() < m_max.Y() && pnt.Y() > m_min.Y());
+        return (pnt.x < m_max.x && pnt.x > m_min.x) && (pnt.y < m_max.y && pnt.y > m_min.y);
     }
 
     [[nodiscard]] bool collides (const Collider& other) const;

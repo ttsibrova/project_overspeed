@@ -20,10 +20,10 @@ struct SpecialTileSpiteIds
 SpecialTileSpiteIds getSpriteIds (map::InteractableTileType type)
 {
     switch (type) {
-    case Tile::SLIDER_ACTIVE  : return SpecialTileSpiteIds { .begin = 0,  .middle = 3,  .end = 6  };
-    case Tile::SLIDER_INACTIVE: return SpecialTileSpiteIds { .begin = 9,  .middle = 12, .end = 15 };
-    case Tile::JUMP_ACTIVE    : return SpecialTileSpiteIds { .begin = 18, .middle = 21, .end = 24 };
-    case Tile::JUMP_INACTIVE  : return SpecialTileSpiteIds { .begin = 27, .middle = 30, .end = 33 };
+    case Tile::SliderActive  : return SpecialTileSpiteIds { .begin = 0,  .middle = 3,  .end = 6  };
+    case Tile::SliderInactive: return SpecialTileSpiteIds { .begin = 9,  .middle = 12, .end = 15 };
+    case Tile::JumpActive    : return SpecialTileSpiteIds { .begin = 18, .middle = 21, .end = 24 };
+    case Tile::JumpInactive  : return SpecialTileSpiteIds { .begin = 27, .middle = 30, .end = 33 };
     default                  : m_assert (false, "New cases not covered.");
     }
     return SpecialTileSpiteIds {};
@@ -32,10 +32,10 @@ SpecialTileSpiteIds getSpriteIds (map::InteractableTileType type)
 Color getColorForMissing (map::InteractableTileType type)
 {
     switch (type) {
-    case Tile::SLIDER_ACTIVE  : return Color { .r = 255, .g = 187, .b = 36,  .a = 255 };
-    case Tile::SLIDER_INACTIVE: return Color { .r = 113, .g = 54,  .b = 0,   .a = 255 };
-    case Tile::JUMP_ACTIVE    : return Color { .r = 14,  .g = 152, .b = 254, .a = 255 };
-    case Tile::JUMP_INACTIVE  : return Color { .r = 0,   .g = 34,  .b = 154, .a = 255 };
+    case Tile::SliderActive  : return Color { .r = 255, .g = 187, .b = 36,  .a = 255 };
+    case Tile::SliderInactive: return Color { .r = 113, .g = 54,  .b = 0,   .a = 255 };
+    case Tile::JumpActive    : return Color { .r = 14,  .g = 152, .b = 254, .a = 255 };
+    case Tile::JumpInactive  : return Color { .r = 0,   .g = 34,  .b = 154, .a = 255 };
     default                  : m_assert (false, "New cases not covered.");
     }
     return RED;
@@ -50,7 +50,7 @@ void drawMissing (const world::LevelInteractableTiles& tiles)
         const int nTiles = tile.end.x - tile.begin.x + 1;
         for (int i = 0; i < nTiles; i++) {
             manager.drawMissing (pos, tileSize.width, tileSize.height, getColorForMissing(tile.type));
-            pos.X() += tileSize.width;
+            pos.x += tileSize.width;
         }
     }
 }
@@ -72,20 +72,20 @@ void draw (const world::LevelInteractableTiles& tiles, const map::types::OptRefE
                           (tile.begin.y - 1) * tileSize.height);
         const SpecialTileSpiteIds ids = getSpriteIds (tile.type);
 
-        manager.drawTile (tileset.GetImageID(), pos,       //
+        manager.drawTile (tileset.getImageID(), pos,       //
                           tileSize.width, tileSize.height, //
                           tileset.GetTilePositionById (ids.begin));
 
         const int nMidTiles = tile.end.x - tile.begin.x - 1;
         for (int i = 1; i < nMidTiles + 1; i++) {
-            pos.X() += tileSize.width;
-            manager.drawTile (tileset.GetImageID(), pos,       //
+            pos.x += tileSize.width;
+            manager.drawTile (tileset.getImageID(), pos,       //
                               tileSize.width, tileSize.height, //
                               tileset.GetTilePositionById (ids.middle));
         }
 
-        pos.X() += tileSize.width;
-        manager.drawTile (tileset.GetImageID(), pos,       //
+        pos.x += tileSize.width;
+        manager.drawTile (tileset.getImageID(), pos,       //
                           tileSize.width, tileSize.height, //
                           tileset.GetTilePositionById (ids.end));
     }
@@ -95,8 +95,8 @@ void draw (const world::LevelActuators& actuators, const map::CollectionTileset&
 {
     const auto& manager = TextureManager::getInstance();
     for (const auto& actuator: actuators.getActuatorValues()) {
-        if (tileset.IsTileBelongsToSet(actuator.tileGid)) {
-            manager.draw (tileset.GetImageID(actuator.tileGid), actuator.pos);
+        if (tileset.isTileBelongsToSet(actuator.tileGid)) {
+            manager.draw (tileset.getImageID(actuator.tileGid), actuator.pos);
         }
     }
 }

@@ -8,13 +8,13 @@ namespace map {
 
 enum class InteractableTileType : uint16_t
 {
-    INCOMPATIBLE = 0,
+    Invalid = 0,
 
-    SLIDER_ACTIVE,
-    SLIDER_INACTIVE,
+    SliderActive,
+    SliderInactive,
 
-    JUMP_ACTIVE,
-    JUMP_INACTIVE
+    JumpActive,
+    JumpInactive
 };
 
 struct InteractableTile

@@ -19,31 +19,31 @@ void InputHandler::handleInput()
 
 void InputHandler::handleTargetedInput (const input::Layer& inputLayer)
 {
-    if (m_lastActiveDevice == input::Device::KEYBOARD) {
+    if (m_lastActiveDevice == input::Device::Keyboard) {
         if (checkKeyboardInputs (inputLayer)) {
             return;
         }
         if (checkGamepadInputs (inputLayer)) {
-            m_lastActiveDevice = input::Device::GAMEPAD;
+            m_lastActiveDevice = input::Device::Gamepad;
         }
         return;
     }
-    if (m_lastActiveDevice == input::Device::GAMEPAD) {
+    if (m_lastActiveDevice == input::Device::Gamepad) {
         if (checkGamepadInputs (inputLayer)) {
             return;
         }
         if (checkKeyboardInputs (inputLayer)) {
-            m_lastActiveDevice = input::Device::KEYBOARD;
+            m_lastActiveDevice = input::Device::Keyboard;
         }
         return;
     }
-    if (m_lastActiveDevice == input::Device::NONE) {
+    if (m_lastActiveDevice == input::Device::None) {
         if (checkKeyboardInputs (inputLayer)) {
-            m_lastActiveDevice = input::Device::KEYBOARD;
+            m_lastActiveDevice = input::Device::Keyboard;
             return;
         }
         if (checkGamepadInputs (inputLayer)) {
-            m_lastActiveDevice = input::Device::GAMEPAD;
+            m_lastActiveDevice = input::Device::Gamepad;
         }
         return;
     }
@@ -53,12 +53,12 @@ bool InputHandler::checkKeyboardInputs (const input::Layer& inputLayer) const
 {
     for (const auto& action : inputLayer.getActions()) {
         switch (action.type) {
-        case input::ActionType::PRESS:
+        case input::ActionType::Press:
             if (IsKeyPressed (action.mappedKButton)) {
                 action.command();
             }
             break;
-        case input::ActionType::HOLD:
+        case input::ActionType::Hold:
             if (IsKeyDown (action.mappedKButton)) {
                 action.command();
             }
@@ -75,13 +75,13 @@ bool InputHandler::checkGamepadInputs (const input::Layer& inputLayer) const
     }
     for (const auto& action : inputLayer.getActions()) {
         switch (action.type) {
-        case input::ActionType::HOLD:
+        case input::ActionType::Hold:
             if (IsGamepadButtonDown (gamepadID, action.mappedGButton)) {
                 action.command();
                 return true;
             }
             break;
-        case input::ActionType::PRESS:
+        case input::ActionType::Press:
             if (IsGamepadButtonPressed (gamepadID, action.mappedGButton)) {
                 action.command();
                 return true;

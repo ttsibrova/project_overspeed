@@ -12,14 +12,14 @@ namespace map {
 InteractableTileType getToggledInteractableTileType (const InteractableTileType source)
 {
     switch (source) {
-    case InteractableTileType::SLIDER_ACTIVE:
-        return InteractableTileType::SLIDER_INACTIVE;
-    case InteractableTileType::SLIDER_INACTIVE:
-        return InteractableTileType::SLIDER_ACTIVE;
-    case InteractableTileType::JUMP_ACTIVE:
-        return InteractableTileType::JUMP_INACTIVE;
-    case InteractableTileType::JUMP_INACTIVE:
-        return InteractableTileType::JUMP_ACTIVE;
+    case InteractableTileType::SliderActive:
+        return InteractableTileType::SliderInactive;
+    case InteractableTileType::SliderInactive:
+        return InteractableTileType::SliderActive;
+    case InteractableTileType::JumpActive:
+        return InteractableTileType::JumpInactive;
+    case InteractableTileType::JumpInactive:
+        return InteractableTileType::JumpActive;
     default:
         assert ("false");
         // add new cases
