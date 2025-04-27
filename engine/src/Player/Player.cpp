@@ -20,9 +20,9 @@ graphics::PlayerSprite convertToSprite (BodyState state)
 {
     if constexpr (std::is_same<BodyState, CoreState>()) {
         switch (state) {
-        case CoreState::EMPTY:
+        case CoreState::Empty:
             return graphics::PlayerSprite::BodyCoreEmpty;
-        case CoreState::FULL:
+        case CoreState::Full:
             return graphics::PlayerSprite::BodyCoreFull;
         default:
             assert (false);
@@ -31,9 +31,9 @@ graphics::PlayerSprite convertToSprite (BodyState state)
     }
     if constexpr (std::is_same<BodyState, PointerState>()) {
         switch (state) {
-        case PointerState::SHARP:
+        case PointerState::Sharp:
             return graphics::PlayerSprite::BodyPointer;
-        case PointerState::SHIELD:
+        case PointerState::Shield:
             return graphics::PlayerSprite::BodyPointerShield;
         default:
             assert (false);
@@ -146,7 +146,7 @@ void Player::draw()
     // std::print ("Rotation for pointer is {}\n", rotationPointer);
 
     geom::Point2D pointerPos = m_pos.translated (pointerOffset * pointerOffsetFromCore);
-    if (m_currentPointerSprite == PointerState::SHIELD) {
+    if (m_currentPointerSprite == PointerState::Shield) {
         pointerPos = m_pos.translated (pointerOffset * shieldOffsetFromCore);
     }
     auto          pointerSpriteInfo = getSpriteInfo (convertToSprite (m_currentPointerSprite));

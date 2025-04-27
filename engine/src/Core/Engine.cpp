@@ -56,7 +56,7 @@ void Engine::update()
     Timer::getInstance().update();
     inputHandler.handleInput();
     if (m_world.has_value()) {
-        m_world.value().update();
+        m_world->update();
     }
 }
 
@@ -65,7 +65,7 @@ void Engine::Render()
     BeginDrawing();
     ClearBackground (Color { 61, 119, 109 });
     if (m_world.has_value()) {
-        m_world.value().draw();
+        m_world->draw();
     }
 
     EndDrawing();

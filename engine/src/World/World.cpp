@@ -53,20 +53,26 @@ void GameWorld::update()
     input::getInputHandler().handleTargetedInput (m_inputLayer);
 
     if (m_action == WorldAction::PlayerInteraction) {
-        auto actuatorId = interaction::detectToggledActuator(m_player, m_currentLevel.getLevelActuators());
+        auto actuatorId = interaction::detectToggledActuator (m_player, m_currentLevel.getLevelActuators());
         if (actuatorId.has_value()) {
             m_currentLevel.toggleActuator (actuatorId.value());
         }
     }
 
     const auto interactableTiles = m_currentLevel.getLevelInteractableTiles();
+
+    /* This is definetely should be changed. State triggered by interactable tiles should not be
+    * connected to player::Action
+    */
     const auto newAction         = interaction::detectActionByInteraction (m_player.getCollider(), interactableTiles);
     if (newAction != player::Action::Idle) {
         m_player.addAction (newAction);
     }
-    const float dt         = static_cast<float> (Timer::getInstance().GetDeltaTime());
-    const auto  groundData = m_currentLevel.getGroundData();
-    const auto newPhysicsState = physics::movement::computeUpdatedMovementState (dt, m_player, m_currentLevel.getGroundData());
+    const float dt              = static_cast<float> (Timer::getInstance().GetDeltaTime());
+    const auto  groundData      = m_currentLevel.getGroundData();
+    const auto  newPhysicsState = physics::movement::computeUpdatedMovementState (dt,
+                                                                                  m_player,
+                                                                                  m_currentLevel.getGroundData());
     m_player.update (newPhysicsState);
     const auto newBodyState = interaction::updateBodyStateOnInteraction (m_player.getCollider (player::ColliderType::INTERACTION),
                                                                          m_player.getBodyState(), groundData);

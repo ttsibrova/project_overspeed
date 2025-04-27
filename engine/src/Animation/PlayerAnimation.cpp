@@ -103,10 +103,10 @@ void PlayerAnimation::draw (const geom::Point2D& playerPos, const geom::Vector2D
 
 physics::Collider PlayerAnimation::ComputeCurrentCollider (const geom::Point2D& playerPos) const
 {
-    const float coreWidth           = 23;
-    const float coreHeight          = 22;
-    const float pointerLength       = 26;
-    const float groundHoverDistance = 45;
+    const float coreWidth           = 23.f;
+    const float coreHeight          = 22.f;
+    const float pointerLength       = 26.f;
+    const float groundHoverDistance = 45.f;
 
     float minX = playerPos.x - coreWidth / 2.f;
     float minY = playerPos.y - coreHeight / 2.f - groundHoverDistance; // adding hover distance above as well

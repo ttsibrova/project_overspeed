@@ -45,7 +45,7 @@ void drawMissing (const world::LevelInteractableTiles& tiles)
 {
     const auto& manager  = TextureManager::getInstance();
     const auto& tileSize = world::settings::tileSize;
-    for (const auto& tile : tiles.getInteractableTiles()) {
+    for (const auto& tile : tiles.getValues()) {
         geom::Point2D pos (tile.begin.x * tileSize.width, (tile.begin.y - 1) * tileSize.height);
         const int nTiles = tile.end.x - tile.begin.x + 1;
         for (int i = 0; i < nTiles; i++) {
@@ -67,7 +67,7 @@ void draw (const world::LevelInteractableTiles& tiles, const map::types::OptRefE
     const auto& manager  = TextureManager::getInstance();
     const auto& tileSize = world::settings::tileSize;
 
-    for (const auto& tile : tiles.getInteractableTiles()) {
+    for (const auto& tile : tiles.getValues()) {
         geom::Point2D pos (tile.begin.x * tileSize.width, //
                           (tile.begin.y - 1) * tileSize.height);
         const SpecialTileSpiteIds ids = getSpriteIds (tile.type);
@@ -94,7 +94,7 @@ void draw (const world::LevelInteractableTiles& tiles, const map::types::OptRefE
 void draw (const world::LevelActuators& actuators, const map::CollectionTileset& tileset)
 {
     const auto& manager = TextureManager::getInstance();
-    for (const auto& actuator: actuators.getActuatorValues()) {
+    for (const auto& actuator: actuators.getValues()) {
         if (tileset.isTileBelongsToSet(actuator.tileGid)) {
             manager.draw (tileset.getImageID(actuator.tileGid), actuator.pos);
         }

@@ -5,14 +5,14 @@ namespace player {
 
 enum class CoreState : uint8_t
 {
-    FULL,
-    EMPTY
+    Full,
+    Empty
 };
 
 enum class PointerState : uint8_t
 {
-    SHARP,
-    SHIELD
+    Sharp,
+    Shield
 };
 
 struct BodyState

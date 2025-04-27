@@ -27,7 +27,7 @@ AlwaysBreakBeforeMultilineStrings: false
 #Functions
 AlignAfterOpenBracket: Align
 AllowAllArgumentsOnNextLine: false
-AllowAllParametersOfDeclarationOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: true
 AllowShortFunctionsOnASingleLine: InlineOnly
 BinPackParameters: false
 BinPackArguments: false #some of arguments are on the same line, no always on new line
@@ -137,8 +137,8 @@ NamespaceIndentation: None
 PackConstructorInitializers: Never
 
 #Penalty
-PenaltyBreakAssignment: 2
-PenaltyBreakBeforeFirstCallParameter: 19
+PenaltyBreakAssignment: 1000
+PenaltyBreakBeforeFirstCallParameter: 10
 PenaltyBreakComment: 300
 PenaltyBreakFirstLessLess: 120
 PenaltyBreakString: 1000

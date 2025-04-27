@@ -51,7 +51,7 @@ player::MovementMode updateModeOnConditions (player::MovementMode     targetMode
                                              const physics::Collider& playerCollider,
                                              const world::GroundData& ground)
 {
-    bool isGrounded = Collision::IsPlayerGrounded (playerCollider, ground);
+    bool isGrounded = collision::isPlayerGrounded (playerCollider, ground);
     switch (targetMode) {
     case Mode::None:
     case Mode::Moving:
@@ -161,7 +161,7 @@ UpdateState simulatePhys (const player::Player& player, const world::GroundData&
 {
     UpdateState physUpdate     = physSim (args...);
     auto        playerCollider = player.getCollider();
-    auto        adjustedVec    = Collision::HitScanGround (playerCollider, physUpdate.trsl, ground);
+    auto        adjustedVec    = collision::hitScanGround (playerCollider, physUpdate.trsl, ground);
     if (adjustedVec.has_value()) {
         physUpdate.trsl     = adjustedVec.value();
         physUpdate.velocity = geom::Vector2D(); // temporary velocity reset on collision

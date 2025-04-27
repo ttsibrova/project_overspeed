@@ -66,8 +66,8 @@ private:
     geom::Point2D  m_pos;
 
     // vis part
-    player::CoreState    m_currentCoreSprite    = { player::CoreState::FULL };
-    player::PointerState m_currentPointerSprite = { player::PointerState::SHARP };
+    player::CoreState    m_currentCoreSprite    = { player::CoreState::Full };
+    player::PointerState m_currentPointerSprite = { player::PointerState::Sharp };
     uint8_t              m_currentFrame         = { 0 };
     float                m_lastThrusterAngle    = { 0. };
     geom::Vector2D       m_lastPointerDir       = geom::Vector2D (-1, 0);

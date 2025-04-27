@@ -46,7 +46,7 @@ void draw (const geom::Point2D& pos, const geom::Vector2D& vec, const Color& col
     DrawLineEx (pos, endPnt, 2.f, color);
     DrawTriangle (endPnt, 8.f, angle, color);
 
-    const std::string vectorText = std::format ("({:.2f}, {:.2f})", vec.x, vec.y);
+    const std::string vectorText = std::format ("{}", vec);
     switch (geom::getVectorQudrant (dir)) {
     case geom::Quadrant::I:
     case geom::Quadrant::II:

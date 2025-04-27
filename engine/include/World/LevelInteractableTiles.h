@@ -17,21 +17,25 @@ public:
         m_tiles (interactaleTiles)
     {}
 
-    auto getInteractableTiles() const
-    { 
-        return m_tiles | std::ranges::views::values;
+    auto getIds() const { return m_tiles | std::ranges::views::keys; }
+    auto getValues() const { return m_tiles | std::ranges::views::values; }
+    auto getTypes() const
+    {
+        return m_tiles | std::ranges::views::values | std::ranges::views::transform (&map::InteractableTile::type);
     }
-
-    auto /*range<std::pair<InteractableTile, physics::Collider>>*/ getInteractableTilesTypeWithColliders() const
+    auto getColliders() const
     {
         auto tileCollider = [] (const map::InteractableTile& tile) {
-            geom::Point2D min (tile.begin.x * settings::tileSize.width - geom::precision::pixel,
-                               (tile.begin.y - 1) * settings::tileSize.height - geom::precision::pixel);
-            geom::Point2D max ((tile.end.x + 1) * settings::tileSize.width + 2 * geom::precision::pixel,
-                               tile.end.y * settings::tileSize.height + 2 * geom::precision::pixel);
-            return std::pair (tile.type, physics::Collider (min, max));
+            const geom::Point2D min {
+                .x = tile.begin.x * settings::tileSize.width - geom::precision::pixel,
+                .y = (tile.begin.y - 1) * settings::tileSize.height - geom::precision::pixel,
+            };
+            const geom::Point2D max {
+                .x = (tile.end.x + 1) * settings::tileSize.width + 2 * geom::precision::pixel,
+                .y = tile.end.y * settings::tileSize.height + 2 * geom::precision::pixel,
+            };
+            return physics::Collider (min, max);
         };
-
         return m_tiles | std::ranges::views::values | std::ranges::views::transform (tileCollider);
     }
 

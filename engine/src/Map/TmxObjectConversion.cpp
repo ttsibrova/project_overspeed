@@ -93,7 +93,9 @@ std::optional<InteractableTile> fillInteractableTile (
     };
 }
 
-void connectTileToActuator (const tinytmx::PropertySet* tileProperties, uint32_t tileId, std::unordered_map<uint32_t, Actuator>& actuators)
+void connectTileToActuator (const tinytmx::PropertySet*             tileProperties,
+                            uint32_t                                tileId,
+                            std::unordered_map<uint32_t, Actuator>& actuators)
 {
     int  actuatorId = tileProperties->GetObjectProperty ("actuator");
     auto actuatorIt = actuators.find (actuatorId);

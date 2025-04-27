@@ -15,8 +15,8 @@ namespace {
 std::optional<uint32_t> detectToggledActuator (const physics::Collider&     playerCollider,
                                                const world::LevelActuators& actuators)
 {
-    for (const auto& [actuatorCollider, actuatorId] : std::views::zip (actuators.getActuatorsColliders(),
-                                                                       actuators.getActuatorIds())) {
+    for (const auto& [actuatorCollider, actuatorId] : std::views::zip (actuators.getColliders(),
+                                                                       actuators.getIds())) {
         if (playerCollider.collides (actuatorCollider)) {
             return actuatorId;
         }
@@ -24,17 +24,18 @@ std::optional<uint32_t> detectToggledActuator (const physics::Collider&     play
     return std::nullopt;
 }
 
-}
+} // namespace
 
 player::BodyState updateBodyStateOnInteraction (const physics::Collider& interactionPlayerCollider,
-                                                player::BodyState playerBodyState, const world::GroundData& ground)
+                                                player::BodyState        playerBodyState,
+                                                const world::GroundData& ground)
 {
     player::BodyState newBodyState;
-    if (Collision::IsPlayerCollidesWithGround (interactionPlayerCollider, ground)) {
-        newBodyState.pointer = player::PointerState::SHIELD;
+    if (collision::isPlayerCollidesWithGround (interactionPlayerCollider, ground)) {
+        newBodyState.pointer = player::PointerState::Shield;
     }
     else {
-        newBodyState.pointer = player::PointerState::SHARP;
+        newBodyState.pointer = player::PointerState::Sharp;
     }
     newBodyState.core = playerBodyState.core;
     return newBodyState;
@@ -43,7 +44,7 @@ player::BodyState updateBodyStateOnInteraction (const physics::Collider& interac
 player::Action detectActionByInteraction (const physics::Collider&             physicalPlayerCollider,
                                           const world::LevelInteractableTiles& tiles)
 {
-    for (const auto& [tileType, tileCollider] : tiles.getInteractableTilesTypeWithColliders()) {
+    for (const auto& [tileType, tileCollider] : std::views::zip (tiles.getTypes(), tiles.getColliders())) {
 
         if (physicalPlayerCollider.collides (tileCollider)) {
             switch (tileType) {

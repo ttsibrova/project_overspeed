@@ -19,15 +19,15 @@ public:
         m_cTileset (cTileset)
     {}
 
-    auto getActuatorIds() const { return m_actuators | std::ranges::views::keys; }
-    auto getActuatorValues() const { return m_actuators | std::ranges::views::values; }
-    auto getActuatorsColliders() const {
+    auto getIds() const { return m_actuators | std::ranges::views::keys; }
+    auto getValues() const { return m_actuators | std::ranges::views::values; }
+    auto getColliders() const {
         auto actuatorCollider = [this] (const map::Actuator& actuator) {
             // fallback sizes in case if image is missing
             float height = settings::tileSize.height;
             float width  = settings::tileSize.width;
             if (m_cTileset.isTileBelongsToSet(actuator.tileGid)) {
-                auto imageInfo = TextureManager::getInstance().getImageInfo(m_cTileset.getImageID(actuator.tileGid));
+                const auto imageInfo = TextureManager::getInstance().getImageInfo(m_cTileset.getImageID(actuator.tileGid));
                 height         = imageInfo.height;
                 width          = imageInfo.width;
             }
@@ -36,7 +36,7 @@ public:
             }
             return physics::Collider (actuator.pos, height, width);
         };
-        return getActuatorValues() | std::ranges::views::transform (actuatorCollider);
+        return getValues() | std::ranges::views::transform (actuatorCollider);
     }
 
 private:

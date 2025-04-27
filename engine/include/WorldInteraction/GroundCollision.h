@@ -4,17 +4,17 @@
 
 #include <optional>
 
-namespace Collision {
+namespace collision {
 
-std::optional<geom::Vector2D> HitScanGround (const physics::Collider& playerCollider, const geom::Vector2D& playerTrsl,
+std::optional<geom::Vector2D> hitScanGround (const physics::Collider& playerCollider, const geom::Vector2D& playerTrsl,
                                              const world::GroundData& groundData);
 
-bool IsPlayerCollidesWithGround (const physics::Collider& playerCollider, const world::GroundData& groundData);
+bool isPlayerCollidesWithGround (const physics::Collider& playerCollider, const world::GroundData& groundData);
 
-std::optional<geom::Vector2D> GetGroundNormalUnderPlayer (const physics::Collider& playerCollider,
+std::optional<geom::Vector2D> getGroundNormalUnderPlayer (const physics::Collider& playerCollider,
                                                           geom::Quadrant           playerVelocityQuadrant,
                                                           const world::GroundData& groundData);
 
-bool IsPlayerGrounded (const physics::Collider& playerCollider, const world::GroundData& groundData);
+bool isPlayerGrounded (const physics::Collider& playerCollider, const world::GroundData& groundData);
 
-} // namespace Collision
+} // namespace collision
