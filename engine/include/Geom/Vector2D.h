@@ -1,7 +1,9 @@
 #pragma once
 #include <Geom/Precision.h>
 #include <cassert>
+#include <cmath>
 #include <iostream>
+#include <utility>
 #include <raylib.h>
 
 namespace geom {
@@ -52,10 +54,11 @@ struct Vector2D
 
     inline Vector2D operator- (const Vector2D& rhs) const { return Vector2D (x - rhs.x, y - rhs.y); }
 
-    inline Vector2D operator-= (const Vector2D& rhs)
+    inline Vector2D& operator-= (const Vector2D& rhs)
     {
         x -= rhs.x;
         y -= rhs.y;
+        return *this;
     }
 
     inline Vector2D operator* (const float scalar) const { return Vector2D (x * scalar, y * scalar); }

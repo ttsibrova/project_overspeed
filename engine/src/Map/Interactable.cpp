@@ -1,6 +1,6 @@
 #include <Map/Interactable.h>
 
-#include <tools/Assert.h>
+#include <Tools/Assert.h>
 
 #include <tinytmxObject.hpp>
 #include <tinytmxPropertySet.hpp>

@@ -1,5 +1,5 @@
 #pragma once
-#include <geom/Point2D.h>
+#include <Geom/Point2D.h>
 #include <Map/Actuator.h>
 #include <Map/Interactable.h>
 #include <Map/Layer.h>

@@ -39,7 +39,7 @@ GameWorld GameWorld::createGameWorld (map::RegisteredMap map)
 {
     auto level = Level::createLevel (map);
     if (!level.has_value()) {
-        throw std::exception { "Failed to initialized world." };
+        throw std::runtime_error { "Failed to initialized world." };
     }
 
     return GameWorld (std::move (level.value()));

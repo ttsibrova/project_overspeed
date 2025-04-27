@@ -4,7 +4,12 @@ include(FetchContent)
 project (project_overspeed)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(solution_path "${CMAKE_CURRENT_SOURCE_DIR}")
-add_compile_options(/W4 /MP /fsanitize=address)
+if (MSVC)
+    add_compile_options(/W4 /MP /fsanitize=address)
+elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+    add_compile_definitions(_DEBUG)
+endif()
+
 
 #Third parties
 #Going to be fetched from github repos and included into project
@@ -64,5 +69,4 @@ endfunction()
 set_project (Engine "${solution_path}/engine")
 target_link_libraries (Engine raylib
                               raygui
-                              tinytmx
-                              winmm)
+                              tinytmx)

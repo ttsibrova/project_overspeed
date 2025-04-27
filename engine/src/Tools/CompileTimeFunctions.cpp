@@ -16,7 +16,7 @@ constexpr size_t hashString (const char* str, size_t length)
 
 } // namespace
 
-consteval size_t operator"" _hash (const char* str, size_t length)
+consteval size_t operator""_hash (const char* str, size_t length)
 {
     return hashString (str, length);
 }

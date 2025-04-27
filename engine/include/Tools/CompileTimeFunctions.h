@@ -3,7 +3,7 @@
 
 namespace tools {
 
-consteval size_t operator"" _hash (const char* str, size_t length);
+consteval size_t operator""_hash (const char* str, size_t length);
 
 struct HasherFNV1a
 {

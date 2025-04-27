@@ -1,6 +1,6 @@
 #pragma once
-#include <map/Actuator.h>
-#include <map/Interactable.h>
+#include <Map/Actuator.h>
+#include <Map/Interactable.h>
 
 #include <unordered_map>
 

@@ -80,8 +80,8 @@ UpdateState simulatePhysRunning (const float dt, float simulationTime, const geo
     const float startSpeed     = 100.f;
     const float dSpeed         = (playerMaxSpeed - startSpeed) / maxSpeedDelay;
 
-    __assume (simulationTime >= 0.f);
-    __assume (dt >= 0.f);
+    //__assume (simulationTime >= 0.f);
+    //__assume (dt >= 0.f);
 
     const auto inputVec = geom::stripByAxis (input::getAxisVec(), geom::Axis::x);
     if (inputVec.getSquareMagnitude() < 1e-5 || std::abs (inputVec.x) < 1e-5) {
