@@ -3,11 +3,12 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/KaseyJenkins/tinytmx.git
     GIT_TAG ef0d4e1b5945d0c530f85a7b7aecc0665c8f707b #verified master
     GIT_PROGRESS TRUE
+    SOURCE_SUBDIR ".." # avoiding inclusion of tinytmx cmake
 )
 
 FetchContent_GetProperties(tinytmx)
 if(NOT tinytmx_POPULATED)
-    FetchContent_Populate(tinytmx)
+    FetchContent_MakeAvailable(tinytmx)
 
     add_library(tinytmx STATIC)
     

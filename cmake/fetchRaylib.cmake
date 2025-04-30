@@ -7,12 +7,11 @@ FetchContent_Declare(
 
 FetchContent_GetProperties(raylib)
 if(NOT raylib_POPULATED)
-    FetchContent_Populate(raylib)
 
     set(BUILD_EXAMPLES OFF)
-    
-    add_subdirectory(${raylib_SOURCE_DIR} ${raylib_BINARY_DIR})
-    
+
+    FetchContent_MakeAvailable(raylib)
+
     if(MSVC)
         set_target_properties(raylib PROPERTIES FOLDER "3rdparty/raylib")
         if(TARGET glfw)

@@ -7,7 +7,7 @@ FetchContent_Declare(
 
 FetchContent_GetProperties(raygui)
 if(NOT raygui_POPULATED)
-    FetchContent_Populate(raygui)
+    FetchContent_MakeAvailable(raygui)
     
     add_library(raygui INTERFACE)
 
