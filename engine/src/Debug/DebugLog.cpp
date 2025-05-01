@@ -3,6 +3,8 @@
 #include <Core/Engine.h>
 #include <Core/Logger.h>
 
+#include <Geom/LineSegment.h>
+
 #include <Debug/CollisionDebugger.h>
 #include <Debug/PlayerMovementDebugger.h>
 
@@ -11,11 +13,11 @@
 
 namespace debug {
 
-void log (const std::pair<geom::Point2D, geom::Point2D>& line, Designation des)
+void log (const geom::LineSegment& segment, Designation des)
 {
     switch (des) {
     case debug::Collision:
-        debug::CollisionDebugger::getInstance().addCollisionLine (line);
+        debug::CollisionDebugger::getInstance().addCollisionSegment (segment);
         break;
     default:
         assert (false);

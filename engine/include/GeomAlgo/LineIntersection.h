@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Geom/Point2D.h>
+#include <Geom/LineSegment.h>
 #include <optional>
 
 namespace geom::algo {
@@ -42,6 +42,15 @@ namespace geom::algo {
     const float x = (C1 * B2 - B1 * C2) / D;
     const float y = (A1 * C2 - C1 * A2) / D;
     return Point2D (x, y);
+}
+
+[[nodiscard]] std::optional<Point2D> intersectSegments (const LineSegment& segment1, const LineSegment& segment2)
+{
+    const auto res = intersectLines(segment1.first, segment1.last, segment2.first, segment2.last);
+    if (res.has_value() && segment1.contains(res.value()) && segment2.contains(res.value())) {
+        return res.value();
+    }
+    return std::nullopt;
 }
 
 } // namespace geom::algo

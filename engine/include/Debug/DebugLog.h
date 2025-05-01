@@ -8,6 +8,7 @@ namespace physics {
 class Collider;
 }
 namespace geom {
+struct LineSegment;
 struct Point2D;
 struct Vector2D;
 } // namespace geom
@@ -24,7 +25,7 @@ enum Designation : uint8_t
 
 #if _DEBUG
 
-void log (const std::pair<geom::Point2D, geom::Point2D>& line, Designation des);
+void log (const geom::LineSegment& segment, Designation des);
 void log (const physics::Collider& collider, const Color& color = BLUE);
 void log (const physics::movement::UpdateState& pus, const geom::Point2D& playerPos);
 void log (const geom::Point2D& pnt, Designation des);

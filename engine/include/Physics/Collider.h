@@ -32,6 +32,12 @@ public:
     [[nodiscard]] inline geom::Point2D getRightCorner() const { return geom::Point2D (m_max.x, m_min.y); }
     [[nodiscard]] inline geom::Point2D getLeftCorner() const { return geom::Point2D (m_min.x, m_max.y); }
 
+    inline void translate (const geom::Vector2D& trsl)
+    {
+        m_min.translate (trsl);
+        m_max.translate (trsl);
+    }
+    
     [[nodiscard]] inline Collider translated (const geom::Vector2D& trsl) const
     {
         return Collider (m_min.translated (trsl), m_max.translated (trsl));
@@ -43,6 +49,16 @@ public:
     }
 
     [[nodiscard]] bool collides (const Collider& other) const;
+
+    void extend (float value) {
+        m_min.translate (geom::Vector2D { -value, -value });
+        m_max.translate (geom::Vector2D { value, value });
+    }
+
+    void extend (const geom::Vector2D& value) {
+        m_min.translate(value.fipped());
+        m_max.translate(value);
+    }
 
 private:
     geom::Point2D m_min;

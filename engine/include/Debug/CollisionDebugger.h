@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Geom/LineSegment.h>
 #include <Geom/Point2D.h>
 #include <Physics/Collider.h>
 
@@ -18,7 +19,7 @@ public:
     void update();
     void draw() const;
 
-    void addCollisionLine (std::pair<geom::Point2D, geom::Point2D> line);
+    void addCollisionSegment (geom::LineSegment segment);
     void addCollider (physics::Collider collider, Color colliderColor);
     void addPoint (geom::Point2D pnt);
 
@@ -26,9 +27,9 @@ private:
     CollisionDebugger() {}
 
 private:
-    std::vector<std::pair<geom::Point2D, geom::Point2D>> m_collisionLines;
-    std::vector<physics::Collider>                       m_colliders;
-    std::vector<Color>                                   m_colliderColors;
-    std::vector<geom::Point2D>                           m_points;
+    std::vector<geom::LineSegment> m_collisionSegments;
+    std::vector<physics::Collider> m_colliders;
+    std::vector<Color>             m_colliderColors;
+    std::vector<geom::Point2D>     m_points;
 };
 } // namespace debug

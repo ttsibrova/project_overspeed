@@ -161,7 +161,7 @@ UpdateState simulatePhys (const player::Player& player, const world::GroundData&
 {
     UpdateState physUpdate     = physSim (args...);
     auto        playerCollider = player.getCollider();
-    auto        adjustedVec    = collision::hitScanGround (playerCollider, physUpdate.trsl, ground);
+    auto        adjustedVec    = collision::computeTranslationBeforeCollision (playerCollider, physUpdate.trsl, ground);
     if (adjustedVec.has_value()) {
         physUpdate.trsl     = adjustedVec.value();
         physUpdate.velocity = geom::Vector2D(); // temporary velocity reset on collision
@@ -191,28 +191,15 @@ UpdateState computeUpdatedMovementState (float dt, const player::Player& player,
 
     switch (targetMode) {
     case Mode::None:
-    {
-        UpdateState physicsState {
-            .nextMode = targetMode,
-            .velocity = geom::Vector2D(),
-            .trsl     = geom::Vector2D(),
-            .simTime  = dt,
-        };
-        return physicsState;
-    }
+        return UpdateState { .nextMode = targetMode, .velocity = geom::Vector2D(), .trsl = geom::Vector2D(), .simTime = dt };
     case Mode::Moving:
-    {
         return simulatePhys (player, ground, simulatePhysRunning, dt, simulationTime, playerState.velocity);
-    }
     case Mode::AirMoving:
-    {
         return simulatePhys (player, ground, simulatePhysAirMovement, dt, simulationTime, playerState.velocity);
-    }
     case Mode::Jumping:
-    {
         return simulatePhys (player, ground, simulatePhysJumping, dt, simulationTime, playerState.velocity);
     }
-    }
+    
     float newSimTime = dt;
     if (targetMode == playerState.currentMode) {
         newSimTime += playerState.currentSimTime;
